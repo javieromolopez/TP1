@@ -37,4 +37,4 @@ K-12 students (grades 5–10) learning basic science. Today they rely on static 
 - Exact image-generation prompt that reliably enforces "flat 2D textbook illustration" style — needs iteration.
 - Whether GPT-4o should return strict JSON (with a defined schema) or prose that the app parses — depends on schema-following reliability on small vision tasks.
 
-**Approved by:** Javier Romo, October 5, 2026
+**Approved by:** Javier Romo & Raphael Ralston, October 5, 2026
