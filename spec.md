@@ -198,4 +198,4 @@ Ruled out by this design:
 - Streaming partial results to the browser.
 - Uploading a student's own photo, and audio (assignment stretch goals; revisit only if the core loop is done early).
 
-**Approved by:** _pending (Javier Romo / Ralston Raphael, checked against `intent/generation-loop.md`)_
+**Approved by:** Javier Romo & Ralston Raphael, October 18, 2026
