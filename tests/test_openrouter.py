@@ -39,6 +39,10 @@ def call(**kwargs):
     return asyncio.run(openrouter.chat(BODY, **kwargs))
 
 
+def runs_lines():
+    return [json.loads(line) for line in openrouter.RUNS_PATH.read_text().splitlines()]
+
+
 def test_posts_body_with_bearer_key_and_parses_usage(server):
     server["replies"] = [(200, OK_REPLY)]
     result = call(timeout=30)
@@ -108,7 +112,7 @@ def test_each_call_appends_one_runs_line(server):
     call(timeout=30)
     call(timeout=30)
 
-    lines = [json.loads(line) for line in openrouter.RUNS_PATH.read_text().splitlines()]
+    lines = runs_lines()
     assert len(lines) == 2
     assert lines[0]["model"] == "openai/gpt-4o"
     assert (lines[0]["prompt_tokens"], lines[0]["completion_tokens"], lines[0]["cost"]) == (12, 3, 0.0004)
@@ -118,5 +122,5 @@ def test_each_call_appends_one_runs_line(server):
 def test_failed_attempts_are_logged_too(server):
     server["replies"] = [(503, {"error": {"message": "busy"}}), (200, OK_REPLY)]
     call(timeout=30, retry_5xx=True)
-    lines = [json.loads(line) for line in openrouter.RUNS_PATH.read_text().splitlines()]
+    lines = runs_lines()
     assert [line["status"] for line in lines] == [503, 200]

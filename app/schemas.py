@@ -1,6 +1,7 @@
 """Pydantic models and the topic-catalog loader (spec: Topic catalog)."""
 
 import json
+from collections import Counter
 from pathlib import Path
 from typing import Literal
 
@@ -65,8 +66,8 @@ def _check_topic(topic: Topic) -> None:
     if not topic.required_parts:
         raise TopicCatalogError("nonempty_required_parts", topic.id, "required_parts is empty")
 
-    rule_ids = [r.id for r in topic.arrangement_rules]
-    duplicates = sorted({r for r in rule_ids if rule_ids.count(r) > 1})
+    rule_counts = Counter(r.id for r in topic.arrangement_rules)
+    duplicates = sorted(rule_id for rule_id, n in rule_counts.items() if n > 1)
     if duplicates:
         raise TopicCatalogError(
             "unique_arrangement_rule_ids", topic.id, f"duplicate rule ids {duplicates}"
