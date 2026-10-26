@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diagram Check</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Schibsted+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="bar">
+    <div class="title">
+      <h1>Diagram check</h1>
+      <p>Pick a topic. The app draws a textbook diagram, then a second AI looks at the picture and checks it against the topic's list of parts.</p>
+    </div>
+    <form id="controls" class="controls">
+      <label for="topic">Topic</label>
+      <select id="topic" name="topic"></select>
+      <button id="generate" type="submit">Generate diagram</button>
+    </form>
+  </header>
+
+  <p id="status" class="status" role="status" hidden></p>
+  <p id="error" class="error" role="alert" hidden></p>
+
+  <main id="result" class="sheet" hidden>
+    <section class="plate">
+      <img id="diagram" alt="AI-generated diagram for the chosen topic">
+      <p id="hidden-notice" class="hidden-notice" hidden></p>
+      <p id="caption" class="caption">AI-generated diagram</p>
+    </section>
+
+    <section class="marks" aria-label="Critique">
+      <p id="critique-error" class="critique-error" hidden></p>
+
+      <div id="critique">
+        <div class="verdict-row">
+          <h2>Checklist</h2>
+          <p id="verdict" class="verdict" hidden></p>
+        </div>
+        <table class="checklist">
+          <thead><tr><th scope="col">Part</th><th scope="col">Mark</th><th scope="col">Note</th></tr></thead>
+          <tbody id="checklist"></tbody>
+        </table>
+
+        <h3>Should not appear</h3>
+        <ul id="forbidden" class="notes"></ul>
+
+        <h3>Arrangement</h3>
+        <ul id="arrangement" class="notes"></ul>
+
+        <h3>Label text</h3>
+        <ul id="text-issues" class="notes"></ul>
+
+        <h3>What the checker says</h3>
+        <p id="narrative" class="narrative"></p>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
