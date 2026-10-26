@@ -1,0 +1,64 @@
+{
+  "topics": [
+    {
+      "id": "plant-cell",
+      "display_name": "Plant cell",
+      "required_parts": ["cell wall", "cell membrane", "cytoplasm", "nucleus", "chloroplast", "vacuole", "mitochondrion"],
+      "forbidden_parts": [],
+      "arrangement_rules": [
+        {"id": "A1", "text": "The cell wall is the outermost layer, outside the membrane."},
+        {"id": "A2", "text": "All organelles sit inside the membrane."},
+        {"id": "A3", "text": "The vacuole is the largest organelle."}
+      ],
+      "labels": ["cell wall", "cell membrane", "cytoplasm", "nucleus", "chloroplast", "vacuole", "mitochondrion"]
+    },
+    {
+      "id": "animal-cell",
+      "display_name": "Animal cell",
+      "required_parts": ["cell membrane", "cytoplasm", "nucleus", "mitochondrion", "ribosome", "endoplasmic reticulum", "Golgi apparatus"],
+      "forbidden_parts": ["cell wall", "chloroplast"],
+      "arrangement_rules": [
+        {"id": "A1", "text": "The membrane is the outer boundary."},
+        {"id": "A2", "text": "All organelles sit inside the membrane."},
+        {"id": "A3", "text": "The endoplasmic reticulum is next to the nucleus."}
+      ],
+      "labels": ["cell membrane", "cytoplasm", "nucleus", "mitochondrion", "ribosome", "endoplasmic reticulum", "Golgi apparatus"]
+    },
+    {
+      "id": "water-cycle",
+      "display_name": "Water cycle",
+      "required_parts": ["sun", "ocean or lake", "evaporation", "condensation", "cloud", "precipitation", "collection"],
+      "forbidden_parts": [],
+      "arrangement_rules": [
+        {"id": "A1", "text": "The evaporation arrow rises from the water."},
+        {"id": "A2", "text": "Precipitation falls from the cloud."},
+        {"id": "A3", "text": "The arrows form one closed loop."}
+      ],
+      "labels": ["sun", "ocean or lake", "evaporation", "condensation", "cloud", "precipitation", "collection"]
+    },
+    {
+      "id": "simple-circuit",
+      "display_name": "Simple circuit",
+      "required_parts": ["battery", "wire", "switch", "light bulb"],
+      "forbidden_parts": [],
+      "arrangement_rules": [
+        {"id": "A1", "text": "All components lie on one loop."},
+        {"id": "A2", "text": "The battery shows + and - terminals."},
+        {"id": "A3", "text": "The loop is closed except at an open switch."}
+      ],
+      "labels": ["battery", "wire", "switch", "light bulb"]
+    },
+    {
+      "id": "flower",
+      "display_name": "Flower",
+      "required_parts": ["petal", "sepal", "stamen", "anther", "filament", "pistil", "stigma", "style", "ovary"],
+      "forbidden_parts": [],
+      "arrangement_rules": [
+        {"id": "A1", "text": "The anther sits on top of the filament."},
+        {"id": "A2", "text": "The stigma is at the top of the style, the ovary at its base."},
+        {"id": "A3", "text": "The sepals are below the petals."}
+      ],
+      "labels": ["petal", "sepal", "stamen", "anther", "filament", "pistil", "stigma", "style", "ovary"]
+    }
+  ]
+}
