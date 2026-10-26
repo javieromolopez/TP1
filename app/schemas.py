@@ -32,6 +32,12 @@ class Topic(BaseModel):
     arrangement_rules: list[ArrangementRule]
     labels: list[str]
 
+    @property
+    def with_article(self) -> str:
+        """'a plant cell', 'an animal cell': for the prompts' English."""
+        name = self.display_name.lower()
+        return f"{'an' if name[0] in 'aeiou' else 'a'} {name}"
+
 
 # Critique schema (spec § Critique schema). Fields a critic may reasonably omit have defaults (plan R7).
 
@@ -62,7 +68,7 @@ class Critique(BaseModel):
 
 
 def _check_topic(topic: Topic) -> None:
-    """Cross-field checks that type validation cannot catch (plan R6 b-e)."""
+    """Cross-field checks that type validation cannot catch (plan R6 b-e, plus review fixes)."""
     if not topic.required_parts:
         raise TopicCatalogError("nonempty_required_parts", topic.id, "required_parts is empty")
 
@@ -79,10 +85,15 @@ def _check_topic(topic: Topic) -> None:
             "required_forbidden_disjoint", topic.id, f"{overlap} are both required and forbidden"
         )
 
-    unknown = [label for label in topic.labels if label not in topic.required_parts]
-    if unknown:
+    folded = [p.casefold() for p in topic.required_parts]
+    if len(folded) != len(set(folded)):
         raise TopicCatalogError(
-            "labels_match_parts", topic.id, f"labels {unknown} are not required part names"
+            "unique_required_parts", topic.id, "two required parts differ only in case"
+        )
+
+    if sorted(topic.labels) != sorted(topic.required_parts):
+        raise TopicCatalogError(
+            "labels_equal_parts", topic.id, "labels must be exactly the required parts"
         )
 
 

@@ -33,9 +33,11 @@ class OpenRouterError(Exception):
 
 @dataclass
 class Usage:
+    """Token counts and cost for one call, as OpenRouter reports them."""
+
     prompt_tokens: int
     completion_tokens: int
-    cost: float | None
+    cost: float | None  # USD from OpenRouter's usage field; None if it was not reported
 
 
 NO_USAGE = Usage(0, 0, None)  # logged for attempts that returned no usable reply
@@ -43,6 +45,8 @@ NO_USAGE = Usage(0, 0, None)  # logged for attempts that returned no usable repl
 
 @dataclass
 class ChatResult:
+    """The decoded reply, its usage, and wall-clock latency (time.perf_counter, seconds)."""
+
     data: dict
     usage: Usage
     latency_s: float
@@ -101,7 +105,11 @@ async def _post_once(client: httpx.AsyncClient, body: dict, timeout: float) -> C
 
 
 async def chat(body: dict, *, timeout: float, retry_5xx: bool = False) -> ChatResult:
-    """POST one chat completion. With retry_5xx, a 429 or 5xx is retried once after RETRY_DELAY_S."""
+    """POST one chat completion. With retry_5xx, a 429 or 5xx is retried once after RETRY_DELAY_S.
+
+    timeout has no default on purpose: each caller states its spec value
+    (60 s for the image call, 30 s for the critique; spec behavior 13).
+    """
     key = os.environ.get("OPENROUTER_API_KEY")
     if not key:
         raise MissingKey("OpenRouter key not configured")

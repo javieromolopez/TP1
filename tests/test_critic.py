@@ -5,7 +5,7 @@ import json
 
 import pytest
 
-from app.critic import MODEL, critique
+from app.critic import MODEL, checklist_text, critique
 from app.prompt_builder import build_image_prompt
 from app.schemas import load_style_block, load_topics
 from tests.conftest import data_url, png_bytes, reply
@@ -82,3 +82,9 @@ def test_returns_the_raw_reply_text(fake_chat):
 def test_empty_content_returns_empty_string(fake_chat):
     fake_chat.replies = [reply({"content": None})]
     assert run(TOPICS["flower"]) == ""
+
+
+def test_checklist_uses_the_right_article():
+    """Review: PR #3 caught "a animal cell"."""
+    assert "diagram of an animal cell" in checklist_text(TOPICS["animal-cell"])
+    assert "diagram of a flower" in checklist_text(TOPICS["flower"])
