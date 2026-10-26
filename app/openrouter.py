@@ -5,7 +5,7 @@ import json
 import os
 import time
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import httpx
@@ -56,7 +56,7 @@ def _usage(payload: dict) -> Usage:
 
 def _log_run(model: str, status: int | None, usage: Usage, latency_s: float, error: str | None) -> None:
     line = {
-        "ts": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "ts": datetime.now(UTC).isoformat(timespec="seconds"),
         "model": model,
         "status": status,
         "prompt_tokens": usage.prompt_tokens,

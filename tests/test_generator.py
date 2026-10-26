@@ -16,7 +16,7 @@ def test_request_has_model_modalities_and_prompt(fake_chat):
     fake_chat.replies = [reply({"content": "", "images": [{"image_url": {"url": data_url(png_bytes())}}]})]
     asyncio.run(generate(TOPIC))
 
-    (body, kwargs), = fake_chat.calls
+    (body, _), = fake_chat.calls
     assert body["model"] == MODEL == "google/gemini-2.5-flash-image"
     assert body["modalities"] == ["image", "text"]
     assert body["messages"] == [{"role": "user", "content": build_image_prompt(TOPIC)}]

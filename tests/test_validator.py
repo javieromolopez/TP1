@@ -7,7 +7,12 @@ import pytest
 
 from app import critic, validator
 from app.schemas import load_topics
-from app.validator import CRITIQUE_UNAVAILABLE, CritiqueInvalid, critique_with_retry, validate
+from app.validator import (
+    CRITIQUE_UNAVAILABLE,
+    CritiqueInvalid,
+    critique_with_retry,
+    validate,
+)
 from tests.conftest import png_bytes
 
 CIRCUIT = load_topics()["simple-circuit"]  # battery, wire, switch, light bulb; rules A1-A3
