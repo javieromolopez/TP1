@@ -28,8 +28,10 @@ def _flaw_caught(flaw: dict, critique: Critique) -> bool:
         return target.casefold() in _folded(critique.forbidden_found)
     if kind == "arrangement":
         return any(a.rule == target and not a.ok for a in critique.arrangement)
-    if kind == "text":
-        return bool(critique.text_issues)
+    if kind == "text":  # with a target, only an issue about that planted label counts
+        if target is None:
+            return bool(critique.text_issues)
+        return any(target.casefold() in issue.label_text.casefold() for issue in critique.text_issues)
     return False
 
 

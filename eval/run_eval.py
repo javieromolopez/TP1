@@ -20,6 +20,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+import httpx
 from dotenv import load_dotenv
 
 from app import critic, generator, openrouter, validator
@@ -31,7 +32,10 @@ load_dotenv()
 
 CRITIC_HEADER = "| Image | Kind | Valid (1st try) | Part acc. | False flags | Flaw caught | Verdict | Tokens in/out | Cost |"
 GENERATE_HEADER = "| Topic | Run | File | Cost | Latency s | Labels ok | Garbled text | Flat style |"
-CALL_FAILURES = (openrouter.OpenRouterTimeout, openrouter.OpenRouterError)
+# One failed call becomes an invalid row instead of aborting a paid run: provider errors,
+# dropped connections, and a 200 reply missing the fields we read.
+CALL_FAILURES = (openrouter.OpenRouterTimeout, openrouter.OpenRouterError, httpx.HTTPError,
+                 KeyError, IndexError, ValueError)
 
 
 class _FreshRunsLog:

@@ -138,7 +138,7 @@
     "text_issue": true,
     "flaw": {
       "kind": "text",
-      "target": null
+      "target": "evaparashun"
     },
     "note": "Nano Banana Pro, told to spell evaporation as 'evaparashun'. The arrows are drawn and labeled in the right place, so the part counts as present; the flaw is the label text."
   },
