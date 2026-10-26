@@ -134,7 +134,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .results { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 20px; align-items: start; }
 .block { border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; background: var(--page); }
 
-.plate { margin: 0; padding: 12px; }
+.plate { margin: 0; padding: 12px; position: sticky; top: 16px; }  /* stays in view beside a long checklist */
 .plate img { display: block; width: 100%; height: auto; border-radius: 4px; }
 .caption { margin: 10px 4px 2px; font-size: 12px; color: var(--muted); }
 .caption::before { content: "✦ "; color: var(--faint); }
@@ -152,7 +152,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* Checklist as a database table: fixed columns so every pill lines up. */
 .checklist { width: 100%; border-collapse: collapse; table-layout: fixed; }
-.checklist col, .checklist th:nth-child(1) { width: 38%; }
+.checklist th:nth-child(1) { width: 30%; }
 .checklist th:nth-child(2) { width: 128px; }
 .checklist th {
   text-align: left; padding: 6px 8px; font-size: 12px; font-weight: 500; color: var(--muted);
@@ -222,5 +222,6 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 @media (max-width: 860px) {
   .page { padding: 0 16px 40px; }
   .results { grid-template-columns: 1fr; }
+  .plate { position: static; }
   .props div { grid-template-columns: 100px 1fr; }
 }

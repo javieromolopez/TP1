@@ -43,7 +43,7 @@ function pill(status) {
 function fillList(list, countBadge, items, empty) {
   list.replaceChildren();
   const problems = items.filter((i) => !i.ok).length;
-  countBadge.textContent = items.length ? (problems ? `${problems} to fix` : "all good") : "";
+  countBadge.textContent = items.length ? (problems ? `${problems} to fix` : "all good") : "none";
   countBadge.className = `count ${problems ? "bad" : "good"}`;
   for (const item of items.length ? items : [{ ok: true, text: empty, quiet: true }]) {
     const li = el("li", undefined, item.quiet ? "quiet" : "");
