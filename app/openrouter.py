@@ -40,6 +40,9 @@ class Usage:
     cost: float | None  # USD from OpenRouter's usage field; None if it was not reported
 
 
+NO_USAGE = Usage(0, 0, None)  # logged for attempts that returned no usable reply
+
+
 @dataclass
 class ChatResult:
     """The decoded reply, its usage, and wall-clock latency (time.perf_counter, seconds)."""
@@ -86,13 +89,13 @@ async def _post_once(client: httpx.AsyncClient, body: dict, timeout: float) -> C
     try:
         response = await client.post(URL, json=body, timeout=timeout)
     except httpx.TimeoutException as exc:
-        _log_run(model, None, Usage(0, 0, None), time.perf_counter() - start, "timeout")
+        _log_run(model, None, NO_USAGE, time.perf_counter() - start, "timeout")
         raise OpenRouterTimeout(f"{model} did not answer within {timeout:g} s") from exc
     latency = time.perf_counter() - start
 
     if response.status_code != 200:
         message = _error_message(response)
-        _log_run(model, response.status_code, Usage(0, 0, None), latency, message)
+        _log_run(model, response.status_code, NO_USAGE, latency, message)
         raise OpenRouterError(response.status_code, message)
 
     payload = response.json()
