@@ -110,6 +110,7 @@ def test_generate_returns_stamped_image_critique_and_code_verdict(client, fake_c
     assert body["verdict"] == "good"
     assert body["image_hidden_reason"] is None
     assert body["usage"]["image"]["model"] == "google/gemini-2.5-flash-image"
+    assert body["arrangement_rules"] == [{"id": r.id, "text": r.text} for r in CIRCUIT.arrangement_rules]
     assert len(fake_chat.calls) == 2
 
 
