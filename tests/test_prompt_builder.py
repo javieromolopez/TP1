@@ -24,6 +24,6 @@ def test_prompt_has_style_block_labels_and_no_people(topic_id):
 
 def test_style_block_is_the_spec_text():
     block = load_style_block()
-    assert block.startswith("Flat-color 2D textbook illustration for a grade 5-10 science class.")
+    assert block.startswith("Flat-color 2D textbook illustration for a grade 5–10 science class.")
     assert "no gradients" in block
     assert block.endswith("No people, no faces, no hands.")

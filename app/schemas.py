@@ -85,6 +85,11 @@ def _check_topic(topic: Topic) -> None:
         )
 
 
+def load_style_block(path: Path = TOPICS_PATH) -> str:
+    """The shared image-style text, with a {labels} placeholder (spec § Topic catalog)."""
+    return json.loads(Path(path).read_text())["style_block"]
+
+
 def load_topics(path: Path = TOPICS_PATH) -> dict[str, Topic]:
     """Load and validate the catalog, in file order. Raises TopicCatalogError on any bad entry."""
     raw = json.loads(Path(path).read_text())
