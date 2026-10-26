@@ -19,6 +19,7 @@ Ten diagrams in `eval/images/`, one good and one deliberately flawed per topic, 
 - **Final set:** the good images and the planted flaws were made with Nano Banana Pro. Some needed more than one try.
 - **Two images were reassigned:** one image the model was told to flaw came out clean, so it became the good image. The "good" circuit from the app's own prompt failed A2 (no + and −), so the final one adds "mark the + and − terminals" to the prompt. Prompts are in `eval/images/prompts*.json`.
 - **Who checked them:** Claude Code checked each image label by label and wrote `expected.json`. **Ralston and Javier should spot-check the five flawed entries before the presentation.**
+- **Selection bias:** the flawed circuit was chosen *because* GPT-4o had already passed it, so this set leans toward GPT-4o's known weakness. Read section 2 with that in mind.
 
 ## 2. Critic comparison (behavior 16)
 
@@ -28,6 +29,8 @@ Ten diagrams in `eval/images/`, one good and one deliberately flawed per topic, 
 |---|---|---|---|---|---|---|---|
 | `openai/gpt-4o` (spec default) | 100% | 0.92 | 0 | **9 / 15** | 45,719 / 10,691 | $0.20 | **FAIL** |
 | `xiaomi/mimo-v2.6-flash` (cheap comparison) | 100% | 0.97 | 0 | **15 / 15** | 43,764 / 37,750 | $0.013 | **PASS** |
+
+Behavior 16 is scored over all repeats pooled: 0 false flags, and at least 80% of the 15 flawed runs caught. Scoring per image ("4 of 5 flaws") gives the same result for both models: GPT-4o 3 of 5, mimo 5 of 5.
 
 **What GPT-4o missed, the same way all 3 times:**
 - **`simple-circuit-flawed`:** it marked every part present and gave the verdict **good**, the same false pass as on Oct 25.
@@ -41,6 +44,10 @@ Ten diagrams in `eval/images/`, one good and one deliberately flawed per topic, 
 **Costs of the cheap model:**
 - **Hidden reasoning:** mimo writes far more output tokens. One flower reply used 6,806 output tokens, against about 700 normally. It is still $0.002, but latency varies.
 - **No timeouts in these runs,** but the critic's 30 s timeout is the risk to watch.
+
+**Typo flaw, re-checked after review:** the first scoring counted a text flaw as caught if the critic raised *any* text issue. It now requires an issue naming the planted label. A re-run on `water-cycle-flawed` (3 repeats each, $0.02) had both models flag "evaparashun" specifically, 3 of 3, so the counts stand.
+
+**Selection bias, again:** one of GPT-4o's two blind spots, the circuit, was picked for this set because GPT-4o missed it before. The flower swap was planted fresh, and GPT-4o missed it too, so the weakness is not only an artifact of how the set was chosen.
 
 **Decision rule from the spec:** "If the cheap model matches GPT-4o on false flags and per-part accuracy within one part per image, we propose switching in a new intent." mimo matches on false flags (both 0), beats GPT-4o on accuracy, and catches six more flaws at about 1/15 the cost. **Recommendation: a new intent to switch the critic to `xiaomi/mimo-v2.6-flash`.** The code is not changed here, because the intent comes first.
 
@@ -144,7 +151,7 @@ The columns:
 | `google/gemini-3-pro-image` (Nano Banana Pro) | $0.138 | 19.6 s | $2.08 |
 
 **Decision rule from the spec:** "We keep Nano Banana unless Pro removes garbled labels on topics where Nano Banana fails more than 1 in 3 runs. If that happens, we update the intent before switching."
-- **The rule triggers.** Nano Banana garbles or misplaces labels on four of five topics in every run, and Pro fixes both.
+- **The rule triggers.** Nano Banana garbles or misplaces labels on four of five topics in every run. Pro removes most of it: 1/15 still garbled ("chloplast"), and 2/15 not flat (water cycle).
 - **The catch is cost.** A Pro image plus a mimo critique is about $0.14 a run (under the $0.25 per-run ceiling), and about 20 s plus the critique (under 45 s). But the spec's 250-run semester estimate becomes about $35, over the intent's $25 budget. **That trade-off is a team decision for the new intent.**
 
 ## 4. End-to-end runs (behavior 17)
@@ -166,10 +173,10 @@ Real runs through the app with the current models (Nano Banana + GPT-4o):
 
 ## 6. Spend
 
-The eval work on Oct 26 cost about $5.80 of OpenRouter credit:
-- **Eval set:** about $2.20. That covers the first Flash attempt and several Pro tries, since some images came out wrong.
+The eval work on Oct 26 cost about $5.90 of OpenRouter credit:
+- **Eval set:** about $3.00. That covers the first Flash attempt (about $0.40) and 19 Nano Banana Pro images at $0.138 (about $2.60), since several came out wrong and were regenerated.
 - **Generator comparison:** $2.66.
 - **Critic comparison:** $0.21.
-- **Spot checks:** a few cents.
+- **Spot checks and the typo re-check:** a few cents.
 
 Total on the key so far: **$6.07**. That includes the earlier development runs and other coursework.
