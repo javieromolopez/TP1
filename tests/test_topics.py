@@ -41,10 +41,16 @@ def test_required_and_forbidden_disjoint(topics):
         assert not set(topic.required_parts) & set(topic.forbidden_parts), topic.id
 
 
-def test_label_strings_match_part_names(topics):
+def test_labels_are_exactly_the_required_parts(topics):
+    """Every required part is drawn and labeled, and nothing else is (review: PR #2, rule R6e)."""
     for topic in topics.values():
-        for label in topic.labels:
-            assert label in topic.required_parts, f"{topic.id}: label {label!r}"
+        assert sorted(topic.labels) == sorted(topic.required_parts), topic.id
+
+
+def test_circuit_rule_text_matches_the_spec(topics):
+    """spec.md writes the terminals as + and the Unicode minus sign (U+2212)."""
+    rule = next(r for r in topics["simple-circuit"].arrangement_rules if r.id == "A2")
+    assert rule.text == "The battery shows + and \u2212 terminals."
 
 
 def _plant_cell(raw):
@@ -72,6 +78,15 @@ def _wrong_type(raw):
     _plant_cell(raw)["required_parts"] = "nucleus"
 
 
+def _label_missing(raw):
+    _plant_cell(raw)["labels"].remove("vacuole")
+
+
+def _case_duplicate_part(raw):
+    _plant_cell(raw)["required_parts"].append("Nucleus")
+    _plant_cell(raw)["labels"].append("Nucleus")
+
+
 @pytest.mark.parametrize(
     "mutate, rule",
     [
@@ -80,8 +95,11 @@ def _wrong_type(raw):
         (_vacuole_forbidden, "required_forbidden_disjoint"),
         (_missing_field, "schema"),
         (_wrong_type, "schema"),
+        (_label_missing, "labels_equal_parts"),
+        (_case_duplicate_part, "unique_required_parts"),
     ],
-    ids=["empty-required", "duplicate-A1", "vacuole-forbidden", "missing-field", "wrong-type"],
+    ids=["empty-required", "duplicate-A1", "vacuole-forbidden", "missing-field", "wrong-type",
+         "label-missing", "case-duplicate-part"],
 )
 def test_bad_topics_rejected_at_startup(tmp_path: Path, mutate, rule):
     raw = copy.deepcopy(json.loads(TOPICS_PATH.read_text()))
