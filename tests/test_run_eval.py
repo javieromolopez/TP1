@@ -3,6 +3,8 @@
 import asyncio
 import json
 
+import httpx
+
 import pytest
 from PIL import Image
 
@@ -185,3 +187,21 @@ def test_generate_mode_records_failures_and_continues(monkeypatch, tmp_path):
     assert f"Images: {len(topics) - 1}" in md
     failed = [line for line in md.splitlines() if "FAILED" in line]
     assert len(failed) == 1 and topics[1] in failed[0] and "can't draw" in failed[0]
+
+
+@pytest.mark.parametrize(
+    "failure",
+    [httpx.ConnectError("connection dropped"), KeyError("choices")],
+    ids=["dropped-connection", "malformed-reply"],
+)
+def test_critic_mode_survives_network_and_malformed_reply_errors(images, monkeypatch, failure):
+    """Review on #9: one bad call must become an invalid row, not abort a paid run."""
+    folder, expected = images
+    fake_critic(monkeypatch, [failure, canned_json()])
+
+    md = asyncio.run(run_eval.run_critic(model="m/x", repeats=1, images_dir=folder, expected_path=expected))
+
+    rows = table_rows(md, ".png")
+    assert len(rows) == 2
+    assert "no (invalid)" in rows[0]
+    assert "Valid rate: 50%" in md

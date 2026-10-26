@@ -114,6 +114,9 @@ def test_false_flags_are_zero_for_flawed_images():
         (flawed("arrangement", "A2"), critique(rules={"A1": False}), False),
         (flawed("text", None), critique(issues=["Mitochondrin"]), True),
         (flawed("text", None), critique(), False),
+        # Review on #9: with a target, only an issue about that label counts.
+        (flawed("text", "evaparashun"), critique(issues=["Evaparashun"]), True),
+        (flawed("text", "evaparashun"), critique(issues=["Mitochondrin"]), False),
     ],
 )
 def test_flaw_caught_per_kind(expected, reply, caught):
