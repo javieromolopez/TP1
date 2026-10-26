@@ -90,17 +90,18 @@ def test_full_render_and_button_disables_while_running(page):
     page.on("request", lambda r: requests.append(r))
     held = hold_generate(page)
 
-    expect(page.locator("#topic option")).to_have_count(5)
-    page.select_option("#topic", "plant-cell")
+    expect(page.locator("#topics .topic-card")).to_have_count(5)
+    page.locator(".topic-card", has_text="Water cycle").click()
     with page.expect_request("**/api/generate"):
         page.click("#generate")
 
-    # While the request is open: disabled, spinner with elapsed seconds, and a second click does nothing.
+    # While the request is open: disabled, loading state with elapsed seconds, and a second click does nothing.
     expect(page.locator("#generate")).to_be_disabled()
-    expect(page.locator("#status")).to_contain_text("s")
+    expect(page.locator("#status")).to_contain_text(" s")
+    expect(page.locator("#loading")).to_be_visible()
     page.evaluate("document.querySelector('#generate').click()")
     assert len(held) == 1
-    assert held[0].request.post_data_json == {"topic_id": "plant-cell"}
+    assert held[0].request.post_data_json == {"topic_id": "water-cycle"}
 
     held[0].fulfill(json=critique_response())
 
@@ -109,17 +110,34 @@ def test_full_render_and_button_disables_while_running(page):
     expect(page.locator("#caption")).to_have_text("AI-generated diagram")
     rows = page.locator("#checklist tr.part-row")
     expect(rows).to_have_count(len(PLANT.required_parts))
-    expect(rows.filter(has_text="vacuole")).to_contain_text("✗")
-    expect(rows.filter(has_text="nucleus")).to_contain_text("✓")
+    expect(rows.filter(has_text="vacuole")).to_contain_text("Missing")
+    expect(rows.filter(has_text="nucleus")).to_contain_text("Present")
+    expect(page.locator("#score")).to_have_text("6 of 7 parts correct")
     expect(page.locator("#arrangement")).to_contain_text("A3")
     expect(page.locator("#text-issues")).to_contain_text("Mitochondrin")
     expect(page.locator("#narrative")).to_have_text("Most parts are here, but the vacuole is missing.")
     expect(page.locator("#verdict")).to_have_text("Needs work")
     expect(page.locator("#status")).to_be_hidden()
+    expect(page.locator("#loading")).to_be_hidden()
 
     generate_calls = [r for r in requests if r.url.endswith("/api/generate")]
     assert len(generate_calls) == 1
     assert not any("openrouter" in r.url for r in requests)
+
+
+def test_needs_attention_filter_shows_only_problem_parts(page):
+    held = hold_generate(page)
+    with page.expect_request("**/api/generate"):
+        page.click("#generate")
+    held[0].fulfill(json=critique_response())
+
+    rows = page.locator("#checklist tr.part-row")
+    expect(rows).to_have_count(7)
+    page.get_by_role("button", name="Needs attention").click()
+    expect(rows.locator("visible=true")).to_have_count(1)
+    expect(rows.locator("visible=true")).to_contain_text("vacuole")
+    page.get_by_role("button", name="All parts").click()
+    expect(rows.locator("visible=true")).to_have_count(7)
 
 
 def test_critique_error_still_shows_the_image(page):
