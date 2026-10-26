@@ -2,6 +2,7 @@
 
 import json
 from collections import Counter
+from functools import cache
 from pathlib import Path
 from typing import Literal
 
@@ -97,6 +98,7 @@ def _check_topic(topic: Topic) -> None:
         )
 
 
+@cache  # read topics.json once per path, not on every call
 def load_style_block(path: Path = TOPICS_PATH) -> str:
     """The shared image-style text, with a {labels} placeholder (spec § Topic catalog)."""
     return json.loads(Path(path).read_text())["style_block"]

@@ -55,7 +55,18 @@ function fillList(list, countBadge, items, empty) {
 }
 
 async function loadTopics() {
-  const topics = await (await fetch("/api/topics")).json();
+  let topics;
+  try {
+    const response = await fetch("/api/topics");
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    topics = await response.json();
+  } catch (err) {
+    console.error("Could not load /api/topics:", err);
+    $("error").textContent = "Could not load the topics from the server. Check that it is running, then reload the page.";
+    $("error").hidden = false;
+    $("generate").disabled = true;
+    return;
+  }
   $("topics").replaceChildren(...topics.map((t, i) => {
     const card = el("label", undefined, "topic-card");
     const input = el("input");
@@ -102,7 +113,7 @@ function renderCritique(body) {
   fillList($("arrangement"), $("arrangement-count"), critique.arrangement.map((a) => ({
     ok: a.ok,
     // A passing rule's note usually restates the rule, so the note is shown only on a failure.
-    text: `${a.rule} · ${rules[a.rule] || ""}${!a.ok && a.note ? ` (${a.note})` : ""}`,
+    text: `${a.rule}${rules[a.rule] ? ` · ${rules[a.rule]}` : ""}${!a.ok && a.note ? ` (${a.note})` : ""}`,
   })), "No arrangement rules were checked.");
   fillList($("text-issues"), $("text-count"), critique.text_issues.map((t) => (
     { ok: false, text: `“${t.label_text}” is ${PROBLEMS[t.problem] || t.problem}` }

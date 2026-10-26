@@ -68,9 +68,12 @@ def create_app(topics_path: Path = TOPICS_PATH) -> FastAPI:
 
     @api.post("/api/generate")
     async def generate(request: GenerateRequest):
-        topic = topics.get(request.topic_id) if request.topic_id else None
+        valid = f"Valid ids: {', '.join(topics)}"
+        if not request.topic_id:
+            raise HTTPException(400, f"No topic selected. {valid}")
+        topic = topics.get(request.topic_id)
         if topic is None:
-            raise HTTPException(400, f"Unknown topic {request.topic_id!r}. Valid ids: {', '.join(topics)}")
+            raise HTTPException(400, f"Unknown topic {request.topic_id!r}. {valid}")
         if not key_present():
             raise HTTPException(503, "OpenRouter key not configured")
 

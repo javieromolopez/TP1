@@ -45,6 +45,7 @@ def critique_response(**overrides):
         },
         "critique_error": None,
         "verdict": "needs_work",
+        "arrangement_rules": [{"id": r.id, "text": r.text} for r in PLANT.arrangement_rules],
         "usage": {"image": {"model": "google/gemini-2.5-flash-image", "prompt_tokens": 96,
                             "completion_tokens": 1290, "cost": 0.0387}},
     }
@@ -113,7 +114,7 @@ def test_full_render_and_button_disables_while_running(page):
     expect(rows.filter(has_text="vacuole")).to_contain_text("Missing")
     expect(rows.filter(has_text="nucleus")).to_contain_text("Present")
     expect(page.locator("#score")).to_have_text("6 of 7 parts correct")
-    expect(page.locator("#arrangement")).to_contain_text("A3")
+    expect(page.locator("#arrangement")).to_contain_text("A3 · The vacuole is the largest organelle.")
     expect(page.locator("#text-issues")).to_contain_text("Mitochondrin")
     expect(page.locator("#narrative")).to_have_text("Most parts are here, but the vacuole is missing.")
     expect(page.locator("#verdict")).to_have_text("Needs work")
