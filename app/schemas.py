@@ -2,6 +2,7 @@
 
 import json
 from pathlib import Path
+from typing import Literal
 
 from pydantic import BaseModel, ValidationError
 
@@ -29,6 +30,34 @@ class Topic(BaseModel):
     forbidden_parts: list[str] = []
     arrangement_rules: list[ArrangementRule]
     labels: list[str]
+
+
+# Critique schema (spec § Critique schema). Fields a critic may reasonably omit have defaults (plan R7).
+
+class Part(BaseModel):
+    name: str
+    status: Literal["present", "missing", "mislabeled", "unclear"]
+    note: str = ""
+
+
+class ArrangementResult(BaseModel):
+    rule: str
+    ok: bool
+    note: str = ""
+
+
+class TextIssue(BaseModel):
+    label_text: str
+    problem: Literal["garbled", "misspelled", "wrong_part"]
+
+
+class Critique(BaseModel):
+    parts: list[Part]
+    forbidden_found: list[str] = []
+    arrangement: list[ArrangementResult] = []
+    text_issues: list[TextIssue] = []
+    people_present: bool = False
+    narrative: str
 
 
 def _check_topic(topic: Topic) -> None:
