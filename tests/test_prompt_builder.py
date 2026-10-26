@@ -27,3 +27,9 @@ def test_style_block_is_the_spec_text():
     assert block.startswith("Flat-color 2D textbook illustration for a grade 5–10 science class.")
     assert "no gradients" in block
     assert block.endswith("No people, no faces, no hands.")
+
+
+def test_article_matches_the_topic_name():
+    """Review: PR #3 caught "a animal cell"."""
+    assert "of an animal cell." in build_image_prompt(TOPICS["animal-cell"])
+    assert "of a plant cell." in build_image_prompt(TOPICS["plant-cell"])
