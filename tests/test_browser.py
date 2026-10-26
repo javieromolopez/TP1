@@ -140,6 +140,29 @@ def test_needs_attention_filter_shows_only_problem_parts(page):
     expect(rows.locator("visible=true")).to_have_count(7)
 
 
+def test_needs_attention_with_nothing_wrong_says_so(page):
+    held = hold_generate(page)
+    with page.expect_request("**/api/generate"):
+        page.click("#generate")
+    clean = critique_response()
+    for part in clean["critique"]["parts"]:
+        part["status"] = "present"
+    held[0].fulfill(json=clean)
+
+    page.get_by_role("button", name="Needs attention").click()
+    expect(page.locator("#no-problems")).to_have_text("No parts need attention: every part is present.")
+    page.get_by_role("button", name="All parts").click()
+    expect(page.locator("#no-problems")).to_be_hidden()
+
+
+def test_topics_failing_to_load_shows_an_error(page):
+    """Review on #4/#5: a failed /api/topics left the topic list empty with no message."""
+    page.route("**/api/topics", lambda route: route.fulfill(status=500, body="boom"))
+    page.reload()
+    expect(page.locator("#error")).to_contain_text("Could not load the topics")
+    expect(page.locator("#generate")).to_be_disabled()
+
+
 def test_critique_error_still_shows_the_image(page):
     held = hold_generate(page)
     with page.expect_request("**/api/generate"):

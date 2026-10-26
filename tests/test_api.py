@@ -178,3 +178,17 @@ def test_critic_provider_error_returns_the_image_and_an_error(client, fake_chat)
     body = generate(client).json()
     assert body["image"] is not None
     assert body["critique_error"] == CRITIQUE_UNAVAILABLE
+
+
+@pytest.mark.parametrize("payload", [{}, {"topic_id": None}, {"topic_id": ""}])
+def test_missing_topic_says_no_topic_selected(client, fake_chat, payload):
+    """Review on #4/#5: a missing topic read 'Unknown topic None'."""
+    detail = client.post("/api/generate", json=payload).json()["detail"]
+    assert detail.startswith("No topic selected.")
+    assert "None" not in detail
+
+
+def test_unknown_topic_names_it(client, fake_chat):
+    assert client.post("/api/generate", json={"topic_id": "volcano"}).json()["detail"].startswith(
+        "Unknown topic 'volcano'."
+    )
