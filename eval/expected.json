@@ -1,0 +1,237 @@
+{
+  "plant-cell-good.png": {
+    "topic": "plant-cell",
+    "kind": "good",
+    "parts": {
+      "cell wall": "present",
+      "cell membrane": "present",
+      "cytoplasm": "present",
+      "nucleus": "present",
+      "chloroplast": "present",
+      "vacuole": "present",
+      "mitochondrion": "present"
+    },
+    "forbidden": [],
+    "arrangement": {
+      "A1": true,
+      "A2": true,
+      "A3": true
+    },
+    "text_issue": false,
+    "flaw": null,
+    "note": "Nano Banana Pro, app prompt + 'one leader line per label, check spelling'. Every part labeled once and correctly; vacuole is the largest organelle."
+  },
+  "plant-cell-flawed.png": {
+    "topic": "plant-cell",
+    "kind": "flawed",
+    "parts": {
+      "cell wall": "present",
+      "cell membrane": "present",
+      "cytoplasm": "present",
+      "nucleus": "present",
+      "chloroplast": "present",
+      "vacuole": "missing",
+      "mitochondrion": "present"
+    },
+    "forbidden": [],
+    "arrangement": {
+      "A1": true,
+      "A2": true,
+      "A3": false
+    },
+    "text_issue": false,
+    "flaw": {
+      "kind": "part",
+      "target": "vacuole"
+    },
+    "note": "Nano Banana Pro, told to draw no vacuole. No vacuole at all, so A3 (vacuole largest) also fails. Otherwise clean."
+  },
+  "animal-cell-good.png": {
+    "topic": "animal-cell",
+    "kind": "good",
+    "parts": {
+      "cell membrane": "present",
+      "cytoplasm": "present",
+      "nucleus": "present",
+      "mitochondrion": "present",
+      "ribosome": "present",
+      "endoplasmic reticulum": "present",
+      "Golgi apparatus": "present"
+    },
+    "forbidden": [],
+    "arrangement": {
+      "A1": true,
+      "A2": true,
+      "A3": true
+    },
+    "text_issue": false,
+    "flaw": null,
+    "note": "Nano Banana Pro. Was asked for a cell wall and ignored it; the result is a clean, correct animal cell, so it is used as the good image."
+  },
+  "animal-cell-flawed.png": {
+    "topic": "animal-cell",
+    "kind": "flawed",
+    "parts": {
+      "cell membrane": "present",
+      "cytoplasm": "present",
+      "nucleus": "present",
+      "mitochondrion": "present",
+      "ribosome": "present",
+      "endoplasmic reticulum": "present",
+      "Golgi apparatus": "present"
+    },
+    "forbidden": [
+      "chloroplast"
+    ],
+    "arrangement": {
+      "A1": true,
+      "A2": true,
+      "A3": true
+    },
+    "text_issue": false,
+    "flaw": {
+      "kind": "forbidden",
+      "target": "chloroplast"
+    },
+    "note": "Nano Banana Pro, told to include and label a chloroplast. Planted flaw: a chloroplast (forbidden in an animal cell), drawn and labeled. Otherwise clean."
+  },
+  "water-cycle-good.png": {
+    "topic": "water-cycle",
+    "kind": "good",
+    "parts": {
+      "sun": "present",
+      "ocean or lake": "present",
+      "evaporation": "present",
+      "condensation": "present",
+      "cloud": "present",
+      "precipitation": "present",
+      "collection": "present"
+    },
+    "forbidden": [],
+    "arrangement": {
+      "A1": true,
+      "A2": true,
+      "A3": true
+    },
+    "text_issue": false,
+    "flaw": null,
+    "note": "Nano Banana Pro, app prompt. All seven labels correct; arrows form one loop."
+  },
+  "water-cycle-flawed.png": {
+    "topic": "water-cycle",
+    "kind": "flawed",
+    "parts": {
+      "sun": "present",
+      "ocean or lake": "present",
+      "evaporation": "present",
+      "condensation": "present",
+      "cloud": "present",
+      "precipitation": "present",
+      "collection": "present"
+    },
+    "forbidden": [],
+    "arrangement": {
+      "A1": true,
+      "A2": true,
+      "A3": true
+    },
+    "text_issue": true,
+    "flaw": {
+      "kind": "text",
+      "target": "evaparashun"
+    },
+    "note": "Nano Banana Pro, told to spell evaporation as 'evaparashun'. The arrows are drawn and labeled in the right place, so the part counts as present; the flaw is the label text."
+  },
+  "simple-circuit-good.png": {
+    "topic": "simple-circuit",
+    "kind": "good",
+    "parts": {
+      "battery": "present",
+      "wire": "present",
+      "switch": "present",
+      "light bulb": "present"
+    },
+    "forbidden": [],
+    "arrangement": {
+      "A1": true,
+      "A2": true,
+      "A3": true
+    },
+    "text_issue": false,
+    "flaw": null,
+    "note": "Nano Banana Pro, app prompt + 'mark + and - terminals, switch open'. The plain app prompt never asks for terminals, so its first attempt failed A2."
+  },
+  "simple-circuit-flawed.png": {
+    "topic": "simple-circuit",
+    "kind": "flawed",
+    "parts": {
+      "battery": "mislabeled",
+      "wire": "mislabeled",
+      "switch": "present",
+      "light bulb": "present"
+    },
+    "forbidden": [],
+    "arrangement": {
+      "A1": true,
+      "A2": true,
+      "A3": true
+    },
+    "text_issue": true,
+    "flaw": {
+      "kind": "part",
+      "target": "wire"
+    },
+    "note": "Real output from the first end-to-end run (Nano Banana, Oct 25): the 'wire' label points into the battery and 'battery' floats above the top wire with no leader. GPT-4o called this diagram good at the time."
+  },
+  "flower-good.png": {
+    "topic": "flower",
+    "kind": "good",
+    "parts": {
+      "petal": "present",
+      "sepal": "present",
+      "stamen": "present",
+      "anther": "present",
+      "filament": "present",
+      "pistil": "present",
+      "stigma": "present",
+      "style": "present",
+      "ovary": "present"
+    },
+    "forbidden": [],
+    "arrangement": {
+      "A1": true,
+      "A2": true,
+      "A3": true
+    },
+    "text_issue": false,
+    "flaw": null,
+    "note": "Nano Banana Pro, app prompt + 'point each label at its part'. Stamen and pistil brackets group the right parts."
+  },
+  "flower-flawed.png": {
+    "topic": "flower",
+    "kind": "flawed",
+    "parts": {
+      "petal": "present",
+      "sepal": "present",
+      "stamen": "present",
+      "anther": "mislabeled",
+      "filament": "present",
+      "pistil": "missing",
+      "stigma": "mislabeled",
+      "style": "present",
+      "ovary": "present"
+    },
+    "forbidden": [],
+    "arrangement": {
+      "A1": true,
+      "A2": true,
+      "A3": true
+    },
+    "text_issue": true,
+    "flaw": {
+      "kind": "part",
+      "target": "anther"
+    },
+    "note": "Nano Banana Pro, told to swap the anther and stigma labels. Planted swap present; the model also left out the 'pistil' label (unplanned)."
+  }
+}

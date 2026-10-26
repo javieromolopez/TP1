@@ -14,7 +14,7 @@ Use the repo's `.venv` (Python 3.12).
 # run      python -m uvicorn app.main:app   (needs OPENROUTER_API_KEY in .env), then open http://localhost:8000
 # lint     uvx ruff check .
 ```
-Not built yet: CI (plan step 12), and the eval harness `eval/` with `CHECKS.md` (plan step 13). Don't claim eval results until they exist.
+Eval (needs the key): `python eval/run_eval.py critic --model openai/gpt-4o --repeats 3` and `python eval/run_eval.py generate --model google/gemini-2.5-flash-image --runs 3`; results in `CHECKS.md`. Not built yet: CI (plan step 12).
 
 ## Conventions
 
@@ -41,3 +41,4 @@ Things the agent got wrong before and must not repeat. Add to this list as they 
 - Stacked PRs: merge each one into `main`, or delete its branch so the next PR retargets. #3 and #4 were merged into stacked branches and had to be re-landed in #6 and #7.
 - Pull before reviewing: a review on a stale checkout re-reported findings that were already fixed.
 - Prompts use `Topic.with_article`, never a hardcoded "a"/"an" ("a animal cell" shipped once).
+- Never edit `eval/expected.json` to make the critic look better; a disagreement is a finding for `CHECKS.md`.

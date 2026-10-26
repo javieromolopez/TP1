@@ -27,7 +27,7 @@
 | `tests/test_critic.py` | Mocked HTTP: asserts the request includes the image and checklist, but **not** the generation prompt. Spec behavior 5. |
 | `tests/test_api.py` | Mocked model calls: covers spec behaviors 1, 3, 6, 9, 10, 12, 13, 14. |
 | `tests/test_browser.py` | Playwright, mocked backend: choose a topic, click Generate, see the full render. Spec behavior 15. |
-| `eval/run_eval.py` | Runs the four model comparisons from spec.md § Diagram generator and § Diagram critic; writes results to `CHECKS.md`. |
+| `eval/run_eval.py` | Runs the four model comparisons from spec.md § Diagram generator and § Diagram critic; prints markdown for `CHECKS.md`. |
 | `eval/expected.json` | Hand-written expected statuses for the ten eval images. |
 | `eval/images/*.png` | Five good + five deliberately flawed PNGs (one of each per topic). |
 | `CHECKS.md` | Results table from `run_eval.py` (model comparisons, tokens, cost, latency). |
@@ -83,7 +83,7 @@ Step 2 is the highest-leverage proof in the plan — bad topic data silently bre
 | 10. API server | `pytest tests/test_api.py` covers B1, B3, B6, B9, B10, B12, B13, B14 with mocked model calls. |
 | 11. Frontend | `pytest tests/test_browser.py` (Playwright, mocked backend) covers the full render path. (B15) |
 | 12. CI | `pytest` green on every PR; GitHub Actions does not need a key. |
-| 13. Eval | `python eval/run_eval.py --critic openai/gpt-4o` (and the three other variants) writes `CHECKS.md` with the model comparisons. (B16, B17) |
+| 13. Eval | `python eval/run_eval.py critic --model openai/gpt-4o --repeats 3` (and the other critic and both `generate` runs) prints the comparison tables that go into `CHECKS.md`. (B16, B17) |
 | 14. README | From a fresh clone, run `pip install -r requirements.txt`, `pytest`, `python -m uvicorn app.main:app`, and the eval command; all four work end to end. |
 
 ### Step 2 proof
