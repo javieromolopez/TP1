@@ -60,7 +60,8 @@ function renderCritique(body) {
   const ruleText = Object.fromEntries((body.arrangement_rules || []).map((r) => [r.id, r.text]));
   fillList($("arrangement"), critique.arrangement.map((a) => ({
     mark: a.ok ? "✓" : "✗",
-    text: `${a.rule}. ${ruleText[a.rule] || ""}${a.note ? ` (${a.note})` : ""}`,
+    // The critic's note on a passing rule usually restates the rule, so it is shown only on a failure.
+    text: `${a.rule}. ${ruleText[a.rule] || ""}${!a.ok && a.note ? ` (${a.note})` : ""}`,
     kind: a.ok ? "good" : "bad",
   })), "No arrangement rules were checked.");
 
