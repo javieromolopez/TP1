@@ -24,7 +24,7 @@ def _quoted(names: list[str]) -> str:
 
 def checklist_text(topic: Topic) -> str:
     rules = "\n".join(f"- {r.id}: {r.text}" for r in topic.arrangement_rules)
-    return f"""You are checking a science diagram of a {topic.display_name.lower()} for a school class. Judge only what is visible in the image.
+    return f"""You are checking a science diagram of {topic.with_article} for a school class. Judge only what is visible in the image.
 
 Required parts. Report each one exactly once in "parts", using exactly these names: {_quoted(topic.required_parts)}.
 status is "present" (drawn and labeled correctly), "missing", "mislabeled" (drawn, but the label points to the wrong thing), or "unclear".

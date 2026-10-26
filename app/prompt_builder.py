@@ -8,4 +8,4 @@ STYLE_BLOCK = load_style_block()
 def build_image_prompt(topic: Topic) -> str:
     """Shared style block with the topic's exact label strings, each quoted, filled in."""
     labels = ", ".join(f'"{label}"' for label in topic.labels)
-    return f"A labeled diagram of a {topic.display_name.lower()}. " + STYLE_BLOCK.format(labels=labels)
+    return f"A labeled diagram of {topic.with_article}. " + STYLE_BLOCK.format(labels=labels)
