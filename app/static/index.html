@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diagram Check</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Kalam:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Icons, drawn once and reused with <use>. -->
+  <svg width="0" height="0" class="sprite" aria-hidden="true">
+    <symbol id="i-check" viewBox="0 0 20 20"><circle cx="10" cy="10" r="10" fill="currentColor"/><path d="M5.8 10.4l2.7 2.7 5.7-6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-x" viewBox="0 0 20 20"><circle cx="10" cy="10" r="10" fill="currentColor"/><path d="M6.8 6.8l6.4 6.4M13.2 6.8l-6.4 6.4" stroke="#fff" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-question" viewBox="0 0 20 20"><circle cx="10" cy="10" r="10" fill="currentColor"/><path d="M7.6 7.7a2.5 2.5 0 1 1 3.4 2.3c-.6.3-1 .8-1 1.5v.3" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round"/><circle cx="10" cy="14.6" r="1.1" fill="#fff"/></symbol>
+    <symbol id="i-caret" viewBox="0 0 16 16"><path d="M6 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </svg>
+
+  <div class="cover" aria-hidden="true"></div>
+
+  <div class="page">
+    <div class="page-icon" aria-hidden="true">🔬</div>
+    <h1>Diagram check</h1>
+
+    <dl class="props">
+      <div><dt>Class</dt><dd>Science, grades 5–10</dd></div>
+      <div><dt>Drawn by</dt><dd class="mono">gemini-2.5-flash-image</dd></div>
+      <div><dt>Checked by</dt><dd class="mono">gpt-4o</dd></div>
+    </dl>
+
+    <p class="lede">Pick a topic and generate a diagram. A second AI looks at the picture itself and marks each part on the topic's checklist, the way a teacher would.</p>
+
+    <form id="controls" class="controls">
+      <fieldset>
+        <legend>Topic</legend>
+        <div id="topics" class="topics"></div>
+      </fieldset>
+      <div class="go">
+        <button id="generate" type="submit">Generate diagram</button>
+        <p class="hint">Takes about 15 seconds.</p>
+      </div>
+    </form>
+
+    <p id="status" class="status" role="status" hidden></p>
+    <p id="error" class="callout callout-bad" role="alert" hidden></p>
+
+    <div id="loading" class="results skeleton" hidden aria-hidden="true">
+      <div class="block plate"><div class="shimmer square"></div></div>
+      <div class="block"><div class="shimmer line w60"></div><div class="shimmer line"></div><div class="shimmer line"></div><div class="shimmer line w80"></div><div class="shimmer line"></div></div>
+    </div>
+
+    <main id="result" hidden>
+      <div id="summary" class="callout summary" hidden>
+        <p id="verdict" class="verdict" hidden></p>
+        <div>
+          <p id="score" class="score"></p>
+          <p class="score-sub">Verdict computed from the marks below, not by the AI.</p>
+        </div>
+      </div>
+      <p id="critique-error" class="callout callout-bad" hidden></p>
+
+      <div class="results">
+        <figure class="block plate">
+          <img id="diagram" alt="AI-generated diagram for the chosen topic">
+          <p id="hidden-notice" class="hidden-notice" hidden></p>
+          <figcaption id="caption" class="caption">AI-generated diagram</figcaption>
+        </figure>
+
+        <section id="critique" class="block" aria-label="Checklist">
+          <div class="table-head">
+            <h2>Checklist</h2>
+            <div class="chips" role="group" aria-label="Show">
+              <button type="button" class="chip" data-filter="all" aria-pressed="true">All parts</button>
+              <button type="button" class="chip" data-filter="problems" aria-pressed="false">Needs attention <span id="problem-count" class="count"></span></button>
+            </div>
+          </div>
+          <table class="checklist">
+            <thead><tr><th scope="col">Part</th><th scope="col">Mark</th><th scope="col">Note</th></tr></thead>
+            <tbody id="checklist"></tbody>
+          </table>
+          <p id="no-problems" class="empty" hidden>Every part is drawn and labeled correctly.</p>
+
+          <details class="toggle" open>
+            <summary><svg class="caret"><use href="#i-caret"/></svg>Arrangement <span id="arrangement-count" class="count"></span></summary>
+            <ul id="arrangement" class="notes"></ul>
+          </details>
+          <details class="toggle" open>
+            <summary><svg class="caret"><use href="#i-caret"/></svg>Label text <span id="text-count" class="count"></span></summary>
+            <ul id="text-issues" class="notes"></ul>
+          </details>
+          <details class="toggle">
+            <summary><svg class="caret"><use href="#i-caret"/></svg>Should not appear <span id="forbidden-count" class="count"></span></summary>
+            <ul id="forbidden" class="notes"></ul>
+          </details>
+
+          <blockquote class="quote">
+            <p class="quote-label">What the checker says</p>
+            <p id="narrative"></p>
+          </blockquote>
+        </section>
+      </div>
+
+      <p id="run-meta" class="run-meta"></p>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
