@@ -83,6 +83,7 @@ def create_app(topics_path: Path = TOPICS_PATH) -> FastAPI:
             "critique": critique.model_dump() if critique else None,
             "critique_error": critique_error,
             "verdict": verdict(topic, critique) if critique else None,
+            "arrangement_rules": [{"id": r.id, "text": r.text} for r in topic.arrangement_rules],
             "usage": {
                 "image": {
                     "model": image.model,
