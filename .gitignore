@@ -1,7 +1,16 @@
 # secrets and local agent settings
 .env
 .env.*
+!.env.example
 .claude/settings.local.json
+
+# app run log (tokens, cost, latency per model call)
+runs.jsonl
+
+# test output
+.pytest_cache/
+test-results/
+playwright-report/
 
 # OS and editors
 .DS_Store
