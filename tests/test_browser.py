@@ -45,6 +45,7 @@ def critique_response(**overrides):
         },
         "critique_error": None,
         "verdict": "needs_work",
+        "arrangement_rules": [{"id": r.id, "text": r.text} for r in PLANT.arrangement_rules],
         "usage": {"image": {"model": "google/gemini-2.5-flash-image", "prompt_tokens": 96,
                             "completion_tokens": 1290, "cost": 0.0387}},
     }
@@ -113,7 +114,7 @@ def test_full_render_and_button_disables_while_running(page):
     expect(rows.filter(has_text="vacuole")).to_contain_text("Missing")
     expect(rows.filter(has_text="nucleus")).to_contain_text("Present")
     expect(page.locator("#score")).to_have_text("6 of 7 parts correct")
-    expect(page.locator("#arrangement")).to_contain_text("A3")
+    expect(page.locator("#arrangement")).to_contain_text("A3 · The vacuole is the largest organelle.")
     expect(page.locator("#text-issues")).to_contain_text("Mitochondrin")
     expect(page.locator("#narrative")).to_have_text("Most parts are here, but the vacuole is missing.")
     expect(page.locator("#verdict")).to_have_text("Needs work")
@@ -138,6 +139,29 @@ def test_needs_attention_filter_shows_only_problem_parts(page):
     expect(rows.locator("visible=true")).to_contain_text("vacuole")
     page.get_by_role("button", name="All parts").click()
     expect(rows.locator("visible=true")).to_have_count(7)
+
+
+def test_needs_attention_with_nothing_wrong_says_so(page):
+    held = hold_generate(page)
+    with page.expect_request("**/api/generate"):
+        page.click("#generate")
+    clean = critique_response()
+    for part in clean["critique"]["parts"]:
+        part["status"] = "present"
+    held[0].fulfill(json=clean)
+
+    page.get_by_role("button", name="Needs attention").click()
+    expect(page.locator("#no-problems")).to_have_text("No parts need attention: every part is present.")
+    page.get_by_role("button", name="All parts").click()
+    expect(page.locator("#no-problems")).to_be_hidden()
+
+
+def test_topics_failing_to_load_shows_an_error(page):
+    """Review on #4/#5: a failed /api/topics left the topic list empty with no message."""
+    page.route("**/api/topics", lambda route: route.fulfill(status=500, body="boom"))
+    page.reload()
+    expect(page.locator("#error")).to_contain_text("Could not load the topics")
+    expect(page.locator("#generate")).to_be_disabled()
 
 
 def test_critique_error_still_shows_the_image(page):
