@@ -190,6 +190,28 @@ code,.mono{font-family:var(--mono);font-size:.82em}
 .s-close .names{font-size:30px;font-weight:500;margin-top:60px;display:flex;gap:56px}
 .s-close .repo{font:400 26px var(--mono);color:var(--muted);margin-top:22px}
 
+
+/* ---- grading + tradeoff slides ---- */
+.rules{position:absolute;left:200px;right:140px;top:420px}
+.rule{display:grid;grid-template-columns:260px 1fr;gap:36px;align-items:baseline;padding:22px 0;border-top:1px solid var(--line)}
+.rule:first-child{border-top:2px solid var(--ink)}
+.rule .tag{font:700 52px/1 var(--hand)}
+.rule.poor .tag{color:var(--pen)}.rule.good .tag{color:var(--good)}.rule.work .tag{color:var(--warn)}
+.rule .txt{font-size:30px;line-height:1.4}
+.rule .code{display:block;margin-top:8px;font:20px var(--mono);color:var(--muted)}
+.rule .n{font:400 20px var(--mono);color:var(--faint);margin-right:14px}
+.example{position:absolute;left:200px;right:140px;bottom:90px;font-size:28px;line-height:1.5;border-left:4px solid var(--pen);padding-left:24px}
+.example b{font-weight:600}
+.tbl{position:absolute;left:200px;right:140px;top:340px}
+.tr{display:grid;grid-template-columns:330px 1fr 1fr;gap:40px;padding:18px 0;border-top:1px solid var(--line);align-items:start}
+.tr.head{border-top:2px solid var(--ink);padding:8px 0 10px}
+.tr.head span{font:700 32px/1 var(--hand);color:var(--pen)}
+.tr .nm{font-size:27px;font-weight:600;line-height:1.25}
+.tr .nm small{display:block;font:400 18px var(--mono);color:var(--muted);margin-top:4px;font-weight:400}
+.tr .up,.tr .down{font-size:24px;line-height:1.4}
+.tr .down{color:var(--muted)}
+.tr.sep{border-top:2px solid var(--ink)}
+
 /* chrome */
 #bar{position:absolute;left:0;bottom:0;height:4px;background:var(--pen);transition:width .5s var(--ease);z-index:10}
 #nav{position:fixed;right:22px;bottom:20px;display:flex;gap:8px;z-index:20;opacity:.3;transition:opacity .3s}
@@ -205,7 +227,7 @@ code,.mono{font-family:var(--mono);font-size:.82em}
 <div id="deck">
 
 <!-- 1 -->
-<section class="slide s-title" data-notes="&lt;b&gt;~10 s.&lt;/b&gt; Hi, I&#x27;m Ralston, this is Javier. Our project is Diagram Check. Don&#x27;t read the subtitle. Go on.">
+<section class="slide s-title" data-notes="&lt;b&gt;~10 s.&lt;/b&gt; Hi, I&#x27;m Ralston, this is Javier. Our project is Diagram Check. Don&#x27;t read the subtitle.">
   <div class="cover"></div>
   <div class="body">
     <p class="course in">CPSC 415 · Team Project 1</p>
@@ -233,7 +255,7 @@ code,.mono{font-family:var(--mono);font-size:.82em}
 </section>
 
 <!-- 3 -->
-<section class="slide" data-notes="&lt;b&gt;~25 s.&lt;/b&gt; Three steps. Gemini draws the diagram. GPT-4o looks at the picture and marks every part on a checklist. Then plain Python gives the grade.&lt;br&gt;The one thing to stress: the model never gives the grade. It only says what it sees.">
+<section class="slide" data-notes="&lt;b&gt;~20 s.&lt;/b&gt; Three steps. Gemini draws the diagram. GPT-4o looks at the picture and marks every part. Then plain Python gives the grade.&lt;br&gt;Stress one thing: the model never gives the grade, it only says what it sees.">
   <div class="cover"></div><div class="pg">3</div>
   <div class="body">
     <h2 class="in">How it works</h2>
@@ -246,7 +268,7 @@ code,.mono{font-family:var(--mono);font-size:.82em}
 </section>
 
 <!-- 4 -->
-<section class="slide s-demo" data-notes="&lt;b&gt;~2 min, live.&lt;/b&gt; Switch to the browser, localhost:8000. Plant cell is selected. Click Generate.&lt;br&gt;While it loads (10 to 15 s): the app is drawing the diagram, stamping it as AI-generated, then sending just the picture to the second model.&lt;br&gt;Read the grade first. Point at one misspelled label in the picture and its red row in the checklist. Point at &#x27;Verdict computed from the marks below, not by the AI.&#x27;&lt;br&gt;If the demo worked: press &lt;b&gt;↓&lt;/b&gt; to skip the backup slides. If it failed: press → and use the screenshots.">
+<section class="slide s-demo" data-notes="&lt;b&gt;~1 min 30 s, live.&lt;/b&gt; Switch to the browser, localhost:8000. Plant cell, Generate.&lt;br&gt;While it loads (10 to 15 s): drawing, stamping it AI-generated, then sending just the picture to the second model.&lt;br&gt;Read the grade first. Point at one misspelled label and its red row. Point at &#x27;Verdict computed from the marks below, not by the AI.&#x27;&lt;br&gt;Demo worked: press &lt;b&gt;A&lt;/b&gt; to skip the backup slides to the grading slide. Demo failed: press → and use the screenshots.">
   <div class="cover"></div><div class="pg">4</div>
   <div class="body">
     <h2 class="in">Demo</h2>
@@ -256,28 +278,43 @@ code,.mono{font-family:var(--mono);font-size:.82em}
 </section>
 
 <!-- 5 -->
-<section class="slide" data-shot="home" data-notes="&lt;b&gt;Backup, ~30 s.&lt;/b&gt; Only if the demo failed.&lt;br&gt;Click 1: two different models, one draws and one checks. Click 2: five topics. Click 3: one button, 10 to 15 s.">
+<section class="slide" data-shot="home" data-notes="&lt;b&gt;Backup, only if the demo failed (~30 s).&lt;/b&gt; Click 1: two different models, one draws and one checks. Click 2: five topics. Click 3: one button, 10 to 15 s.">
   <div class="cover"></div><div class="pg">5</div>
   <div class="body"><h2 class="in">Home page</h2></div>
   <p class="margin-note"></p><div class="shotarea in d1"><div class="shot"><div class="zoomer"><img src="img/home.png" alt="App home page"></div></div></div>
 </section>
 
 <!-- 6 -->
-<section class="slide" data-shot="result" data-notes="&lt;b&gt;Backup, ~45 s.&lt;/b&gt; Click 1: the grade, 4 of 7 parts correct. Click 2: the grade is computed in verdict.py, not by the AI.&lt;br&gt;Click 3: the three misspelled labels it caught. Click 4: it missed one. The &#x27;nucleus&#x27; label points at the cytoplasm. Javier will come back to when the checker gets it wrong. Click 5: every image is stamped AI-generated.">
+<section class="slide" data-shot="result" data-notes="&lt;b&gt;Backup (~45 s).&lt;/b&gt; Click 1: the grade. Click 2: computed in verdict.py, not by the AI. Click 3: the three misspelled labels it caught. Click 4: it missed one, the &#x27;nucleus&#x27; label points at the cytoplasm; Javier covers when the checker gets it wrong. Click 5: stamped AI-generated.">
   <div class="cover"></div><div class="pg">6</div>
   <div class="body"><h2 class="in">Result for plant cell</h2></div>
   <p class="margin-note"></p><div class="shotarea in d1"><div class="shot"><div class="zoomer"><img src="img/result.png" alt="Result with verdict, diagram and checklist"></div></div></div>
 </section>
 
 <!-- 7 -->
-<section class="slide" data-shot="checklist" data-notes="&lt;b&gt;Backup, ~20 s.&lt;/b&gt; Click 1: three parts marked mislabeled, with what the model read. Click 2: the exact misspellings it read off the image.">
+<section class="slide" data-shot="checklist" data-notes="&lt;b&gt;Backup (~20 s).&lt;/b&gt; Click 1: three parts marked mislabeled, with what the model read. Click 2: the exact misspellings it read off the image.">
   <div class="cover"></div><div class="pg">7</div>
   <div class="body"><h2 class="in">Checklist</h2></div>
   <p class="margin-note"></p><div class="shotarea in d1"><div class="shot"><div class="zoomer"><img src="img/checklist.png" alt="Checklist with three mislabeled parts"></div></div></div>
 </section>
 
+<!-- grading -->
+<section class="slide" data-steps="5" data-jump="1" data-notes="&lt;b&gt;~1 min 15 s.&lt;/b&gt; Click 0: GPT-4o only says, for each part, present, missing, mislabeled, or unclear. verdict.py turns that into a grade, checked top to bottom, first match wins.&lt;br&gt;Click 1, poor: a part that shouldn&#x27;t be there is drawn, or half or more of the parts are missing or mislabeled. Click 2, good: everything present, every arrangement rule ok, no misspelled labels. Click 3, needs work: everything else.&lt;br&gt;Click 4, the example you just saw: 7 parts, 3 mislabeled. 2 times 3 is 6, less than 7, so not poor. Not all present, so not good. Needs work. One more bad part and it flips to poor.&lt;br&gt;The &#x27;4 of 7 parts correct&#x27; on the page is just the count of parts marked present.">
+  <div class="cover"></div><div class="pg">0</div>
+  <div class="body">
+    <h2 class="in">How the grade is calculated</h2>
+    <p class="sub in d1">GPT-4o only marks each part: present, missing, mislabeled, or unclear. <code>verdict.py</code> turns the marks into a grade, checking in this order.</p>
+  </div>
+  <div class="rules">
+    <div class="rule poor st" data-step="1"><div class="tag">poor</div><div class="txt"><span class="n">1</span>A part that should not be there is drawn, or half or more of the parts are missing or mislabeled.<span class="code">forbidden_found or 2 * bad &gt;= len(required_parts)</span></div></div>
+    <div class="rule good st" data-step="2"><div class="tag">good</div><div class="txt"><span class="n">2</span>Every part present, every arrangement rule ok, no misspelled labels.</div></div>
+    <div class="rule work st" data-step="3"><div class="tag">needs work</div><div class="txt"><span class="n">3</span>Anything else.</div></div>
+  </div>
+  <p class="example st" data-step="4"><b>Our plant cell:</b> 7 parts, 3 mislabeled. 2 × 3 = 6, which is less than 7, so not poor. Not every part is present, so not good. Grade: needs work. A fourth bad part would make it poor (8 ≥ 7).</p>
+</section>
+
 <!-- 8 -->
-<section class="slide" data-arch="1" data-notes="&lt;b&gt;~2 min 30 s.&lt;/b&gt; Click Next to walk one request through. Click any box to open its code. Esc closes.&lt;br&gt;&lt;b&gt;Overview (15 s):&lt;/b&gt; blue boxes are model calls, green is our Python. Two model calls, everything else is our code.&lt;br&gt;&lt;b&gt;Steps (about 10 s each):&lt;/b&gt; Draw: one call, about 4 cents, no retry because retries cost money. Stamp: writes ai_generated into the PNG. Check: the image and the checklist go to GPT-4o, not the prompt. Validate: if the JSON is broken we ask once more. Grade: no model, just counting.&lt;br&gt;&lt;b&gt;Key idea 1 (25 s):&lt;/b&gt; if GPT-4o saw what we asked for, it could pass a diagram because the request was right, not because the drawing is. So it only sees the picture.&lt;br&gt;&lt;b&gt;Key idea 2 (25 s):&lt;/b&gt; models are sometimes confidently wrong, so the grade comes from a small function we can test without an API key.&lt;br&gt;If you have time, click Verdict and show the code.">
+<section class="slide" data-arch="1" data-notes="&lt;b&gt;~1 min 30 s.&lt;/b&gt; Click Next to walk one request through. Click any box to open its code. Esc closes.&lt;br&gt;Overview (10 s): blue boxes are model calls, green is our Python. Two model calls, everything else is our code.&lt;br&gt;Steps (about 5 s each, one fact): Draw, one call, about 4 cents, no retry. Check, the image and the checklist, not the prompt. Validate, bad JSON gets one retry. Grade, no model, just counting.&lt;br&gt;Key idea 1 (20 s): if GPT-4o saw what we asked for, it could pass a diagram because the request was right, not because the drawing is. Key idea 2 (20 s): the grade comes from a small function we can test with no API key.&lt;br&gt;Short on time: click through the steps without talking and say only the two key ideas.">
   <div class="cover"></div><div class="pg">8</div>
   <div class="body"><h2 class="in">Architecture</h2></div>
   <div class="legend in d1">
@@ -334,6 +371,33 @@ code,.mono{font-family:var(--mono);font-size:.82em}
   <div class="archnav"><button id="ab-back">← Back</button><button id="ab-next" class="primary">Next →</button></div>
   <div class="archcount" id="ac-c"></div>
   <aside class="drawer" id="drawer"><button class="x" id="dx" aria-label="Close">×</button><div id="dbody"></div></aside>
+</section>
+
+<!-- models -->
+<section class="slide" data-steps="2" data-notes="&lt;b&gt;~1 min.&lt;/b&gt; Click 1, drawing: Flash is about 4 cents and 6 seconds but misspells labels. We tested Pro, which spells much better but costs about 14 cents and 20 seconds, and would put a semester at about $35 against our $25 budget. So we ship Flash.&lt;br&gt;Click 2, checking: GPT-4o gives reliable JSON, about 6 seconds, under a cent. We also tested mimo, which caught every planted mistake at about 1/15 the cost, but it writes long hidden reasoning so its speed varies. Javier shows the test results next. Don&#x27;t repeat his numbers.">
+  <div class="cover"></div><div class="pg">0</div>
+  <div class="body"><h2 class="in">Models: what we got and what it cost</h2></div>
+  <div class="tbl">
+    <div class="tr head"><span>model</span><span>upside</span><span>tradeoff</span></div>
+    <div class="tr st" data-step="0"><div class="nm">Gemini 2.5 Flash Image<small>draws · what we ship</small></div><div class="up">About $0.04 and 6 seconds per image.</div><div class="down">Misspells labels.</div></div>
+    <div class="tr st" data-step="0"><div class="nm">Gemini 3 Pro Image<small>draws · tested</small></div><div class="up">Far fewer misspellings.</div><div class="down">About $0.14 and 20 seconds. A semester of use would cost about $35 against our $25 budget.</div></div>
+    <div class="tr st sep" data-step="1"><div class="nm">GPT-4o<small>checks · what we ship</small></div><div class="up">Reliable JSON. About 6 seconds and under a cent per check.</div><div class="down">Missed mistakes we planted. Javier shows this.</div></div>
+    <div class="tr st" data-step="1"><div class="nm">mimo-v2.6-flash<small>checks · tested</small></div><div class="up">Caught every planted mistake at about 1/15 the cost.</div><div class="down">Writes long hidden reasoning, so its speed varies.</div></div>
+  </div>
+</section>
+
+<!-- design choices -->
+<section class="slide" data-steps="3" data-notes="&lt;b&gt;~1 min.&lt;/b&gt; Click 1: our code gives the grade, same answer every time, tested with no key, but it&#x27;s only as good as the marks and the &#x27;half&#x27; cutoff is our judgment. The critic never sees the prompt, so it judges the picture, but it only grades the listed parts.&lt;br&gt;Click 2: topics live in a JSON file, so we can change a checklist without code, but a wrong checklist gives wrong grades with no error. Plain HTTP calls, every call logged, so we can see the request and total the cost, but we write the timeouts and retries ourselves.&lt;br&gt;Click 3: FastAPI and a plain JS page, easy to read, no login, localhost only.">
+  <div class="cover"></div><div class="pg">0</div>
+  <div class="body"><h2 class="in">Design choices: upside and tradeoff</h2></div>
+  <div class="tbl">
+    <div class="tr head"><span>choice</span><span>upside</span><span>tradeoff</span></div>
+    <div class="tr st" data-step="0"><div class="nm">Our code gives the grade</div><div class="up">Same answer every time. Tested with no API key.</div><div class="down">Only as good as the marks it gets. The “half” cutoff is our own call.</div></div>
+    <div class="tr st" data-step="0"><div class="nm">The critic never sees the prompt</div><div class="up">It judges the picture, not what we asked for.</div><div class="down">It grades only the parts on the checklist.</div></div>
+    <div class="tr st" data-step="1"><div class="nm">Topics live in a JSON file</div><div class="up">Change a checklist without touching code. It is validated at startup.</div><div class="down">A wrong checklist gives wrong grades with no error. Only 5 topics.</div></div>
+    <div class="tr st" data-step="1"><div class="nm">Plain HTTP calls, every call logged</div><div class="up">The request is visible. <code>runs.jsonl</code> totals cost.</div><div class="down">We write timeouts and retries ourselves. Images never retry.</div></div>
+    <div class="tr st" data-step="2"><div class="nm">FastAPI and a plain JS page</div><div class="up">A few readable files. No build step.</div><div class="down">No login. It only runs on localhost.</div></div>
+  </div>
 </section>
 
 <!-- 9 -->
@@ -743,7 +807,7 @@ document.addEventListener('keydown', e => {
   else if (['ArrowLeft','PageUp','Backspace'].includes(e.key)){ e.preventDefault(); prev(); }
   else if (e.key === 'ArrowDown'){ e.preventDefault(); if (cur < slides.length-1){ cur++; frag = 0; render(); } }
   else if (e.key === 'ArrowUp'){ e.preventDefault(); if (cur > 0){ cur--; frag = 0; render(); } }
-  else if (e.key === 'a' || e.key === 'A'){ const i = slides.findIndex(x => x.dataset.arch); if (i >= 0){ cur = i; frag = 0; render(); } }
+  else if (e.key === 'a' || e.key === 'A'){ const i = slides.findIndex(x => x.dataset.jump); if (i >= 0){ cur = i; frag = 0; render(); } }
   else if (e.key === 'Escape') closeDrawer();
   else if (e.key === 'n' || e.key === 'N') $('notes').classList.toggle('on');
   else if (e.key === 'f' || e.key === 'F') fs();
@@ -762,6 +826,7 @@ document.querySelectorAll('svg.penfree').forEach(svg => {
 });
 const t0 = Date.now(); setInterval(() => { const s = Math.floor((Date.now()-t0)/1000); $('timer').textContent = `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; }, 1000);
 const m = location.hash.match(/^#(\d+)(?:\.(\d+))?/); if (m){ cur = Math.min(slides.length-1, +m[1]-1); frag = +(m[2]||0); }
+slides.forEach((sl,i) => { const pg = sl.querySelector('.pg'); if (pg) pg.textContent = i+1; });
 document.fonts.ready.then(render);
 </script>
 </body>
