@@ -36,11 +36,6 @@ h2.title{font-size:58px;line-height:1.08;letter-spacing:-.02em;margin:0;font-wei
 .s-title .tag b{color:#fff;font-weight:700}
 .s-title .meta{position:absolute;left:120px;bottom:90px;font-size:24px;color:#8a93ab;display:flex;gap:40px}
 .s-title .meta span b{color:#e6e9f2;font-weight:600}
-.orbit{position:absolute;right:140px;top:210px;width:620px;height:620px}
-.orbit .ring{position:absolute;inset:0;border:2px dashed rgba(255,255,255,.12);border-radius:50%;animation:spin 60s linear infinite}
-.orbit .ring.r2{inset:110px;animation-duration:40s;animation-direction:reverse}
-.orbit .chip{position:absolute;padding:14px 22px;border-radius:14px;font-size:24px;font-weight:700;color:#fff;backdrop-filter:blur(4px)}
-@keyframes spin{to{transform:rotate(360deg)}}
 
 /* three steps */
 .trio{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:84px}
@@ -152,6 +147,38 @@ h2.title{font-size:58px;line-height:1.08;letter-spacing:-.02em;margin:0;font-wei
 .s-hand h2{font-size:96px;margin:0;letter-spacing:-.03em}
 .s-hand p{font-size:34px;color:#aeb6cb;margin-top:22px}
 
+
+/* ---------- Javier's section: reusable layouts ---------- */
+.ph{color:var(--faint);background:repeating-linear-gradient(90deg,transparent 0 6px,rgba(154,161,174,.0) 6px 12px);border-bottom:3px dashed #c9c4b8;padding-bottom:2px}
+.s-hand .ph,.s-close .ph{color:#7e879e;border-color:#3a4258}
+.st{opacity:0;transform:translateY(22px);transition:opacity .6s var(--ease),transform .7s var(--ease)}
+.st.shown{opacity:1;transform:none}
+.compare{position:absolute;left:120px;right:120px;top:300px;bottom:190px;display:grid;grid-template-columns:1fr 1fr;gap:48px}
+.slot{margin:0;display:flex;flex-direction:column;gap:18px;min-height:0}
+.slot .frame{position:relative;flex:1;min-height:0;border-radius:22px;overflow:hidden;background:#fff;box-shadow:0 1px 0 var(--line),0 30px 70px -36px rgba(20,23,31,.4)}
+.slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff}
+.slot .empty-ph{position:absolute;inset:18px;border:3px dashed #d6d1c6;border-radius:16px;display:none;place-items:center;text-align:center;color:var(--faint);font-size:24px;line-height:1.5;padding:30px}
+.slot.empty img{display:none}.slot.empty .empty-ph{display:grid}
+.slot figcaption{font-size:26px;font-weight:600}
+.slot .badge{display:inline-block;font-size:18px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:6px 12px;border-radius:8px;margin-right:12px;vertical-align:3px}
+.badge.bad{background:var(--red-soft);color:var(--red)}.badge.good{background:var(--code-bg);color:var(--code)}
+.takeaway{position:absolute;left:120px;right:120px;bottom:60px;display:flex;justify-content:center}
+.takeaway span{font-size:32px;font-weight:700;background:var(--ink);color:#fff;padding:18px 30px;border-radius:16px;box-shadow:0 18px 40px -16px rgba(0,0,0,.5)}
+.takeaway span .dot{display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--red);margin-right:14px;vertical-align:2px}
+.stats{position:absolute;left:120px;right:120px;top:320px;display:grid;grid-template-columns:1fr auto 1fr;gap:56px;align-items:center}
+.stat{background:var(--card);border-radius:28px;padding:56px 52px;box-shadow:0 1px 0 var(--line),0 24px 60px -30px rgba(20,23,31,.25)}
+.stat .big{font-size:150px;font-weight:850;letter-spacing:-.04em;line-height:1}
+.stat .lab{font-size:28px;color:var(--muted);margin-top:14px}
+.stat .who{display:inline-block;margin-top:24px;font:600 22px ui-monospace,Menlo,monospace;padding:7px 14px;border-radius:8px;background:var(--paper)}
+.stat.lose .big{color:var(--red)}.stat.win .big{color:var(--code)}
+.vs{font-size:40px;font-weight:800;color:var(--faint)}
+.close-names{display:flex;gap:40px;font-size:28px;color:#aeb6cb;margin-top:40px}
+.close-names b{color:#fff}
+.s-close{background:radial-gradient(1200px 700px at 78% 30%,#1d2440 0%,var(--night) 60%);color:#fff;display:flex;flex-direction:column;justify-content:center}
+.s-close h2{font-size:140px;margin:0;letter-spacing:-.04em;line-height:1}
+.s-close .recap{font-size:38px;color:#c9cfdf;margin-top:28px;max-width:1400px}
+.s-close .repo{position:absolute;left:120px;bottom:90px;font:24px ui-monospace,Menlo,monospace;color:#8a93ab}
+
 /* chrome */
 #bar{position:absolute;left:0;bottom:0;height:6px;background:var(--red);transition:width .6s var(--ease);z-index:10}
 #nav{position:fixed;right:24px;bottom:22px;display:flex;gap:10px;z-index:20;opacity:.35;transition:opacity .3s}
@@ -169,31 +196,128 @@ h2.title{font-size:58px;line-height:1.08;letter-spacing:-.02em;margin:0;font-wei
 .dots{position:absolute;right:120px;bottom:28px;display:flex;gap:7px}
 .dots i{width:9px;height:9px;border-radius:50%;background:#d6d2c9;transition:background .3s,transform .3s}
 .dots i.on{background:var(--red);transform:scale(1.3)}
+
+/* ================= Design system v2: editorial, after Slidev "seriph" ================= */
+@font-face{font-family:"Source Serif 4";src:url(fonts/source-serif-4-latin-400-normal.woff2) format("woff2");font-weight:400}
+@font-face{font-family:"Source Serif 4";src:url(fonts/source-serif-4-latin-600-normal.woff2) format("woff2");font-weight:600}
+@font-face{font-family:"Source Serif 4";src:url(fonts/source-serif-4-latin-400-italic.woff2) format("woff2");font-weight:400;font-style:italic}
+@font-face{font-family:"IBM Plex Sans";src:url(fonts/ibm-plex-sans-latin-400-normal.woff2) format("woff2");font-weight:400}
+@font-face{font-family:"IBM Plex Sans";src:url(fonts/ibm-plex-sans-latin-500-normal.woff2) format("woff2");font-weight:500}
+@font-face{font-family:"IBM Plex Sans";src:url(fonts/ibm-plex-sans-latin-600-normal.woff2) format("woff2");font-weight:600}
+@font-face{font-family:"IBM Plex Mono";src:url(fonts/ibm-plex-mono-latin-400-normal.woff2) format("woff2");font-weight:400}
+@font-face{font-family:"IBM Plex Mono";src:url(fonts/ibm-plex-mono-latin-500-normal.woff2) format("woff2");font-weight:500}
+:root{--paper:#faf8f4;--ink:#1a1a1a;--muted:#5c5a55;--faint:#9b978f;--line:#e2ded6;--red:#c8321f;--red-soft:rgba(200,50,31,.08);
+  --serif:"Source Serif 4",Georgia,serif;--sans:"IBM Plex Sans",-apple-system,Helvetica,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+body,#deck{font-family:var(--sans)}
+.slide{padding:110px 128px}
+.kicker{font:500 20px var(--mono);letter-spacing:.02em;text-transform:none;color:var(--faint);margin:0 0 22px}
+h1.title,h2.title{font-family:var(--serif);font-weight:600;letter-spacing:-.01em;font-size:60px;line-height:1.1}
+.lead{font-size:28px;line-height:1.5;color:var(--muted)}
+.lead b{color:var(--ink);font-weight:600}
+/* title */
+.s-title{background:var(--paper);color:var(--ink);display:flex;flex-direction:column;justify-content:center}
+.s-title h1{font-family:var(--serif);font-weight:600;font-size:150px;letter-spacing:-.025em;line-height:1;margin:0}
+.s-title .tag{font-family:var(--serif);font-size:40px;line-height:1.4;color:var(--muted);margin:40px 0 0;max-width:1300px}
+.s-title .meta{left:128px;bottom:100px;font:400 22px var(--mono);color:var(--faint);gap:48px;border-top:1px solid var(--line);padding-top:24px;right:128px}
+.s-title::after{content:"";position:absolute;left:128px;top:110px;width:72px;height:4px;background:var(--red)}
+/* problem */
+.bigq{font-family:var(--serif);font-weight:600;font-size:68px;letter-spacing:-.015em}
+.bigq em{font-style:italic;font-weight:400;color:var(--red)}
+.zoomcrop{border-radius:6px;box-shadow:none;border:1px solid var(--line)}
+/* trio */
+.trio{gap:0;margin-top:90px;border-top:1px solid var(--ink)}
+.step{background:none;border-radius:0;box-shadow:none;padding:36px 44px 0 0;border-right:1px solid var(--line);margin-right:44px}
+.trio .step:last-child{border-right:0;margin-right:0}
+.step .num{font:400 76px var(--serif);color:var(--red);letter-spacing:0;line-height:1}
+.step h3{font-family:var(--serif);font-weight:600;font-size:46px;margin:22px 0 14px}
+.step p{font-size:26px;line-height:1.5}
+.step .who{background:none!important;color:var(--faint)!important;padding:0;margin-top:26px;font:400 20px var(--mono)}
+.oneidea{font-family:var(--serif);font-style:italic;font-weight:400;font-size:38px;text-align:left;margin-top:72px;color:var(--ink)}
+/* demo */
+.s-demo{background:var(--ink);color:#f3f1ec}
+.s-demo .kicker{color:#8f8b83}
+.s-demo h2{font-family:var(--serif);font-weight:600;font-size:150px;letter-spacing:-.025em}
+.demo-steps{gap:0;margin-top:64px;border-top:1px solid #3a3936}
+.demo-steps div{border:0;border-right:1px solid #3a3936;border-radius:0;padding:26px 56px 0 0;margin-right:56px;font-size:28px;color:#d9d6cf}
+.demo-steps div:last-child{border-right:0}
+.demo-steps b{font:400 28px var(--mono);color:#8f8b83}
+.fallback{font:400 20px var(--mono);color:#8f8b83;left:128px}
+/* screenshots */
+.shot-head{left:128px;top:110px}
+.shot{border-radius:6px;box-shadow:0 0 0 1px var(--line),0 20px 50px -30px rgba(0,0,0,.25)}
+.mark .shape{border-width:4px;border-radius:6px;background:transparent}
+.mark.ring .shape{border-radius:50%}
+.spot{border-radius:6px;box-shadow:0 0 0 4000px rgba(250,248,244,.72)}
+.callout,.takeaway{justify-content:flex-start;left:128px;bottom:60px}
+.callout span,.takeaway>span{background:none;color:var(--ink);box-shadow:none;border-radius:0;padding:0 0 0 22px;border-left:4px solid var(--red);font:500 30px var(--sans)}
+.takeaway>span .ph{color:var(--faint)}
+/* architecture */
+#arch .t1{font-family:var(--sans);font-weight:600}
+#arch .t2{font-family:var(--mono)}
+#arch .t3,#arch .lbl{font-family:var(--sans)}
+#arch .cap{font-family:var(--mono);font-weight:500;letter-spacing:.02em}
+#arch .node rect{rx:6px}
+#arch .node.hl rect{filter:none}
+.legend{font-size:18px;font-family:var(--sans);right:128px;top:118px}
+.legend i{border-radius:3px;border-width:1.5px}
+.archcap{left:128px}
+.archcap .n{font:500 18px var(--mono);letter-spacing:.02em;text-transform:none;color:var(--red)}
+.archcap .t{font-family:var(--serif);font-weight:600;font-size:38px}
+.archnext button{font:500 20px var(--sans);border-radius:4px;border:1px solid var(--ink);padding:14px 22px}
+.archnext button:hover{transform:none;background:var(--paper)}
+.archnext button.primary:hover{background:#000}
+.dots i{border-radius:0;width:14px;height:3px}.dots i.on{transform:none}
+.drawer{box-shadow:-1px 0 0 var(--line);padding:84px 56px}
+.drawer .chipk{border-radius:0;border:0;padding:0;font:500 17px var(--mono);letter-spacing:.02em}
+.drawer h3{font-family:var(--serif);font-weight:600;font-size:48px}
+.drawer h4{font:500 15px var(--mono);letter-spacing:.04em;color:var(--faint)}
+.drawer .file{font-family:var(--mono)}
+/* handoff + close */
+.s-hand,.s-close{background:var(--ink);color:#f3f1ec}
+.s-hand .kicker,.s-close .kicker{color:#8f8b83}
+.s-hand h2,.s-close h2{font-family:var(--serif);font-weight:600;letter-spacing:-.02em}
+.s-hand p{font-family:var(--serif);font-style:italic;color:#b9b5ad}
+.s-close .recap{font-family:var(--serif);color:#d9d6cf}
+.close-names{font:400 22px var(--mono);color:#8f8b83}
+.close-names b{font-weight:400;color:#d9d6cf}
+.s-close .repo{left:128px;font-family:var(--mono)}
+.s-hand .ph,.s-close .ph{color:#8f8b83;border-color:#4a4843}
+/* Javier layouts */
+.ph{border-bottom:2px dashed #cfc9bd}
+.compare{left:128px;right:128px}
+.slot .frame{border-radius:6px;box-shadow:0 0 0 1px var(--line)}
+.slot .empty-ph{border:1.5px dashed #cfc9bd;border-radius:4px;font:400 22px var(--mono)}
+.slot figcaption{font-size:24px;font-weight:500}
+.slot .badge{border-radius:0;background:none!important;padding:0;font:500 18px var(--mono);letter-spacing:.02em;text-transform:none}
+.stats{left:128px;right:128px}
+.stat{background:none;box-shadow:none;border-radius:0;border-top:1px solid var(--ink);padding:36px 0 0}
+.stat .big{font-family:var(--serif);font-weight:600;font-size:150px}
+.stat .who{background:none;padding:0;font:400 20px var(--mono);color:var(--faint)}
+.vs{font:400 italic 40px var(--serif);color:var(--faint)}
+.takeaway span span{background:none;padding:0;border-left:0;box-shadow:none;border-radius:0;color:var(--faint);font:inherit;border-bottom:2px dashed #cfc9bd}
+/* chrome */
+#bar{height:3px}
+#nav button{border-radius:4px;font-family:var(--sans)}
+#notes{font-family:var(--sans)}
 </style>
 </head>
 <body>
 <div id="viewport"><div id="deck">
 
 <!-- 1. Title -->
-<section class="slide s-title" data-notes="Hi, we're Ralston and Javier. [Draft] One sentence on who we are, then straight to the problem.">
-  <div class="orbit in d3" aria-hidden="true">
-    <div class="ring"></div><div class="ring r2"></div>
-    <div class="chip" style="left:-30px;top:120px;background:rgba(107,70,217,.55)">🎨 AI draws</div>
-    <div class="chip" style="right:-20px;top:260px;background:rgba(37,99,235,.55)">🔍 AI checks</div>
-    <div class="chip" style="left:150px;bottom:40px;background:rgba(19,128,79,.65)">✅ Code grades</div>
-  </div>
-  <p class="kicker in">CPSC 415 · Team Project 1</p>
-  <h1 class="in d1">Diagram<br>Check</h1>
-  <p class="tag in d2">An AI draws a science diagram. <b>A second AI looks at it.</b><br><b>Our code</b> decides if it's right.</p>
-  <div class="meta in d4"><span><b>Ralston Raphael</b></span><span><b>Javier Romo</b></span><span>Nov 2, 2026</span></div>
+<section class="slide s-title" data-notes="[Draft] Hi, we're Ralston and Javier. One sentence on who we are, then straight to the problem.">
+  <p class="kicker in">CPSC 415 &nbsp;·&nbsp; Team Project 1</p>
+  <h1 class="in d1">Diagram Check</h1>
+  <p class="tag in d2">An AI draws a science diagram. A second AI looks at it.<br>Our code decides whether it is right.</p>
+  <div class="meta in d3"><span>Ralston Raphael</span><span>Javier Romo</span><span>November 2, 2026</span></div>
 </section>
 
 <!-- 2. Problem -->
 <section class="slide" data-notes="[Draft] AI diagrams look right at a glance. Zoom: this label is supposed to say cytoplasm. A student studying from this would learn a word that doesn't exist.">
   <div class="problem">
     <div>
-      <p class="kicker in">The problem</p>
-      <p class="bigq in d1">AI diagrams look right.<br>The labels <span class="strike">often aren't.</span></p>
+      <p class="kicker in">01 &nbsp;The problem</p>
+      <p class="bigq in d1">AI diagrams look right.<br>The labels <em>often aren't.</em></p>
       <p class="lead in d2">This is a real image our app generated tonight. It's supposed to say <b>cytoplasm</b>.</p>
     </div>
     <div class="zoomcrop in d2"><div class="zin"><img src="img/diagram.png" alt="A generated plant cell with a misspelled label"><div class="mark ring pring" style="left:45.7%;top:15.5%;width:19.5%;height:7.1%"><div class="shape"></div></div></div></div>
@@ -202,21 +326,19 @@ h2.title{font-size:58px;line-height:1.08;letter-spacing:-.02em;margin:0;font-wei
 
 <!-- 3. What we built -->
 <section class="slide" data-notes="[Draft] Three steps. Two different AIs, then plain Python. The key idea is the last line.">
-  <p class="kicker in">What we built</p>
+  <p class="kicker in">02 &nbsp;What we built</p>
   <h2 class="title in d1">Pick a topic. Get a diagram and an honest grade.</h2>
   <div class="trio">
-    <div class="step in d2"><div class="num">STEP 1</div><div class="ico" style="background:var(--ai-bg)">🎨</div><h3>Draw</h3><p>An image model draws a labeled textbook diagram of the topic.</p><span class="who" style="background:var(--ai-bg);color:var(--ai)">gemini-2.5-flash-image</span>
-      <svg class="arrow-between" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <div class="step in d3"><div class="num">STEP 2</div><div class="ico" style="background:var(--blue-soft)">🔍</div><h3>Check</h3><p>A second AI looks at the picture and marks every part on a checklist.</p><span class="who" style="background:var(--blue-soft);color:var(--blue)">gpt-4o</span>
-      <svg class="arrow-between" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <div class="step in d4"><div class="num">STEP 3</div><div class="ico" style="background:var(--code-bg)">✅</div><h3>Grade</h3><p>Plain Python turns those marks into good, needs work, or poor.</p><span class="who" style="background:var(--code-bg);color:var(--code)">verdict.py</span></div>
+    <div class="step in d2"><div class="num">1</div><h3>Draw</h3><p>An image model draws a labeled textbook diagram of the topic.</p><span class="who">gemini-2.5-flash-image</span></div>
+    <div class="step in d3"><div class="num">2</div><h3>Check</h3><p>A second AI looks at the picture and marks every part on a checklist.</p><span class="who">gpt-4o</span></div>
+    <div class="step in d4"><div class="num">3</div><h3>Grade</h3><p>Plain Python turns those marks into good, needs work, or poor.</p><span class="who">verdict.py</span></div>
   </div>
-  <p class="oneidea in d5">The AI says what it sees. <em>Our code decides the grade.</em></p>
+  <p class="oneidea in d5">The AI says what it sees. Our code decides the grade.</p>
 </section>
 
 <!-- 4. Live demo cue -->
 <section class="slide s-demo" data-notes="Switch to the browser at localhost:8000. Plant cell → Generate. While it loads (~10-15 s), say what is happening: drawing, stamping, checking. If anything fails, come back here and press → for the screenshots.">
-  <div class="live in"><i></i>LIVE DEMO</div>
+  <p class="kicker in">03 &nbsp;Live demo</p>
   <h2 class="in d1">Let's run it.</h2>
   <div class="demo-steps in d2"><div><b>1</b>Pick a topic</div><div><b>2</b>Generate</div><div><b>3</b>Read the result</div></div>
   <p class="fallback in d3">localhost:8000 · backup screenshots on the next slides</p>
@@ -224,28 +346,28 @@ h2.title{font-size:58px;line-height:1.08;letter-spacing:-.02em;margin:0;font-wei
 
 <!-- 5. Home -->
 <section class="slide" data-shot="home" data-notes="[Draft] Walk the screen top to bottom.">
-  <div class="shot-head"><p class="kicker in">The app</p><h2 class="title in d1">One screen, one button</h2></div>
+  <div class="shot-head"><p class="kicker in">03 &nbsp;The app</p><h2 class="title in d1">One screen, one button</h2></div>
   <div class="shotwrap"><div class="shot in d2"><div class="zoomer"><img src="img/home.png" alt="App home screen"></div></div></div>
   <div class="callout"></div>
 </section>
 
 <!-- 6. Result -->
 <section class="slide" data-shot="result" data-notes="[Draft] The grade at the top, then the picture. Point at the misspellings. Then the honest part: one mistake the checker missed.">
-  <div class="shot-head"><p class="kicker in">The result</p><h2 class="title in d1">A grade you can trace back to evidence</h2></div>
+  <div class="shot-head"><p class="kicker in">03 &nbsp;The result</p><h2 class="title in d1">A grade you can trace back to evidence</h2></div>
   <div class="shotwrap"><div class="shot in d2"><div class="zoomer"><img src="img/result.png" alt="A generated plant cell with its verdict and checklist"></div></div></div>
   <div class="callout"></div>
 </section>
 
 <!-- 7. Checklist -->
 <section class="slide" data-shot="checklist" data-notes="[Draft] Every part gets a mark and a note. The label text section is the AI reading the actual letters in the image.">
-  <div class="shot-head"><p class="kicker in">The checklist</p><h2 class="title in d1">Every part, marked</h2></div>
+  <div class="shot-head"><p class="kicker in">03 &nbsp;The checklist</p><h2 class="title in d1">Every part, marked</h2></div>
   <div class="shotwrap"><div class="shot in d2"><div class="zoomer"><img src="img/checklist.png" alt="Checklist with three mislabeled parts"></div></div></div>
   <div class="callout"></div>
 </section>
 
 <!-- 8. Architecture -->
 <section class="slide" id="s-arch" data-arch="1" data-notes="Click Next to walk one request through the system. Click any box at any time for details (Esc closes).">
-  <p class="kicker in">Under the hood</p>
+  <p class="kicker in">04 &nbsp;Under the hood</p>
   <h2 class="title in d1" id="archtitle">How one click flows through the app</h2>
   <div class="legend in d2">
     <span><i style="background:var(--ai-bg);border-color:var(--ai)"></i>AI model</span>
@@ -307,10 +429,65 @@ h2.title{font-size:58px;line-height:1.08;letter-spacing:-.02em;margin:0;font-wei
 </section>
 
 <!-- 9. Handoff -->
-<section class="slide s-hand" data-notes="[Draft] Hand off: 'That's how it works when it works. Javier will show what went wrong along the way.'">
-  <p class="kicker in" style="color:#ff8a80">Up next · Javier</p>
+<section class="slide s-hand" data-notes="[Draft, Ralston] Hand off: 'That's how it works when it works. Javier will show what went wrong along the way.'">
+  <p class="kicker in">05 &nbsp;Javier</p>
   <h2 class="in d1">What went wrong<br>along the way</h2>
   <p class="in d2">Garbled labels, a checker that got fooled, and what we changed.</p>
+</section>
+
+<!-- ============ JAVIER'S SECTION (layouts only; his content goes in the [placeholders) ============
+     How to fill:
+     - Replace any text in [brackets] and remove the "ph" class from it.
+     - Images: save them as slides/img/javier-1.png, javier-2.png ... and they appear automatically.
+     - Click-by-click reveals: data-steps="N" on the]<section> = number of clicks; data-step="k" on an element = shows on click k (0 = on arrival).
+     - Red circle or box on an image: put inside a .frame, e.g.
+       <div class="mark ring" data-step="2" style="left:40%;top:30%;width:20%;height:10%"><div class="shape"></div></div>
+       (use "mark box" for a rectangle; positions are % of the image frame)
+-->
+
+<!-- 10. Javier: what went wrong #1 (side-by-side images) -->
+<section class="slide" data-steps="3" data-notes="[Javier] What went wrong #1. Click 1 shows the second image, click 2 shows the takeaway.">
+  <p class="kicker in">05 &nbsp;What went wrong, 1</p>
+  <h2 class="title in d1"><span class="ph">[One-sentence headline: what went wrong]</span></h2>
+  <div class="compare">
+    <figure class="slot st" data-step="0"><div class="frame"><img src="img/javier-1.png" alt="" onerror="this.closest('.slot').classList.add('empty')"><div class="empty-ph">[Image A]<br>save as slides/img/javier-1.png</div></div>
+      <figcaption><span class="badge bad">Before</span><span class="ph">[caption]</span></figcaption></figure>
+    <figure class="slot st" data-step="1"><div class="frame"><img src="img/javier-2.png" alt="" onerror="this.closest('.slot').classList.add('empty')"><div class="empty-ph">[Image B]<br>save as slides/img/javier-2.png</div></div>
+      <figcaption><span class="badge good">After</span><span class="ph">[caption]</span></figcaption></figure>
+  </div>
+  <div class="takeaway st" data-step="2"><span><span class="ph">[What we did about it]</span></span></div>
+</section>
+
+<!-- 11. Javier: what went wrong #2 (head-to-head numbers) -->
+<section class="slide" data-steps="3" data-notes="[Javier] What went wrong #2. Click 1 reveals the second number, click 2 the takeaway.">
+  <p class="kicker in">05 &nbsp;What went wrong, 2</p>
+  <h2 class="title in d1"><span class="ph">[One-sentence headline]</span></h2>
+  <div class="stats">
+    <div class="stat lose st" data-step="0"><div class="big ph">[#]</div><div class="lab ph">[what this number means]</div><span class="who ph">[model / option A]</span></div>
+    <div class="vs st" data-step="1">vs</div>
+    <div class="stat win st" data-step="1"><div class="big ph">[#]</div><div class="lab ph">[what this number means]</div><span class="who ph">[model / option B]</span></div>
+  </div>
+  <div class="takeaway st" data-step="2"><span><span class="ph">[So what]</span></span></div>
+</section>
+
+<!-- 12. Javier: what we'd do next (three cards) -->
+<section class="slide" data-steps="3" data-notes="[Javier] Next steps, one card per click.">
+  <p class="kicker in">06 &nbsp;What we'd do next</p>
+  <h2 class="title in d1"><span class="ph">[Headline]</span></h2>
+  <div class="trio">
+    <div class="step st" data-step="0"><div class="num">1</div><h3 class="ph" style="margin-top:18px">[Title]</h3><p class="ph">[One or two lines]</p></div>
+    <div class="step st" data-step="1"><div class="num">2</div><h3 class="ph" style="margin-top:18px">[Title]</h3><p class="ph">[One or two lines]</p></div>
+    <div class="step st" data-step="2"><div class="num">3</div><h3 class="ph" style="margin-top:18px">[Title]</h3><p class="ph">[One or two lines]</p></div>
+  </div>
+</section>
+
+<!-- 13. Close + questions -->
+<section class="slide s-close" data-notes="[Javier] One-sentence recap, then open the peer notes form and take questions.">
+  <p class="kicker in">Thank you</p>
+  <h2 class="in d1">Questions?</h2>
+  <p class="recap in d2"><span class="ph">[One-sentence recap of the whole project]</span></p>
+  <div class="close-names in d3"><span><b>Ralston Raphael</b></span><span><b>Javier Romo</b></span></div>
+  <p class="repo in d4">github.com/javieromolopez/TP1</p>
 </section>
 
 <div id="bar"></div>
@@ -388,7 +565,7 @@ function buildShot(slide){
     z.appendChild(d);
   }
   const spot = document.createElement('div'); spot.className = 'spot'; slide.querySelector('.shot').appendChild(spot);
-  slide.querySelector('.callout').innerHTML = '<span><i class="dot"></i><b class="txt"></b></span>';
+  slide.querySelector('.callout').innerHTML = '<span><b class="txt"></b></span>';
 }
 function union(key, ids){
   ids = [].concat(ids); let x1=1,y1=1,x2=0,y2=0;
@@ -551,11 +728,12 @@ $('ab-back').onclick = e => { e.stopPropagation(); prev(); };
 const slides = [...document.querySelectorAll('.slide')];
 let cur = 0, frag = 0;
 slides.filter(s => s.dataset.shot).forEach(buildShot);
-function fragsOf(s){ return s.dataset.shot ? FRAGS[s.dataset.shot].length : s.dataset.arch ? AFR.length : 1; }
+function fragsOf(s){ return s.dataset.shot ? FRAGS[s.dataset.shot].length : s.dataset.arch ? AFR.length : s.dataset.steps ? +s.dataset.steps : 1; }
 function render(){
   slides.forEach((s,i) => { s.classList.toggle('active', i === cur); s.classList.toggle('past', i < cur); });
   const s = slides[cur];
   if (s.dataset.shot) showShotFrag(s, frag);
+  if (s.dataset.steps) s.querySelectorAll('[data-step]').forEach(el => el.classList.toggle(el.classList.contains('mark') ? 'on' : 'shown', frag >= +el.dataset.step));
   if (s.dataset.arch){ if (!arch.classList.contains('built')) setTimeout(() => arch.classList.add('built'), 250); showArch(frag); }
   else { closeDrawer(); }
   $('bar').style.width = ((cur + (frag+1)/fragsOf(s)) / slides.length * 100) + '%';
