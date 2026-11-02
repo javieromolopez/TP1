@@ -75,6 +75,13 @@ class TestParseCritique:
         assert result.failed is True
         assert result.reason == "not_json"
 
+    def test_not_json_excerpt_capped_at_200_chars(self):
+        """Spec §17: the excerpt is the first 200 chars of the reply."""
+        reply = "x" * 500
+        result = parse_critique(reply)
+        assert result.failed is True
+        assert result.excerpt == reply[:200]
+
 
 # ============================================================================
 # 2. Per-part comparison (Spec §18, §19, §20)
