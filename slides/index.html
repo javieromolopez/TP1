@@ -81,7 +81,7 @@ code,.mono{font-family:var(--mono);font-size:.82em}
 .zoomer img{width:100%;height:100%;display:block}
 .mark{position:absolute;pointer-events:none}
 .pen{position:absolute;overflow:visible;pointer-events:none}
-.pen path{fill:none;stroke:var(--pen);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;transition:stroke-dashoffset .75s var(--ease) .05s}
+.pen path{fill:none;stroke:var(--pen);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;opacity:0;transition:stroke-dashoffset .75s var(--ease) .05s,opacity .35s}
 .note{position:absolute;font:700 38px/1.15 var(--hand);color:var(--pen);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .4s .45s, left .9s var(--ease), top .9s var(--ease);
   text-shadow:0 0 4px #fff,0 0 8px #fff,0 0 12px #fff}
 .note.on{opacity:1}
@@ -117,7 +117,7 @@ code,.mono{font-family:var(--mono);font-size:.82em}
 #arch.built .lbl{opacity:1}
 #arch .box{fill:none;stroke:#d9dade;stroke-width:1.2;stroke-dasharray:3 5}
 #arch .cap{font:10.5px var(--mono);fill:var(--faint)}
-#arch .loops path{fill:none;stroke:var(--pen);stroke-width:2.6;stroke-linecap:round;transition:stroke-dashoffset .7s var(--ease)}
+#arch .loops path{fill:none;stroke:var(--pen);stroke-width:2.6;stroke-linecap:round;transition:stroke-dashoffset .7s var(--ease),opacity .35s}
 #arch .anote{font:700 15px var(--hand);fill:var(--pen)}
 #packet{fill:var(--pen);opacity:0}
 .archside{position:absolute;left:1500px;right:110px;top:330px}
@@ -425,7 +425,19 @@ function drawMark(el){
   const p = svg.querySelector('path'), L = p.getTotalLength();
   p.style.strokeDasharray = L; p.style.strokeDashoffset = L; el.dataset.drawn = 1;
 }
-function penOn(el, on){ drawMark(el); const p = el.querySelector('path'); if (p) p.style.strokeDashoffset = on ? 0 : p.getTotalLength(); }
+function penOn(el, on){
+  drawMark(el); const p = el.querySelector('path'); if (!p) return; const L = p.getTotalLength();
+  if (on){
+    if (p.dataset.state === 'on') return;           // already drawn: leave it alone
+    p.dataset.state = 'on'; clearTimeout(p._t);
+    p.style.transition = 'none'; p.style.opacity = 1; p.style.strokeDashoffset = L; p.getBoundingClientRect();
+    p.style.transition = ''; p.style.strokeDashoffset = 0;
+  } else {
+    if (p.dataset.state !== 'on') return;
+    p.dataset.state = 'off'; p.style.opacity = 0;   // fade out, never rewind the stroke
+    p._t = setTimeout(() => { p.style.transition = 'none'; p.style.strokeDashoffset = L; }, 450);
+  }
+}
 
 /* ---------- screenshot slides ---------- */
 const MARKS = {
@@ -577,14 +589,25 @@ let af = 0, raf = 0;
 aedges.forEach(p => { const L = p.getTotalLength(); p.style.setProperty('--len', L); p.style.strokeDasharray = L; });
 anodes.forEach((n,i) => n.style.transitionDelay = (i*50)+'ms');
 
+const loopEls = {};
 function archLoops(ids, note){
-  const g = $('loops'); g.innerHTML = '';
+  const g = $('loops');
+  g.querySelectorAll('.anote').forEach(n => n.remove());
+  // loops that are no longer highlighted un-draw; loops that stay are left alone
+  Object.keys(loopEls).forEach(id => {
+    if (ids.includes(id)) return;
+    const p = loopEls[id]; delete loopEls[id];
+    p.style.opacity = 0;
+    setTimeout(() => p.remove(), 400);
+  });
   ids.forEach((id, k) => {
+    if (loopEls[id]) return;
     const r = $('n_'+id).querySelector('rect'), x = +r.getAttribute('x'), y = +r.getAttribute('y'), w = +r.getAttribute('width'), h = +r.getAttribute('height');
     const pad = 12, p = document.createElementNS('http://www.w3.org/2000/svg','path');
-    p.setAttribute('d', loopPath(w + pad*2, h + pad*2, 7 + k*3 + af));
+    let seed = 0; for (const ch of id) seed = (seed*31 + ch.charCodeAt(0)) % 997;
+    p.setAttribute('d', loopPath(w + pad*2, h + pad*2, seed));
     p.setAttribute('transform', `translate(${x-pad} ${y-pad})`);
-    g.appendChild(p);
+    g.appendChild(p); loopEls[id] = p;
     const L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L;
     requestAnimationFrame(() => requestAnimationFrame(() => { p.style.transitionDelay = (k*0.15)+'s'; p.style.strokeDashoffset = 0; }));
   });
@@ -608,11 +631,12 @@ function packet(ids){
 function showArch(i){
   af = i; const f = AFR[i];
   anodes.forEach(n => n.classList.remove('dim')); aedges.forEach(e => e.classList.remove('on','hot','dim'));
-  $('flows').innerHTML = ''; $('loops').innerHTML = ''; $('packet').style.opacity = 0; cancelAnimationFrame(raf);
-  let lit = [], edges = [], hot = [], note = null;
-  if (f.view === 'see'){ lit = ['pb','gen','imgmodel','stamp','critic','critmodel']; hot = ['e_pg','e_gimg']; edges = ['e_gs','e_sc','e_cm']; archLoops(['critic'], [570, 432, 'image + checklist only']); }
-  else if (f.view === 'grade'){ lit = ['critic','critmodel','val','verdict']; edges = ['e_cm','e_cv','e_vv']; archLoops(['verdict'], [205, 432, 'the grade comes from here']); }
-  else if (f.n.length){ lit = f.n; edges = f.e; archLoops(f.n.filter(x => x !== 'catalog' || f.n.length === 1)); packet(f.e); }
+  $('flows').innerHTML = ''; $('packet').style.opacity = 0; cancelAnimationFrame(raf);
+  let lit = [], edges = [], hot = [], loopIds = [], note = null;
+  if (f.view === 'see'){ lit = ['pb','gen','imgmodel','stamp','critic','critmodel']; hot = ['e_pg','e_gimg']; edges = ['e_gs','e_sc','e_cm']; loopIds = ['critic']; note = [570, 432, 'image + checklist only']; }
+  else if (f.view === 'grade'){ lit = ['critic','critmodel','val','verdict']; edges = ['e_cm','e_cv','e_vv']; loopIds = ['verdict']; note = [205, 432, 'the grade comes from here']; }
+  else if (f.n.length){ lit = f.n; edges = f.e; loopIds = f.n.filter(x => x !== 'catalog' || f.n.length === 1); packet(f.e); }
+  archLoops(loopIds, note);
   if (lit.length){
     anodes.forEach(n => n.classList.toggle('dim', !lit.includes(nid(n))));
     aedges.forEach(e => e.classList.toggle('dim', !edges.includes(e.id) && !hot.includes(e.id)));
