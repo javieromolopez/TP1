@@ -164,6 +164,28 @@ code,.mono{font-family:var(--mono);font-size:.82em}
 .stat .lab{font-size:28px;color:var(--muted);margin-top:16px}
 .stat .who{font:400 21px var(--mono);color:var(--faint);margin-top:14px}
 
+/* Javier: story 2 (critic) and the test grid */
+.story{position:absolute;left:200px;right:140px;top:320px;display:grid;grid-template-columns:730px 480px;gap:90px;align-items:center}
+.story .frame{flex:none;width:730px;height:500px}
+.verdict{border:2px solid var(--ink);border-radius:10px;padding:34px 40px}
+.verdict .vlab{font:400 22px var(--mono);color:var(--muted)}
+.verdict .vbig{font-size:150px;font-weight:800;letter-spacing:-.05em;line-height:1;margin-top:14px}
+.verdict .vsub{font-size:26px;color:var(--muted);margin-top:14px}
+.verdict .vnote{font:700 34px/1.2 var(--hand);color:var(--pen);margin-top:26px}
+.trow{position:absolute;left:200px;right:140px;display:grid;grid-template-columns:290px repeat(5,1fr) 170px;gap:24px;align-items:center}
+.trow.pics{top:330px}
+.trow.gpt{top:640px}.trow.mimo{top:750px}
+.tcell{margin:0;display:flex;flex-direction:column;gap:10px}
+.tcell .frame{position:relative;height:190px;flex:none;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
+.tcell img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.tcell figcaption{font-size:21px;line-height:1.3;color:var(--muted);text-align:center}
+.trow .who{font-size:28px;font-weight:700}
+.trow .who small{display:block;font:400 18px var(--mono);color:var(--faint);margin-top:6px}
+.trow .ok,.trow .no{font:700 62px/1 var(--hand);text-align:center}
+.trow .ok{color:var(--ink)}.trow .no{color:var(--pen)}
+.trow .score{font-size:72px;font-weight:800;letter-spacing:-.04em;text-align:right}
+.trow.mimo .score{color:var(--ink)}.trow.gpt .score{color:var(--pen)}
+
 .s-close h2{font-size:150px;letter-spacing:-.045em;margin-top:70px}
 .s-close .names{font-size:30px;font-weight:500;margin-top:60px;display:flex;gap:56px}
 .s-close .repo{font:400 26px var(--mono);color:var(--muted);margin-top:22px}
@@ -348,19 +370,40 @@ code,.mono{font-family:var(--mono);font-size:.82em}
 </section>
 
 <!-- 11 -->
-<section class="slide" data-steps="3" data-notes="(Short on time? Say only the two numbers and move on.) The second problem is scarier. Our critic, GPT-4o, looked at a circuit where the wire label pointed into the battery, and said good. So we built a test: 10 pictures, a good one and one with a planted mistake for each topic, and we ran each one three times. GPT-4o passed that broken circuit again, all three times, and overall it caught only 9 of the 15 planted mistakes. <b>Click:</b> a much cheaper model, MiMo, caught all 15, with no false alarms. <b>Click:</b> to be fair, we picked that circuit because GPT-4o had already missed it. But it also missed a mistake we planted fresh in the flower. Both misses were a label pointing at the wrong part. The lesson: an AI checking an AI still needs a test with known answers.">
+<section class="slide" data-steps="4" data-notes="(Short on time? Show the picture, say GPT-4o called it good, and go to the next slide.) The second problem is scarier. This is a real picture from our first run. <b>Click:</b> the wire label points into the battery, and battery points at nothing. <b>Click:</b> we gave it to our critic, GPT-4o. It said good: every part present. <b>Click:</b> it looked right, so it passed. So we needed a test where we already know the answer.">
   <div class="cover"></div><div class="pg">11</div>
   <div class="body"><h2 class="in">The critic got fooled</h2></div>
-  <div class="stats">
-    <div class="stat st" data-step="0"><div class="big">9/15</div><div class="lab">planted mistakes caught</div><div class="who">openai/gpt-4o &middot; $0.20</div></div>
-    <div class="stat st" data-step="1"><div class="big">15/15</div><div class="lab">planted mistakes caught</div><div class="who">xiaomi/mimo-v2.6-flash &middot; $0.013</div></div>
+  <div class="story">
+    <figure class="slot st" data-step="0"><div class="frame"><img src="img/javier-circuit.png" alt="Circuit from our first run">
+        <div class="mark" data-step="1" data-kind="ring" style="left:15%;top:47%;width:22%;height:13%"></div>
+        <div class="mark" data-step="1" data-kind="ring" style="left:5%;top:8%;width:18%;height:11%"></div></div>
+      <figcaption><span class="hand">our first run</span>&ldquo;wire&rdquo; points into the battery</figcaption></figure>
+    <div class="verdict st" data-step="2"><div class="vlab">GPT-4o&rsquo;s verdict</div><div class="vbig">good</div><div class="vsub">every part present</div><div class="vnote">wrong</div></div>
   </div>
-  <p class="takeaway st" data-step="2">GPT-4o passed a broken circuit 4 times. The cheaper critic caught every mistake.</p>
+  <p class="takeaway st" data-step="3">It looked right, so it passed. We needed a test where we know the answer.</p>
 </section>
 
 <!-- 12 -->
-<section class="slide" data-steps="3" data-notes="Three things, in order. One: switch the critic to the cheaper model that won. We have not changed the code yet on purpose: the intent changes first, then the code. <b>Click:</b> two: our checklist wants plus and minus on the battery, but our prompt never asked for them, so a correct-looking circuit could fail. That is a one-line prompt fix. <b>Click:</b> three: clean labels versus going over budget is a team decision. So far we have spent about six dollars on the key, and one run costs about five cents.">
+<section class="slide" data-steps="4" data-notes="We made 5 broken pictures, one per topic, each with one mistake we planted on purpose, and I checked the answer key against them myself. Each picture went to the critic three times, and the results were the same every time. <b>Click:</b> GPT-4o caught 3 of the 5. It missed the circuit again, and the flower, where two labels were swapped. <b>Click:</b> a much cheaper model, MiMo, caught all 5, with no false alarms on the good pictures, at about a fifteenth of the price. <b>Click:</b> both misses were a label pointing at the wrong part: GPT-4o reads the words but does not follow the line. To be fair, we picked the circuit because GPT-4o had already missed it, but the flower was new and it missed that too.">
   <div class="cover"></div><div class="pg">12</div>
+  <div class="body"><h2 class="in">So we built a test</h2></div>
+  <div class="trow pics st" data-step="0">
+    <div class="who">5 planted mistakes<small>each shown 3 times</small></div>
+    <figure class="tcell"><div class="frame"><img src="img/javier-t-plant-cell.png" alt=""></div><figcaption>vacuole missing</figcaption></figure>
+    <figure class="tcell"><div class="frame"><img src="img/javier-t-animal-cell.png" alt=""></div><figcaption>chloroplast in an animal cell</figcaption></figure>
+    <figure class="tcell"><div class="frame"><img src="img/javier-t-water-cycle.png" alt=""></div><figcaption>&ldquo;evaparashun&rdquo;</figcaption></figure>
+    <figure class="tcell"><div class="frame"><img src="img/javier-t-simple-circuit.png" alt=""></div><figcaption>&ldquo;wire&rdquo; points into the battery</figcaption></figure>
+    <figure class="tcell"><div class="frame"><img src="img/javier-t-flower.png" alt=""></div><figcaption>anther and stigma swapped</figcaption></figure>
+    <div></div>
+  </div>
+  <div class="trow gpt st" data-step="1"><div class="who">GPT-4o<small>openai/gpt-4o &middot; $0.20</small></div><div class="ok">&#10003;</div><div class="ok">&#10003;</div><div class="ok">&#10003;</div><div class="no">&#10007;</div><div class="no">&#10007;</div><div class="score">3/5</div></div>
+  <div class="trow mimo st" data-step="2"><div class="who">MiMo<small>xiaomi/mimo-v2.6-flash &middot; $0.013</small></div><div class="ok">&#10003;</div><div class="ok">&#10003;</div><div class="ok">&#10003;</div><div class="ok">&#10003;</div><div class="ok">&#10003;</div><div class="score">5/5</div></div>
+  <p class="takeaway st" data-step="3">Both misses: a label pointing at the wrong part. An AI checking an AI needs a test with known answers.</p>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-steps="3" data-notes="Three things, in order. One: switch the critic to the cheaper model that won. We have not changed the code yet on purpose: the intent changes first, then the code. <b>Click:</b> two: our checklist wants plus and minus on the battery, but our prompt never asked for them, so a correct-looking circuit could fail. That is a one-line prompt fix. <b>Click:</b> three: clean labels versus going over budget is a team decision. So far we have spent about six dollars on the key, and one run costs about five cents.">
+  <div class="cover"></div><div class="pg">13</div>
   <div class="body">
     <h2 class="in">Next</h2>
     <div class="cols">
@@ -371,9 +414,9 @@ code,.mono{font-family:var(--mono);font-size:.82em}
   </div>
 </section>
 
-<!-- 13 -->
+<!-- 14 -->
 <section class="slide s-close" data-notes="In one sentence: the AI draws, a second AI looks, and our code decides the grade. Thank you. Questions? (Open the peer notes form.)">
-  <div class="cover"></div><div class="pg">13</div>
+  <div class="cover"></div><div class="pg">14</div>
   <div class="body">
     <h2 class="in">Questions</h2>
     <p class="sub in d1">The AI draws, a second AI looks, our code decides.</p>
