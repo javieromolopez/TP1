@@ -205,7 +205,7 @@ code,.mono{font-family:var(--mono);font-size:.82em}
 <div id="deck">
 
 <!-- 1 -->
-<section class="slide s-title" data-notes="[Draft] Who we are, one line. Then the problem.">
+<section class="slide s-title" data-notes="&lt;b&gt;~10 s.&lt;/b&gt; Hi, I&#x27;m Ralston, this is Javier. Our project is Diagram Check. Don&#x27;t read the subtitle. Go on.">
   <div class="cover"></div>
   <div class="body">
     <p class="course in">CPSC 415 · Team Project 1</p>
@@ -217,7 +217,7 @@ code,.mono{font-family:var(--mono);font-size:.82em}
 </section>
 
 <!-- 2 -->
-<section class="slide" data-notes="[Draft] Image models get the shapes right and the spelling wrong. This came out of our app tonight.">
+<section class="slide" data-notes="&lt;b&gt;~20 s.&lt;/b&gt; We asked an image model for a plant cell. Look at the label on top: &lt;i&gt;cytorpaspt&lt;/i&gt;. It&#x27;s supposed to say cytoplasm. A student studying from this would learn a word that doesn&#x27;t exist.&lt;br&gt;So we built an app that draws the diagram and then checks it.">
   <div class="cover"></div><div class="pg">2</div>
   <div class="body">
     <div class="split">
@@ -233,7 +233,7 @@ code,.mono{font-family:var(--mono);font-size:.82em}
 </section>
 
 <!-- 3 -->
-<section class="slide" data-notes="[Draft] Three parts. Two different models, then plain Python.">
+<section class="slide" data-notes="&lt;b&gt;~25 s.&lt;/b&gt; Three steps. Gemini draws the diagram. GPT-4o looks at the picture and marks every part on a checklist. Then plain Python gives the grade.&lt;br&gt;The one thing to stress: the model never gives the grade. It only says what it sees.">
   <div class="cover"></div><div class="pg">3</div>
   <div class="body">
     <h2 class="in">How it works</h2>
@@ -246,7 +246,7 @@ code,.mono{font-family:var(--mono);font-size:.82em}
 </section>
 
 <!-- 4 -->
-<section class="slide s-demo" data-notes="Switch to localhost:8000. Plant cell, Generate. While it loads (10-15 s) say: drawing, stamping, checking. If it fails, come back and press → for the screenshots.">
+<section class="slide s-demo" data-notes="&lt;b&gt;~2 min, live.&lt;/b&gt; Switch to the browser, localhost:8000. Plant cell is selected. Click Generate.&lt;br&gt;While it loads (10 to 15 s): the app is drawing the diagram, stamping it as AI-generated, then sending just the picture to the second model.&lt;br&gt;Read the grade first. Point at one misspelled label in the picture and its red row in the checklist. Point at &#x27;Verdict computed from the marks below, not by the AI.&#x27;&lt;br&gt;If the demo worked: press &lt;b&gt;↓&lt;/b&gt; to skip the backup slides. If it failed: press → and use the screenshots.">
   <div class="cover"></div><div class="pg">4</div>
   <div class="body">
     <h2 class="in">Demo</h2>
@@ -256,28 +256,28 @@ code,.mono{font-family:var(--mono);font-size:.82em}
 </section>
 
 <!-- 5 -->
-<section class="slide" data-shot="home" data-notes="[Draft] Top to bottom: the two models, the topics, the button.">
+<section class="slide" data-shot="home" data-notes="&lt;b&gt;Backup, ~30 s.&lt;/b&gt; Only if the demo failed.&lt;br&gt;Click 1: two different models, one draws and one checks. Click 2: five topics. Click 3: one button, 10 to 15 s.">
   <div class="cover"></div><div class="pg">5</div>
   <div class="body"><h2 class="in">Home page</h2></div>
   <p class="margin-note"></p><div class="shotarea in d1"><div class="shot"><div class="zoomer"><img src="img/home.png" alt="App home page"></div></div></div>
 </section>
 
 <!-- 6 -->
-<section class="slide" data-shot="result" data-notes="[Draft] Grade first, then the picture. The misspellings it caught, then the one it missed.">
+<section class="slide" data-shot="result" data-notes="&lt;b&gt;Backup, ~45 s.&lt;/b&gt; Click 1: the grade, 4 of 7 parts correct. Click 2: the grade is computed in verdict.py, not by the AI.&lt;br&gt;Click 3: the three misspelled labels it caught. Click 4: it missed one. The &#x27;nucleus&#x27; label points at the cytoplasm. Javier will come back to when the checker gets it wrong. Click 5: every image is stamped AI-generated.">
   <div class="cover"></div><div class="pg">6</div>
   <div class="body"><h2 class="in">Result for plant cell</h2></div>
   <p class="margin-note"></p><div class="shotarea in d1"><div class="shot"><div class="zoomer"><img src="img/result.png" alt="Result with verdict, diagram and checklist"></div></div></div>
 </section>
 
 <!-- 7 -->
-<section class="slide" data-shot="checklist" data-notes="[Draft] Each part gets a mark and a note. Label text is the model reading the letters in the image.">
+<section class="slide" data-shot="checklist" data-notes="&lt;b&gt;Backup, ~20 s.&lt;/b&gt; Click 1: three parts marked mislabeled, with what the model read. Click 2: the exact misspellings it read off the image.">
   <div class="cover"></div><div class="pg">7</div>
   <div class="body"><h2 class="in">Checklist</h2></div>
   <p class="margin-note"></p><div class="shotarea in d1"><div class="shot"><div class="zoomer"><img src="img/checklist.png" alt="Checklist with three mislabeled parts"></div></div></div>
 </section>
 
 <!-- 8 -->
-<section class="slide" data-arch="1" data-notes="Next walks one request through. Click any box for details; Esc closes.">
+<section class="slide" data-arch="1" data-notes="&lt;b&gt;~2 min 30 s.&lt;/b&gt; Click Next to walk one request through. Click any box to open its code. Esc closes.&lt;br&gt;&lt;b&gt;Overview (15 s):&lt;/b&gt; blue boxes are model calls, green is our Python. Two model calls, everything else is our code.&lt;br&gt;&lt;b&gt;Steps (about 10 s each):&lt;/b&gt; Draw: one call, about 4 cents, no retry because retries cost money. Stamp: writes ai_generated into the PNG. Check: the image and the checklist go to GPT-4o, not the prompt. Validate: if the JSON is broken we ask once more. Grade: no model, just counting.&lt;br&gt;&lt;b&gt;Key idea 1 (25 s):&lt;/b&gt; if GPT-4o saw what we asked for, it could pass a diagram because the request was right, not because the drawing is. So it only sees the picture.&lt;br&gt;&lt;b&gt;Key idea 2 (25 s):&lt;/b&gt; models are sometimes confidently wrong, so the grade comes from a small function we can test without an API key.&lt;br&gt;If you have time, click Verdict and show the code.">
   <div class="cover"></div><div class="pg">8</div>
   <div class="body"><h2 class="in">Architecture</h2></div>
   <div class="legend in d1">
@@ -337,7 +337,7 @@ code,.mono{font-family:var(--mono);font-size:.82em}
 </section>
 
 <!-- 9 -->
-<section class="slide" data-notes="[Draft, Ralston] Hand off to Javier.">
+<section class="slide" data-notes="&lt;b&gt;~5 s.&lt;/b&gt; That&#x27;s how it works when it works. Javier will show what went wrong along the way.">
   <div class="cover"></div><div class="pg">9</div>
   <div class="body">
     <h2 class="in" style="font-size:110px;margin-top:120px">What went wrong</h2>
@@ -741,6 +741,9 @@ function prev(){ if (frag > 0) frag--; else if (cur > 0){ cur--; frag = fragsOf(
 document.addEventListener('keydown', e => {
   if (['ArrowRight','PageDown',' ','Enter'].includes(e.key)){ e.preventDefault(); next(); }
   else if (['ArrowLeft','PageUp','Backspace'].includes(e.key)){ e.preventDefault(); prev(); }
+  else if (e.key === 'ArrowDown'){ e.preventDefault(); if (cur < slides.length-1){ cur++; frag = 0; render(); } }
+  else if (e.key === 'ArrowUp'){ e.preventDefault(); if (cur > 0){ cur--; frag = 0; render(); } }
+  else if (e.key === 'a' || e.key === 'A'){ const i = slides.findIndex(x => x.dataset.arch); if (i >= 0){ cur = i; frag = 0; render(); } }
   else if (e.key === 'Escape') closeDrawer();
   else if (e.key === 'n' || e.key === 'N') $('notes').classList.toggle('on');
   else if (e.key === 'f' || e.key === 'F') fs();
