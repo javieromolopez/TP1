@@ -212,6 +212,16 @@ code,.mono{font-family:var(--mono);font-size:.82em}
 .tr .down{color:var(--muted)}
 .tr.sep{border-top:2px solid var(--ink)}
 
+
+/* ---- chain slide ---- */
+.chain{position:absolute;left:200px;right:140px;top:380px;height:330px;display:grid;grid-template-columns:repeat(6,1fr);border-top:2px solid var(--ink)}
+.chain .cell{padding:28px 18px 0 0}
+.chain .cell .n{font:700 52px/1 var(--hand);color:var(--pen)}
+.chain .cell h3{font-size:30px;font-weight:700;margin:12px 0 10px;letter-spacing:-.01em}
+.chain .cell .f{font:19px/1.5 var(--mono);color:var(--muted)}
+.chain .mark{left:calc(100%/6 - 6px);top:10px;width:calc(100%/6 - 6px);height:185px}
+.chainnote{position:absolute;left:200px;right:140px;bottom:90px;font-size:30px;line-height:1.45;border-left:4px solid var(--pen);padding-left:24px}
+
 /* chrome */
 #bar{position:absolute;left:0;bottom:0;height:4px;background:var(--pen);transition:width .5s var(--ease);z-index:10}
 #nav{position:fixed;right:22px;bottom:20px;display:flex;gap:8px;z-index:20;opacity:.3;transition:opacity .3s}
@@ -371,6 +381,25 @@ code,.mono{font-family:var(--mono);font-size:.82em}
   <div class="archnav"><button id="ab-back">← Back</button><button id="ab-next" class="primary">Next →</button></div>
   <div class="archcount" id="ac-c"></div>
   <aside class="drawer" id="drawer"><button class="x" id="dx" aria-label="Close">×</button><div id="dbody"></div></aside>
+</section>
+
+<!-- chain -->
+<section class="slide" data-steps="3" data-notes="&lt;b&gt;~30 s.&lt;/b&gt; We built this with a chain of files. First an intent says what the app should do. The spec picks a language and a model for each part. The plan lists the steps. Then tests, reviewed pull requests, and our notes.&lt;br&gt;Click 1: the spec is the one to know. It&#x27;s where we wrote the rules for the eval before running it.&lt;br&gt;Click 2: the rule for switching the critic to the cheaper model was written first, the eval met it, and the code still hasn&#x27;t changed because a model change needs a new intent first.">
+  <div class="cover"></div><div class="pg">0</div>
+  <div class="body">
+    <h2 class="in">How we built it</h2>
+    <p class="sub in d1">Each stage leaves one file, and each file comes from the one before it.</p>
+  </div>
+  <div class="chain in d2">
+    <div class="cell"><div class="n">1</div><h3>Intent</h3><div class="f">intent/<br>generation-loop.md</div></div>
+    <div class="cell"><div class="n">2</div><h3>Spec</h3><div class="f">spec.md</div></div>
+    <div class="cell"><div class="n">3</div><h3>Plan</h3><div class="f">plan.md</div></div>
+    <div class="cell"><div class="n">4</div><h3>Tests</h3><div class="f">tests/<br>168 tests</div></div>
+    <div class="cell"><div class="n">5</div><h3>Review</h3><div class="f">pull requests<br>REVIEW.md</div></div>
+    <div class="cell"><div class="n">6</div><h3>Notes</h3><div class="f">CLAUDE.md<br>ANNOTATION.md</div></div>
+    <div class="mark" data-step="1" data-kind="box"></div>
+  </div>
+  <p class="chainnote st" data-step="2">The spec wrote the rule for switching the critic before we ran the eval. The eval met it. The switch still waits for a new intent, so the code hasn't changed.</p>
 </section>
 
 <!-- models -->
