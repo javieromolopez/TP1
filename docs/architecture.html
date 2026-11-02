@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagram Check architecture</title>
+<style>
+:root{
+  --bg:#f6f7fb; --card:#ffffff; --ink:#1d2433; --muted:#667085; --line:#c9cfdd;
+  --ai:#6d4bd8; --ai-bg:#efeaff; --code:#127a4f; --code-bg:#e3f6ec; --data:#a8610a; --data-bg:#fdf0da;
+  --ui:#1f5fd1; --ui-bg:#e4eeff; --off:#8a93a6; --off-bg:#eef0f5; --hot:#e0391b; --glow:rgba(224,57,27,.22);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1420; --card:#171e2e; --ink:#e8ecf6; --muted:#97a1b8; --line:#34405a;
+    --ai:#b49cff; --ai-bg:#2a2250; --code:#5fd4a0; --code-bg:#12352a; --data:#f0b35c; --data-bg:#3b2a0f;
+    --ui:#7fb0ff; --ui-bg:#182b52; --off:#8c96ac; --off-bg:#1f2739; --hot:#ff7a5c; --glow:rgba(255,122,92,.25);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1420; --card:#171e2e; --ink:#e8ecf6; --muted:#97a1b8; --line:#34405a;
+  --ai:#b49cff; --ai-bg:#2a2250; --code:#5fd4a0; --code-bg:#12352a; --data:#f0b35c; --data-bg:#3b2a0f;
+  --ui:#7fb0ff; --ui-bg:#182b52; --off:#8c96ac; --off-bg:#1f2739; --hot:#ff7a5c; --glow:rgba(255,122,92,.25);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+header{padding:20px 16px 8px;max-width:1280px;margin:0 auto}
+h1{margin:0;font-size:26px;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:2px 0 0}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:1280px;margin:10px auto 0;padding:0 16px}
+.bar button{font:inherit;font-size:14px;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.bar button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.bar .sp{flex:1}
+.legend{display:flex;gap:12px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1.5px solid}
+main{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;max-width:1280px;margin:12px auto 24px;padding:0 16px}
+@media (max-width:980px){main{grid-template-columns:1fr}}
+.stage{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px}
+svg{width:100%;height:auto;display:block}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;align-self:start;position:sticky;top:12px;min-height:300px}
+.panel h2{margin:0 0 2px;font-size:20px}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;margin-bottom:8px;border:1px solid}
+.panel .file{font:13px ui-monospace,Menlo,monospace;color:var(--muted);margin:0 0 10px;word-break:break-all}
+.panel h3{margin:12px 0 2px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.panel p{margin:0}
+.hint{color:var(--muted);font-size:14px}
+.steps{display:none;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+.steps.on{display:flex}
+.steps button{font:inherit;font-size:14px;padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.steps button.primary{background:var(--ui);color:#fff;border-color:var(--ui)}
+.steps .n{font-size:13px;color:var(--muted)}
+
+/* diagram */
+.node rect{stroke-width:2;transition:filter .2s,stroke-width .2s,opacity .2s}
+.node text{pointer-events:none}
+.node{cursor:pointer;transition:opacity .25s}
+.node:hover rect{filter:brightness(.97);stroke-width:3}
+.node:focus{outline:none}
+.node:focus-visible rect{stroke-width:4}
+.t1{font:700 14px -apple-system,Segoe UI,Roboto,sans-serif;fill:var(--ink)}
+.t2{font:12px ui-monospace,Menlo,monospace;fill:var(--muted)}
+.t3{font:12px -apple-system,Segoe UI,Roboto,sans-serif;fill:var(--muted)}
+.k-ai rect{fill:var(--ai-bg);stroke:var(--ai)}
+.k-code rect{fill:var(--code-bg);stroke:var(--code)}
+.k-data rect{fill:var(--data-bg);stroke:var(--data)}
+.k-ui rect{fill:var(--ui-bg);stroke:var(--ui)}
+.k-off rect{fill:var(--off-bg);stroke:var(--off);stroke-dasharray:6 4}
+.edge{fill:none;stroke:var(--line);stroke-width:2.5;transition:stroke .2s,opacity .25s}
+.edge.on{stroke:var(--ui);stroke-width:3.5}
+.edge.hot{stroke:var(--hot);stroke-width:3.5}
+.lbl{font:12px -apple-system,Segoe UI,Roboto,sans-serif;fill:var(--muted)}
+.dim{opacity:.22}
+.sel rect{stroke-width:4;filter:drop-shadow(0 0 6px var(--glow))}
+.glow rect{stroke:var(--hot);stroke-width:4;filter:drop-shadow(0 0 8px var(--glow))}
+.box{fill:none;stroke:var(--line);stroke-width:2;stroke-dasharray:3 6}
+.cap{font:700 12px -apple-system,Segoe UI,Roboto,sans-serif;fill:var(--muted);letter-spacing:.06em}
+#dot{fill:var(--hot);opacity:0}
+.callout{opacity:0;transition:opacity .25s;pointer-events:none}
+.callout.on{opacity:1}
+.callout rect{fill:var(--card);stroke:var(--hot);stroke-width:2;rx:8}
+.callout text{font:700 12.5px -apple-system,Segoe UI,Roboto,sans-serif;fill:var(--ink)}
+.callout .bad{fill:var(--hot)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Diagram Check: how it works</h1>
+  <p class="sub">Click any box to see what it does and why we built it that way. Or press <b>Walk through a request</b>.</p>
+</header>
+<div class="bar" role="toolbar" aria-label="Views">
+  <button id="m-overview" aria-pressed="true">Overview</button>
+  <button id="m-walk" aria-pressed="false">Walk through a request</button>
+  <button id="m-see" aria-pressed="false">What the checker sees</button>
+  <button id="m-grade" aria-pressed="false">Who decides the grade?</button>
+  <span class="sp"></span>
+  <span class="legend">
+    <span><i style="background:var(--ai-bg);border-color:var(--ai)"></i>AI model</span>
+    <span><i style="background:var(--code-bg);border-color:var(--code)"></i>plain Python</span>
+    <span><i style="background:var(--data-bg);border-color:var(--data)"></i>data</span>
+    <span><i style="background:var(--ui-bg);border-color:var(--ui)"></i>browser</span>
+    <span><i style="background:var(--off-bg);border-color:var(--off);border-style:dashed"></i>not in the live path</span>
+  </span>
+</div>
+<main>
+  <div class="stage">
+    <svg id="svg" viewBox="0 0 1020 560" role="img" aria-label="Architecture diagram of the Diagram Check app">
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0 0L10 5L0 10z" fill="context-stroke"/>
+        </marker>
+      </defs>
+
+      <rect class="box" x="185" y="48" width="560" height="470" rx="16"/>
+      <text class="cap" x="200" y="68">FASTAPI SERVER  ·  app/main.py</text>
+
+      <!-- edges -->
+      <path class="edge" id="e_req"  d="M150 242 H205" marker-end="url(#ah)"/>
+      <path class="edge" id="e_pg"   d="M335 242 H385" marker-end="url(#ah)"/>
+      <path class="edge" id="e_gimg" d="M450 210 V175 H800" marker-end="url(#ah)"/>
+      <path class="edge" id="e_gs"   d="M515 242 H565" marker-end="url(#ah)"/>
+      <path class="edge" id="e_sc"   d="M630 274 V340" marker-end="url(#ah)"/>
+      <path class="edge" id="e_cm"   d="M695 372 H800" marker-end="url(#ah)"/>
+      <path class="edge" id="e_cv"   d="M565 372 H515" marker-end="url(#ah)"/>
+      <path class="edge" id="e_vv"   d="M385 372 H335" marker-end="url(#ah)"/>
+      <path class="edge" id="e_resp" d="M205 372 H150" marker-end="url(#ah)"/>
+      <path class="edge" id="e_pc"   d="M270 210 V150" stroke-dasharray="2 6" style="display:none"/>
+
+      <text class="lbl" x="152" y="232">topic</text>
+      <text class="lbl" x="338" y="232">prompt</text>
+      <text class="lbl" x="620" y="168">prompt  →</text>
+      <text class="lbl" x="470" y="168">← PNG image</text>
+      <text class="lbl" x="517" y="232">PNG</text>
+      <text class="lbl" x="640" y="312">stamped PNG</text>
+      <text class="lbl" x="706" y="364">image + checklist</text>
+      <text class="lbl" x="707" y="392">JSON ←</text>
+      <text class="lbl" x="518" y="362">raw JSON</text>
+      <text class="lbl" x="338" y="362">parts</text>
+      <text class="lbl" x="156" y="392">result</text>
+
+      <!-- nodes -->
+      <g class="node k-ui" id="n_browser" tabindex="0" role="button" aria-label="Web page">
+        <rect x="20" y="210" width="130" height="190" rx="12"/>
+        <text class="t1" x="85" y="290" text-anchor="middle">Web page</text>
+        <text class="t3" x="85" y="310" text-anchor="middle">pick a topic,</text>
+        <text class="t3" x="85" y="326" text-anchor="middle">see the result</text>
+        <text class="t2" x="85" y="352" text-anchor="middle">static/</text>
+      </g>
+
+      <g class="node k-data" id="n_catalog" tabindex="0" role="button" aria-label="Topic catalog">
+        <rect x="205" y="85" width="520" height="55" rx="10"/>
+        <text class="t1" x="225" y="108">Topic catalog</text>
+        <text class="t3" x="225" y="127">5 topics: labels to draw, parts to check, rules. One file everyone reads.</text>
+        <text class="t2" x="705" y="108" text-anchor="end">topics.json</text>
+      </g>
+
+      <g class="node k-code" id="n_pb" tabindex="0" role="button" aria-label="Prompt builder">
+        <rect x="205" y="210" width="130" height="64" rx="10"/>
+        <text class="t1" x="270" y="237" text-anchor="middle">Prompt builder</text>
+        <text class="t2" x="270" y="258" text-anchor="middle">prompt_builder.py</text>
+      </g>
+      <g class="node k-code" id="n_gen" tabindex="0" role="button" aria-label="Generator">
+        <rect x="385" y="210" width="130" height="64" rx="10"/>
+        <text class="t1" x="450" y="237" text-anchor="middle">Generator</text>
+        <text class="t2" x="450" y="258" text-anchor="middle">generator.py</text>
+      </g>
+      <g class="node k-code" id="n_stamp" tabindex="0" role="button" aria-label="Stamp">
+        <rect x="565" y="210" width="130" height="64" rx="10"/>
+        <text class="t1" x="630" y="237" text-anchor="middle">AI stamp</text>
+        <text class="t2" x="630" y="258" text-anchor="middle">stamp.py</text>
+      </g>
+
+      <g class="node k-ai" id="n_critic" tabindex="0" role="button" aria-label="Critic">
+        <rect x="565" y="340" width="130" height="64" rx="10"/>
+        <text class="t1" x="630" y="367" text-anchor="middle">Critic</text>
+        <text class="t2" x="630" y="388" text-anchor="middle">critic.py</text>
+      </g>
+      <g class="node k-code" id="n_val" tabindex="0" role="button" aria-label="Validator">
+        <rect x="385" y="340" width="130" height="64" rx="10"/>
+        <text class="t1" x="450" y="367" text-anchor="middle">Validator</text>
+        <text class="t2" x="450" y="388" text-anchor="middle">validator.py</text>
+      </g>
+      <g class="node k-code" id="n_verdict" tabindex="0" role="button" aria-label="Verdict">
+        <rect x="205" y="340" width="130" height="64" rx="10"/>
+        <text class="t1" x="270" y="367" text-anchor="middle">Verdict</text>
+        <text class="t2" x="270" y="388" text-anchor="middle">verdict.py</text>
+      </g>
+
+      <g class="node k-code" id="n_client" tabindex="0" role="button" aria-label="OpenRouter client and run log">
+        <rect x="205" y="445" width="520" height="52" rx="10"/>
+        <text class="t1" x="225" y="468">OpenRouter client + run log</text>
+        <text class="t3" x="225" y="486">Both AI calls go through here. Logs model, tokens, cost, time.</text>
+        <text class="t2" x="705" y="468" text-anchor="end">openrouter.py</text>
+      </g>
+
+      <g class="node k-ai" id="n_imgmodel" tabindex="0" role="button" aria-label="Image model">
+        <rect x="800" y="140" width="200" height="70" rx="12"/>
+        <text class="t1" x="900" y="168" text-anchor="middle">Image model</text>
+        <text class="t2" x="900" y="188" text-anchor="middle">gemini-2.5-flash-image</text>
+        <text class="t3" x="900" y="203" text-anchor="middle">via OpenRouter</text>
+      </g>
+      <g class="node k-ai" id="n_critmodel" tabindex="0" role="button" aria-label="Checker model">
+        <rect x="800" y="340" width="200" height="64" rx="12"/>
+        <text class="t1" x="900" y="367" text-anchor="middle">Checker model</text>
+        <text class="t2" x="900" y="388" text-anchor="middle">openai/gpt-4o</text>
+      </g>
+
+      <g class="node k-off" id="n_checker" tabindex="0" role="button" aria-label="checker.py">
+        <rect x="20" y="445" width="150" height="64" rx="10"/>
+        <text class="t1" x="95" y="472" text-anchor="middle">checker.py</text>
+        <text class="t3" x="95" y="490" text-anchor="middle">Week 6, not wired in</text>
+      </g>
+
+      <!-- callouts for the "sees" and "grade" views -->
+      <g class="callout" id="c_sees">
+        <rect x="765" y="420" width="245" height="56"/>
+        <text x="777" y="442">Critic gets: <tspan font-weight="700" fill="var(--code)">image + checklist</tspan></text>
+        <text x="777" y="463">Never gets: <tspan class="bad">our prompt</tspan></text>
+      </g>
+      <g class="callout" id="c_gradeai">
+        <rect x="765" y="420" width="245" height="30"/>
+        <text x="777" y="440">AI: "here is what I see"</text>
+      </g>
+      <g class="callout" id="c_gradecode">
+        <rect x="195" y="410" width="300" height="30"/>
+        <text x="207" y="430">Code: applies fixed rules, picks the grade</text>
+      </g>
+
+      <circle id="dot" r="8"/>
+    </svg>
+    <div class="steps" id="steps">
+      <button id="prev">← Back</button>
+      <button id="next" class="primary">Next →</button>
+      <button id="auto">▶ Auto play</button>
+      <span class="n" id="stepn"></span>
+    </div>
+  </div>
+
+  <aside class="panel" id="panel" aria-live="polite">
+    <h2>Start anywhere</h2>
+    <p class="hint">Click a box, or press "Walk through a request" and use the arrow keys.</p>
+    <h3>The one idea</h3>
+    <p>An AI draws the picture. A second AI looks at the picture and reports what it sees. Plain code, not an AI, decides the grade.</p>
+  </aside>
+</main>
+
+<script>
+const D = {
+  browser:{t:'Web page',k:'ui',tag:'Runs in the browser',f:'app/static/ (index.html, app.js, style.css)',
+    what:'One page. You pick a topic and click Generate. It shows the picture, a checklist of parts with ✓ and ✗, label problems, the verdict, and a timer while it waits.',
+    why:'Plain HTML, CSS and JavaScript with no build step, so every line can be read. We considered React with Vite, but that adds a toolchain for one screen.',
+    breaks:'It depends on the exact JSON the server sends back. Errors show as a message, nothing smarter.'},
+  catalog:{t:'Topic catalog',k:'data',tag:'Data, no code',f:'app/topics.json, app/schemas.py',
+    what:'Holds the five topics. For each: the exact labels to draw, the parts the checker must look for, parts that must not appear, and arrangement rules (like "the cell wall is outside the membrane"). The prompt builder, critic, validator and verdict all read it.',
+    why:'JSON, not code, so the checklists are easy to read and change. Pydantic checks the file when the server starts, so a typo stops the server instead of causing a quiet bad grade.',
+    breaks:'If a checklist is wrong, every grade for that topic is wrong and nothing errors.',link:['pb','critic','val','verdict']},
+  pb:{t:'Prompt builder',k:'code',tag:'Plain Python',f:'app/prompt_builder.py',
+    what:'Builds the text we send to the image model: a "flat 2D textbook style" block, the exact labels to spell, and "no people, no faces".',
+    why:'Keeping the prompt in one place means the eval measures exactly what the app sends.',
+    breaks:'A prompt that forgets something shows up as a bad picture. Our circuit prompt once did not ask for + and − on the battery.'},
+  gen:{t:'Generator',k:'code',tag:'Plain Python calling an AI',f:'app/generator.py',
+    what:'Sends the prompt to the image model once and gets a PNG back. It never retries on its own, because every try costs money. You can click Generate again.',
+    why:'Python, since the rest of the backend is Python. Model: gemini-2.5-flash-image at about $0.039 per image. We also tested gemini-3-pro-image at about $0.138, which spells better but would put the semester over our $25 budget.',
+    breaks:'Misspelled or garbled labels (the cheap model did this on 4 of 5 topics in our eval), timeouts (504), or a reply with no image (502).',link:['client']},
+  imgmodel:{t:'Image model',k:'ai',tag:'External AI',f:'google/gemini-2.5-flash-image, through OpenRouter',
+    what:'Draws the diagram from our prompt. It also adds its own invisible SynthID watermark, which we note but cannot check ourselves.',
+    why:'Cheap and fast, and decent at text inside images.',breaks:'Spelling. It draws what looks right, not what is right.'},
+  stamp:{t:'AI stamp',k:'code',tag:'Plain Python',f:'app/stamp.py',
+    what:'Re-saves the PNG with hidden text fields: ai_generated=true, the model, the topic, the time. The page also shows a visible "AI-generated diagram" caption.',
+    why:'Pillow does it in a few lines. The stronger standard, C2PA, needs signing certificates we do not have.',
+    breaks:'A screenshot or re-upload strips the hidden fields. It is a label, not proof.'},
+  critic:{t:'Critic',k:'ai',tag:'Plain Python calling an AI',f:'app/critic.py',
+    what:'Sends the picture and the topic checklist to a vision model and asks for strict JSON: which parts are present, missing or mislabeled, arrangement, and label problems. It does NOT send the prompt, so the model has to judge the picture, not our intentions.',
+    why:'Temperature 0 and JSON mode for steady answers. We chose gpt-4o by default. In our 10-image eval the cheaper xiaomi/mimo-v2.6-flash caught 15 of 15 planted flaws and gpt-4o caught 9 of 15, so switching is recommended through a new intent.',
+    breaks:'The model can say a wrong diagram is fine (gpt-4o did, four times on one circuit). Replies may not be valid JSON.',link:['client']},
+  critmodel:{t:'Checker model',k:'ai',tag:'External AI',f:'openai/gpt-4o, through OpenRouter',
+    what:'Looks at the picture and describes what it sees against the checklist. About 6 seconds and $0.008 per check.',
+    why:'The spec default, picked for reliable structured output.',breaks:'Confidently wrong sometimes. That is why a human-written test and a code-computed grade sit around it.'},
+  val:{t:'Validator',k:'code',tag:'Plain Python',f:'app/validator.py',
+    what:'Cleans the model reply: strips code fences, parses the JSON, checks it against the schema (every required part exactly once, no made-up parts). If it is invalid, it asks the critic once more. If that fails too, the page says "Critique unavailable".',
+    why:'Pure Python with no model, so it is tested with no API key.',breaks:'One retry only; after that the picture still shows but with no checklist.'},
+  verdict:{t:'Verdict',k:'code',tag:'Plain Python, the part that grades',f:'app/verdict.py',
+    what:'A short function turns the part statuses into one grade.\n• poor: a forbidden part appeared, or half or more of the parts are missing or mislabeled\n• good: every part present, every rule ok, no label problems\n• needs work: anything else',
+    why:'The model reports, code concludes, so the model never grades itself. Same idea as the Week 5 receipt checker.',
+    breaks:'The grade is only as good as the part statuses the model reports. The "half or more" cutoff is our own call.'},
+  client:{t:'OpenRouter client + run log',k:'code',tag:'Plain Python',f:'app/openrouter.py → runs.jsonl',
+    what:'One function that sends every AI call, with timeouts. The critic call retries once on a 429 or 5xx; the image call never does. Every call appends a line to runs.jsonl with model, tokens, cost and time.',
+    why:'Plain httpx instead of a vendor SDK, so the exact request is visible in our code. The log is how we add up cost.',
+    breaks:'Needs OPENROUTER_API_KEY in .env (503 without it). No login or rate limit, so it is meant for localhost only.',link:['gen','critic']},
+  checker:{t:'checker.py',k:'off',tag:'Week 6 piece, not connected yet',f:'app/checker.py',
+    what:'Pure Python, no model. Parses a critic reply, compares it to an answer key, and marks each part. A reply that is not JSON becomes a structured failure instead of a crash. A required part the critic skipped is a failing row. A part the critic made up is a failing row. An image passes only if every row passes.',
+    why:'Strict equality: True is not "true", and "nucleus" is not "Nucleus". No fuzzy matching and no AI judge, so results repeat exactly and tests need no key.',
+    breaks:'Nothing in the live app imports it yet. Be ready to say that if asked.'}
+};
+
+const STEPS = [
+  {n:['browser'],e:['e_req'],t:'1. You click Generate',d:'The page sends the topic (like "plant-cell") to POST /api/generate. The server checks it is a real topic and that the API key exists.'},
+  {n:['catalog','pb'],e:['e_req'],t:'2. Build the prompt',d:'The prompt builder reads the topic from the catalog and writes the instructions: flat 2D textbook style, these exact labels, no people.'},
+  {n:['gen','imgmodel','client'],e:['e_pg','e_gimg'],t:'3. Draw the diagram',d:'The generator sends the prompt to the image model through OpenRouter and gets a PNG back. About 6 seconds, about $0.039. One try only.'},
+  {n:['stamp'],e:['e_gs'],t:'4. Stamp it as AI',d:'Hidden fields saying "ai_generated" are written into the PNG. The page will also show a visible caption.'},
+  {n:['critic','critmodel','catalog','client'],e:['e_sc','e_cm'],t:'5. Check the picture',d:'The critic sends the stamped image and the checklist to gpt-4o. The prompt is not included. The model lists what it sees for every part. About 6 seconds, about $0.008.'},
+  {n:['val'],e:['e_cv'],t:'6. Clean up the reply',d:'The validator strips fences, parses JSON, and checks every required part appears once with no made-up parts. If invalid, it retries the critic once.'},
+  {n:['verdict'],e:['e_vv'],t:'7. Code picks the grade',d:'A plain function counts missing and mislabeled parts and checks rules. Result: good, needs work, or poor. No AI involved.'},
+  {n:['browser'],e:['e_resp'],t:'8. Show the result',d:'The server returns the image, checklist, label problems, and verdict. The page draws them. A full run takes about 10 to 15 seconds and about 5 cents.'}
+];
+
+const $ = id => document.getElementById(id);
+const svg = $('svg'), panel = $('panel');
+const nodes = [...svg.querySelectorAll('.node')];
+const edges = [...svg.querySelectorAll('.edge')];
+let mode = 'overview', step = -1, timer = null, selected = null, raf = 0;
+
+const nid = n => n.id.replace('n_','');
+const byId = id => $('n_'+id);
+
+function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+
+function showNode(id){
+  const d = D[id]; if(!d) return;
+  const col = {ai:'var(--ai)',code:'var(--code)',data:'var(--data)',ui:'var(--ui)',off:'var(--off)'}[d.k];
+  panel.innerHTML = `<span class="tag" style="color:${col};border-color:${col}">${esc(d.tag)}</span>
+    <h2>${esc(d.t)}</h2><p class="file">${esc(d.f)}</p>
+    <h3>What it does</h3><p>${esc(d.what).replace(/\n/g,'<br>')}</p>
+    <h3>Why we chose this</h3><p>${esc(d.why)}</p>
+    <h3>What breaks</h3><p>${esc(d.breaks)}</p>`;
+}
+function clearMarks(){
+  nodes.forEach(n=>n.classList.remove('dim','sel','glow'));
+  edges.forEach(e=>e.classList.remove('on','hot'));
+  ['c_sees','c_gradeai','c_gradecode'].forEach(c=>$(c).classList.remove('on'));
+  $('dot').style.opacity=0; cancelAnimationFrame(raf);
+}
+function select(id){
+  selected = id; showNode(id);
+  if(mode==='overview'){
+    clearMarks(); byId(id).classList.add('sel');
+    (D[id].link||[]).forEach(l=>byId(l).classList.add('glow'));
+  }
+}
+nodes.forEach(n=>{
+  const act=()=>{ if(mode!=='overview'){ setMode('overview'); } select(nid(n)); };
+  n.addEventListener('click',act);
+  n.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();act();} });
+});
+
+function setMode(m){
+  mode = m; stop(); clearMarks(); step=-1;
+  ['overview','walk','see','grade'].forEach(x=>$('m-'+x).setAttribute('aria-pressed',x===m));
+  $('steps').classList.toggle('on',m==='walk');
+  if(m==='overview'){
+    panel.innerHTML = `<h2>Start anywhere</h2><p class="hint">Click a box, or press "Walk through a request".</p>
+      <h3>The one idea</h3><p>An AI draws the picture. A second AI looks at the picture and reports what it sees. Plain code, not an AI, decides the grade.</p>`;
+    if(selected) select(selected);
+  }
+  if(m==='walk'){ go(0); }
+  if(m==='see'){
+    nodes.forEach(n=>{ if(!['critic','critmodel','stamp','catalog','pb','gen','imgmodel'].includes(nid(n))) n.classList.add('dim'); });
+    ['e_sc','e_cm'].forEach(e=>$(e).classList.add('on'));
+    ['e_pg','e_gimg'].forEach(e=>$(e).classList.add('hot')); $('c_sees').classList.add('on');
+    byId('critic').classList.add('sel');
+    panel.innerHTML = `<h2>What the checker sees</h2>
+      <p>The critic gets the <b>finished picture</b> and the <b>checklist</b>. It never gets the prompt we gave the image model.</p>
+      <h3>Why</h3><p>If it saw the prompt, it could pass a diagram because we asked for the right thing, not because the right thing is drawn. The assignment says the critique has to read the generated image itself.</p>
+      <h3>The red arrows</h3><p>That is the prompt path. It ends at the image model and never reaches the critic.</p>`;
+  }
+  if(m==='grade'){
+    nodes.forEach(n=>{ if(!['critic','critmodel','val','verdict'].includes(nid(n))) n.classList.add('dim'); });
+    ['e_cm','e_cv','e_vv'].forEach(e=>$(e).classList.add('on'));
+    byId('critic').classList.add('glow'); byId('verdict').classList.add('sel');
+    $('c_gradeai').classList.add('on'); $('c_gradecode').classList.add('on');
+    panel.innerHTML = `<h2>Who decides the grade?</h2>
+      <p><b>The AI describes. Our code decides.</b></p>
+      <h3>AI's job</h3><p>For each part on the checklist: present, missing, mislabeled, or unclear. Plus any label typos it can read.</p>
+      <h3>Code's job</h3><p><b>poor</b> if a forbidden part appears or half the parts are missing or mislabeled.<br><b>good</b> if everything is present, every rule holds, and no typos.<br><b>needs work</b> otherwise.</p>
+      <h3>Why</h3><p>Models can be confidently wrong. A plain function is easy to test and gives the same answer every time.</p>`;
+  }
+}
+
+function go(i){
+  step = Math.max(0,Math.min(STEPS.length-1,i));
+  clearMarks();
+  const s = STEPS[step];
+  nodes.forEach(n=>{ if(!s.n.includes(nid(n))) n.classList.add('dim'); else n.classList.add('sel'); });
+  s.e.forEach(e=>$(e).classList.add('on'));
+  $('stepn').textContent = `Step ${step+1} of ${STEPS.length}`;
+  panel.innerHTML = `<h2>${esc(s.t)}</h2><p style="margin-top:8px">${esc(s.d)}</p>
+    <h3>Boxes in play</h3><p class="file">${s.n.map(x=>D[x].t).join(' · ')}</p>`;
+  animate(s.e[s.e.length-1]);
+  $('prev').disabled = step===0; $('next').textContent = step===STEPS.length-1 ? '↺ Restart' : 'Next →';
+}
+function animate(edgeId){
+  const p = $(edgeId), len = p.getTotalLength(), dot = $('dot'), t0 = performance.now(), dur = 1300;
+  dot.style.opacity = 1;
+  const tick = now => {
+    const k = Math.min(1,(now-t0)/dur), pt = p.getPointAtLength(k*len);
+    dot.setAttribute('cx',pt.x); dot.setAttribute('cy',pt.y);
+    if(k<1) raf = requestAnimationFrame(tick); else setTimeout(()=>{ if(mode==='walk') dot.style.opacity=0 },300);
+  };
+  cancelAnimationFrame(raf); raf = requestAnimationFrame(tick);
+}
+function stop(){ clearInterval(timer); timer=null; $('auto').textContent='▶ Auto play'; }
+
+$('m-overview').onclick=()=>setMode('overview');
+$('m-walk').onclick=()=>setMode('walk');
+$('m-see').onclick=()=>setMode('see');
+$('m-grade').onclick=()=>setMode('grade');
+$('prev').onclick=()=>{stop();go(step-1)};
+$('next').onclick=()=>{stop(); go(step===STEPS.length-1?0:step+1)};
+$('auto').onclick=()=>{
+  if(timer){stop();return}
+  $('auto').textContent='⏸ Pause'; if(step===STEPS.length-1) go(0);
+  timer=setInterval(()=>{ if(step>=STEPS.length-1) stop(); else go(step+1); },3800);
+};
+document.addEventListener('keydown',e=>{
+  if(mode!=='walk') return;
+  if(e.key==='ArrowRight'){stop();go(Math.min(step+1,STEPS.length-1))}
+  if(e.key==='ArrowLeft'){stop();go(step-1)}
+});
+</script>
+</body>
+</html>
