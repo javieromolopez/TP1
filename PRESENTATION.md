@@ -1,82 +1,92 @@
-# TP1 presentation flow (DRAFT)
+# TP1 presentation plan (draft)
 
-Mon Nov 2, 1:30 PM, MC-225. 10 minutes plus 5 of questions. Order is drawn at the start of class.
-The sheet asks for three things: the app running live, one artifact from the chain on screen, and one thing we tried that failed or took out, and what we did about it.
+Monday Nov 2, 1:30 PM, MC-225. We get 10 minutes, then 5 minutes of questions. The order is drawn when class starts.
 
-**Audience:** CS students, not AI researchers. Say "the AI looks at the picture" before saying "vision model". Explain any term once, then use it.
+The assignment wants three things: the app running live, one file from our project shown on screen, and one thing that went wrong and what we did about it.
 
-**Speaker split:** R = Ralston, J = Javier. Both of us must be able to answer questions on every part.
+Our audience is CS students. Say "the AI looks at the picture" before you say "vision model."
 
-## Before we start (5 minutes before class)
-- [ ] `.env` has the OpenRouter key; `python -m uvicorn app.main:app` is running; http://localhost:8000 loads.
-- [ ] Run one full generation on the plant cell. Know that it takes about 13 to 15 seconds and costs about $0.05.
-- [ ] Backup ready: screenshots or a screen recording of one good run, in case the network or API fails.
-- [ ] `spec.md` open at the architecture diagram. `CHECKS.md` open at the generator comparison.
-- [ ] Peer notes form open on a laptop: https://docs.google.com/forms/d/e/1FAIpQLSfNKbChCap-3fGF5U-2mELJmqkGJPybHt7KplK3F__zngARNA/viewform
-- [ ] Browser zoom at 125% or more so the back row can read it.
+R = Ralston, J = Javier.
+
+## Before class
+- [ ] The server is running and http://localhost:8000 loads (key in `.env`).
+- [ ] Run one plant cell to check it works. It takes about 15 seconds and costs about 5 cents.
+- [ ] Have screenshots of one good run, in case the network or API fails.
+- [ ] Open `spec.md` to the architecture diagram, and `eval/generator-comparison/` for the failure story.
+- [ ] Open the peer notes form: https://docs.google.com/forms/d/e/1FAIpQLSfNKbChCap-3fGF5U-2mELJmqkGJPybHt7KplK3F__zngARNA/viewform
+- [ ] Zoom the browser in so the back row can read it.
 
 ## Timeline
 
-| Time | Who | Section |
+| Time | Who | What |
 |---|---|---|
-| 0:00 to 0:45 | R | The problem and what we built |
-| 0:45 to 3:30 | R drives, J narrates | Live demo |
-| 3:30 to 6:00 | J | Artifact on screen: the architecture in `spec.md` |
-| 6:00 to 8:30 | R | What failed: garbled labels, and the critic fooled |
-| 8:30 to 9:30 | J | What we'd do next |
-| 9:30 to 10:00 | R | Close, hand over to questions |
+| 0:00 | R | What we built (45 sec) |
+| 0:45 | R + J | Live demo (2 min 45 sec) |
+| 3:30 | J | The architecture in `spec.md` (2 min 30 sec) |
+| 6:00 | R | What went wrong (2 min 30 sec) |
+| 8:30 | J | What we'd do next (1 min) |
+| 9:30 | R | Wrap up (30 sec) |
 
-## 1. The problem and what we built (R, 45 s)
-- AI image models draw diagrams that look right but have garbled or wrong labels. A student can't tell.
-- Our app: pick a science topic, it draws a labeled textbook diagram, then a second AI looks at the picture and checks it against a checklist we wrote.
-- One line that frames everything: **the AI reports what it sees, and our code decides the grade.**
+## 1. What we built (R)
+- AI image tools draw diagrams that look right but often have misspelled or wrong labels. A student can't tell.
+- Our app: you pick a science topic, it draws a labeled diagram, and a second AI checks the picture against a checklist.
+- The one idea to remember: **the AI says what it sees, and our code decides the grade.**
 
-## 2. Live demo (R drives, J narrates, 2 min 45 s)
-- Pick the plant cell (most reliable). Click Generate. While the spinner runs (about 15 s), J says what is happening: draw, stamp, check.
-- Point out: the "AI-generated diagram" caption (provenance), the checklist table with the marks per part, the arrangement notes, any text issues, and the verdict.
-- If the verdict is "needs_work", good: explain what flagged it. A perfect run is less interesting than the checker catching something.
-- If time allows, run a second topic (flower is the hardest).
-- Do not narrate code here. Save it for section 3.
+## 2. Live demo (R clicks, J talks)
+- Use the plant cell. Click Generate.
+- While it loads, J explains: the app draws the image, adds an "AI-generated" label, then sends the picture to the checker.
+- Show the result: the checklist with ✓ and ✗, any label problems, and the final grade (good, needs work, or poor).
+- A "needs work" result is fine. Explain what the checker caught.
+- Keep code out of this part.
 
-## 3. Artifact on screen: the architecture in spec.md (J, 2 min 30 s)
-Show the diagram at the top of `spec.md`: browser, then FastAPI server, then generator, stamp, critic, validator and verdict.
-- Walk it left to right in one sentence per box.
-- **Key design idea (say it plainly):** the critic never sees the prompt we gave the image model. It judges the picture, not our intentions. And it never grades itself: it lists what it sees, and `verdict.py` applies fixed rules (a forbidden part or half the parts missing is "poor", everything present is "good").
-- Why it matters: models are confidently wrong, so the trustworthy part must be code we can test without an API key.
-- Show one line from the spec where a language and a model were chosen with the alternative considered (generator: Python, `gemini-2.5-flash-image`, alternative the Pro model).
-- This is also where we say it is a chain: intent, spec, plan, tests, reviewed PRs, annotation.
+## 3. The architecture in spec.md (J)
+Show the diagram at the top of `spec.md`. Go left to right, one sentence per box: page, server, image model, label stamp, checker, grade.
 
-## 4. What failed (R, 2 min 30 s)
-Two short stories. Pick the first for sure; add the second if time is OK.
-1. **Garbled labels.** The cheap image model (Nano Banana) misspelled or misplaced labels on four of five topics in every run. Show the contact sheet in `eval/generator-comparison/` (cheap model on the top row, Pro below). We could not even use its output as "correct" reference images. The Pro model fixed most of it but costs about 3.5x as much per image, which would put the semester over our $25 budget. So we stopped and wrote it up as a decision for a new intent instead of switching quietly.
-2. **The checker was fooled.** GPT-4o graded a mislabeled circuit "good" four times in a row. Our 10-image eval (one good and one planted flaw per topic) caught it. The cheaper model caught 15 of 15 planted flaws against GPT-4o's 9 of 15, at about 1/15 the cost. Be upfront that we chose the flawed circuit because GPT-4o had already passed it, so the test leans against GPT-4o.
-- What we did about it: moved the grading into code, added the eval, and recorded the findings in `CHECKS.md` rather than editing the answer key to look better.
+Three points to hit:
+1. The checker never sees the prompt we gave the image model. It only sees the picture, so it can't pass something just because we asked for it.
+2. The checker doesn't give the grade. It lists which parts it sees, and a small Python function (`verdict.py`) turns that list into good, needs work, or poor.
+3. That function is plain code, so we can test it without an API key.
 
-## 5. What we'd do next (J, 1 min)
-- Switch the critic to the cheaper model through a new intent (the spec says intent comes first).
-- Fix the circuit prompt so it asks for + and - terminals; today a correct-looking circuit can fail rule A2.
-- Decide whether the better image model is worth the budget.
-- Total spend so far: about $6.07 on the key (see README cost section).
+Then point to one line in the spec where we picked a language and a model and wrote down the alternative. This is our project's chain: intent, spec, plan, tests, reviewed pull requests, annotation.
 
-## 6. Close (R, 30 s)
-- One-sentence recap: draw, look, and let code decide.
-- "Questions?" Then open the peer notes form for the room.
+## 4. What went wrong (R)
+**Story 1: garbled labels.**
+- The cheap image model misspelled or misplaced labels on four of the five topics, every run.
+- Show the comparison sheet in `eval/generator-comparison/`: cheap model on top, better model below.
+- The better model fixed most of it but costs about 3.5 times as much. That would put the semester over our $25 budget.
+- So we didn't switch quietly. We wrote it up as a decision for a new intent.
 
-## Likely questions and who answers
+**Story 2: the checker got fooled** (use if time allows).
+- GPT-4o graded a wrong circuit as fine, four times in a row.
+- We built a test of 10 images, one good and one with a planted mistake for each topic. It caught this.
+- On that test, the cheaper checker found 15 of 15 planted mistakes and GPT-4o found 9 of 15.
+- Be honest: we picked that circuit because GPT-4o had already passed it, so the test is a bit unfair to GPT-4o.
 
-| Question | Answer in one or two sentences | Lead |
+## 5. What we'd do next (J)
+- Switch to the cheaper checker, through a new intent first.
+- Fix the circuit prompt so it asks for + and − on the battery.
+- Decide if the better image model is worth the money.
+- We've spent about $6.07 so far.
+
+## 6. Wrap up (R)
+- One sentence: the AI draws, a second AI looks, and our code decides.
+- Say "Questions?" and have the peer form open.
+
+## Questions we might get
+
+| Question | Short answer | Who |
 |---|---|---|
-| Why not just ask the image model if its own image is right? | It tends to agree with itself. A second model reading only the picture, plus a code-computed verdict, is harder to fool. | R |
-| Why doesn't the critic see the prompt? | The assignment requires judging the image itself. If it saw the prompt, it could pass what we asked for rather than what was drawn. | J |
-| What does `checker.py` do and why strict equality? | It compares the critic's reply to an answer key with exact matches, so results are the same every time and tests need no API key. A fuzzy match could hide real mistakes. | J |
-| How much did it cost? | About $6.07 total on the key; about $0.05 per generate-and-check run. | R |
-| What if the model returns garbage instead of JSON? | The validator strips code fences, retries once, and if it still fails the page shows "Critique unavailable". It never crashes. | R |
-| What does the provenance stamp do? | It writes "ai_generated" and the model name into the PNG's metadata, plus a visible caption. It's removed if the image is screenshotted. | J |
-| Which parts did each of you write? | R: the app code (generator, critic, validator, server, page, eval). J: the Week 6 image set integration and the checker. Both reviewed each other's PRs. | both |
-| What would you do differently? | Start the eval earlier; our spec's default critic lost to a cheaper model. | either |
+| Why not ask the image model if its own picture is right? | It tends to agree with itself. A second model plus a grade from code is harder to fool. | R |
+| Why doesn't the checker see the prompt? | It has to judge the picture, not what we asked for. | J |
+| What does `checker.py` do? Why exact matching? | It compares the checker's answer to an answer key. Exact matching gives the same result every time and needs no API key. | J |
+| How much did it cost? | About $6.07 total, about 5 cents per run. | R |
+| What if the AI returns something that isn't JSON? | We retry once. If it fails again the page says "Critique unavailable." It doesn't crash. | R |
+| What does the stamp do? | It writes "ai_generated" into the PNG's hidden data and shows a caption. A screenshot would remove the hidden part. | J |
+| Who wrote what? | R: generator, checker, server, page, eval. J: the Week 6 image set and `checker.py`. We reviewed each other's PRs. | both |
+| What would you change? | Start the eval earlier. Our default checker lost to a cheaper one. | either |
 
-## Rules for both of us
-- Keep to 10 minutes. Cut the second demo topic or the second failure story before running over.
-- Don't read from the repo for more than a few seconds at a time.
-- If the live demo fails, switch to the backup within 10 seconds and say what went wrong.
-- Everything we say has to be something we can explain if asked.
+## Ground rules
+- Stay under 10 minutes. Cut the second story or second demo topic first.
+- Don't read from the repo for more than a few seconds.
+- If the demo breaks, switch to the screenshots within 10 seconds and say what happened.
+- Only say things we could explain if asked.
