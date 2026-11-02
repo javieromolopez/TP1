@@ -21,25 +21,26 @@ R = Ralston, J = Javier.
 | Time | Who | What |
 |---|---|---|
 | 0:00 | R | What we built (45 sec) |
-| 0:45 | R + J | Live demo (2 min 45 sec) |
-| 3:30 | J | The architecture in `spec.md` (2 min 30 sec) |
-| 6:00 | R | What went wrong (2 min 30 sec) |
-| 8:30 | J | What we'd do next (1 min) |
-| 9:30 | R | Wrap up (30 sec) |
+| 0:45 | R | Live demo (2 min 45 sec) |
+| 3:30 | R | The architecture in `spec.md` (2 min 30 sec) |
+| 6:00 | J | What went wrong (2 min 30 sec) |
+| 8:30 | J | What we'd do next and wrap up (1 min 30 sec) |
+
+Ralston talks for the first 6 minutes, Javier for the last 4. Hand off with a line like "Javier will show what went wrong along the way."
 
 ## 1. What we built (R)
 - AI image tools draw diagrams that look right but often have misspelled or wrong labels. A student can't tell.
 - Our app: you pick a science topic, it draws a labeled diagram, and a second AI checks the picture against a checklist.
 - The one idea to remember: **the AI says what it sees, and our code decides the grade.**
 
-## 2. Live demo (R clicks, J talks)
+## 2. Live demo (R)
 - Use the plant cell. Click Generate.
-- While it loads, J explains: the app draws the image, adds an "AI-generated" label, then sends the picture to the checker.
+- While it loads, R explains: the app draws the image, adds an "AI-generated" label, then sends the picture to the checker.
 - Show the result: the checklist with ✓ and ✗, any label problems, and the final grade (good, needs work, or poor).
 - A "needs work" result is fine. Explain what the checker caught.
 - Keep code out of this part.
 
-## 3. The architecture in spec.md (J)
+## 3. The architecture in spec.md (R)
 Show the diagram at the top of `spec.md`. Go left to right, one sentence per box: page, server, image model, label stamp, checker, grade.
 
 Three points to hit:
@@ -49,7 +50,7 @@ Three points to hit:
 
 Then point to one line in the spec where we picked a language and a model and wrote down the alternative. This is our project's chain: intent, spec, plan, tests, reviewed pull requests, annotation.
 
-## 4. What went wrong (R)
+## 4. What went wrong (J)
 **Story 1: garbled labels.**
 - The cheap image model misspelled or misplaced labels on four of the five topics, every run.
 - Show the comparison sheet in `eval/generator-comparison/`: cheap model on top, better model below.
@@ -68,7 +69,7 @@ Then point to one line in the spec where we picked a language and a model and wr
 - Decide if the better image model is worth the money.
 - We've spent about $6.07 so far.
 
-## 6. Wrap up (R)
+## 6. Wrap up (J)
 - One sentence: the AI draws, a second AI looks, and our code decides.
 - Say "Questions?" and have the peer form open.
 
@@ -77,11 +78,11 @@ Then point to one line in the spec where we picked a language and a model and wr
 | Question | Short answer | Who |
 |---|---|---|
 | Why not ask the image model if its own picture is right? | It tends to agree with itself. A second model plus a grade from code is harder to fool. | R |
-| Why doesn't the checker see the prompt? | It has to judge the picture, not what we asked for. | J |
+| Why doesn't the checker see the prompt? | It has to judge the picture, not what we asked for. | R |
 | What does `checker.py` do? Why exact matching? | It compares the checker's answer to an answer key. Exact matching gives the same result every time and needs no API key. | J |
-| How much did it cost? | About $6.07 total, about 5 cents per run. | R |
+| How much did it cost? | About $6.07 total, about 5 cents per run. | J |
 | What if the AI returns something that isn't JSON? | We retry once. If it fails again the page says "Critique unavailable." It doesn't crash. | R |
-| What does the stamp do? | It writes "ai_generated" into the PNG's hidden data and shows a caption. A screenshot would remove the hidden part. | J |
+| What does the stamp do? | It writes "ai_generated" into the PNG's hidden data and shows a caption. A screenshot would remove the hidden part. | R |
 | Who wrote what? | R: generator, checker, server, page, eval. J: the Week 6 image set and `checker.py`. We reviewed each other's PRs. | both |
 | What would you change? | Start the eval earlier. Our default checker lost to a cheaper one. | either |
 
