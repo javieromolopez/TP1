@@ -139,6 +139,13 @@ code,.mono{font-family:var(--mono);font-size:.82em}
 .drawer .file{font:17px var(--mono);color:var(--muted);margin:0 0 22px;word-break:break-all}
 .drawer h4{font:700 26px var(--hand);color:var(--pen);margin:22px 0 4px}
 .drawer p{font-size:22px;line-height:1.5;margin:0}
+.drawer{width:1060px;padding:176px 56px 60px}
+.drawer h3{font-size:40px;margin:4px 0 8px}
+.drawer .lead2{font-size:24px;line-height:1.45;margin:0 0 18px}
+.drawer .two{display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-top:6px}
+.drawer .two p{font-size:20px}
+.drawer .code{margin:6px 0 0;padding:20px 22px;background:#f7f7f5;border:1px solid var(--line);border-radius:8px;font:15px/1.55 var(--mono);color:var(--ink);white-space:pre;overflow-x:auto}
+.drawer .code .c{color:#8b8e94;font-style:italic}.drawer .code .s{color:var(--good)}.drawer .code .k{color:var(--blue)}
 
 /* Javier: layouts with [placeholders] */
 .ph{color:var(--faint);border-bottom:2px dashed #d6d7da}
@@ -198,7 +205,7 @@ code,.mono{font-family:var(--mono);font-size:.82em}
         <p class="sub in d2">A student studying from this would learn a word that doesn't exist.</p>
       </div>
       <div class="crop in d1"><div class="z"><img src="img/diagram.png" alt="Generated plant cell with a misspelled label">
-        <div class="mark" data-auto="1" data-kind="ring" style="left:45%;top:13.2%;width:21%;height:6.4%"></div></div></div>
+        <div class="mark" data-auto="1" data-kind="ring" style="left:47.6%;top:10.8%;width:15.8%;height:4.8%"></div></div></div>
     </div>
   </div>
 </section>
@@ -616,10 +623,24 @@ function showArch(i){
   $('ac-t').textContent = f.t; $('ac-d').innerHTML = f.d;
   $('ac-c').textContent = `${i+1} / ${AFR.length}`;
 }
+const CODE = {"browser": {"f": "app/static/app.js", "c": "const response = await fetch(\"/api/generate\", {\n  method: \"POST\",\n  headers: { \"Content-Type\": \"application/json\" },\n  body: JSON.stringify({ topic_id: topicId }),\n});\nconst body = await response.json().catch(() => ({}));\nif (response.ok) render(body, seconds());\nelse showError(body.detail || `The server answered ${response.status}.`);"}, "catalog": {"f": "app/topics.json · first topic, labels list left out", "c": "{\n  \"id\": \"plant-cell\",\n  \"display_name\": \"Plant cell\",\n  \"required_parts\": [\"cell wall\", \"cell membrane\", \"cytoplasm\",\n    \"nucleus\", \"chloroplast\", \"vacuole\", \"mitochondrion\"],\n  \"forbidden_parts\": [],\n  \"arrangement_rules\": [\n    {\"id\": \"A1\", \"text\": \"The cell wall is the outermost layer, outside the membrane.\"},\n    {\"id\": \"A2\", \"text\": \"All organelles sit inside the membrane.\"},\n    {\"id\": \"A3\", \"text\": \"The vacuole is the largest organelle.\"}\n  ]\n}"}, "pb": {"f": "app/prompt_builder.py", "c": "def build_image_prompt(topic: Topic) -> str:\n    \"\"\"Shared style block with the topic's exact label strings, each quoted, filled in.\"\"\"\n    labels = \", \".join(f'\"{label}\"' for label in topic.labels)\n    return f\"A labeled diagram of {topic.with_article}. \" + STYLE_BLOCK.format(labels=labels)"}, "gen": {"f": "app/generator.py", "c": "async def generate(topic: Topic, model: str = MODEL) -> GeneratedImage:\n    body = {\n        \"model\": model,\n        \"modalities\": [\"image\", \"text\"],\n        \"messages\": [{\"role\": \"user\", \"content\": build_image_prompt(topic)}],\n    }\n    # No retry_5xx: a second image attempt costs money; the student can press Generate again.\n    result = await openrouter.chat(body, timeout=IMAGE_TIMEOUT_S)\n\n    message = result.data[\"choices\"][0][\"message\"]\n    images = message.get(\"images\") or []\n    if not images:\n        raise NoImageError(message.get(\"content\") or \"The image model returned no image.\")"}, "stamp": {"f": "app/stamp.py", "c": "def stamp(png: bytes, meta: dict) -> bytes:\n    image = Image.open(io.BytesIO(png))\n    info = PngInfo()\n    info.add_text(\"ai_generated\", \"true\")\n    info.add_text(\"app\", APP_NAME)\n    for key, value in meta.items():\n        info.add_text(key, str(value))\n\n    out = io.BytesIO()\n    image.save(out, format=\"PNG\", pnginfo=info)\n    return out.getvalue()"}, "critic": {"f": "app/critic.py", "c": "async def critique(topic: Topic, png: bytes, *, retry_note: str | None = None, model: str = MODEL) -> str:\n    \"\"\"Return the critic's raw reply text. Parsing and validation happen in app.validator.\"\"\"\n    text = checklist_text(topic)\n    if retry_note:\n        text += f\"\\n\\nYour previous reply was invalid: {retry_note}. Return only JSON in the shape above.\"\n\n    image_url = \"data:image/png;base64,\" + base64.b64encode(png).decode()\n    body = {\n        \"model\": model,\n        \"temperature\": 0,\n        \"response_format\": {\"type\": \"json_object\"},\n        \"messages\": [\n            {\n                \"role\": \"user\",\n                \"content\": [\n                    {\"type\": \"text\", \"text\": text},\n                    {\"type\": \"image_url\", \"image_url\": {\"url\": image_url}},\n                ],\n            }\n        ],\n    }\n    result = await openrouter.chat(body, timeout=CRITIC_TIMEOUT_S, retry_5xx=True)\n    return result.data[\"choices\"][0][\"message\"].get(\"content\") or \"\""}, "val": {"f": "app/validator.py", "c": "async def critique_with_retry(topic, png):\n    \"\"\"At most two critic calls. Returns (critique, None) or (None, CRITIQUE_UNAVAILABLE).\"\"\"\n    raw = await critic.critique(topic, png)\n    try:\n        return validate(topic, raw), None\n    except CritiqueInvalid as first:\n        retry_note = first.reason\n\n    raw = await critic.critique(topic, png, retry_note=retry_note)\n    try:\n        return validate(topic, raw), None\n    except CritiqueInvalid:\n        return None, CRITIQUE_UNAVAILABLE"}, "verdict": {"f": "app/verdict.py", "c": "def verdict(topic: Topic, critique: Critique) -> Verdict:\n    statuses = [p.status for p in critique.parts]\n\n    bad = sum(1 for s in statuses if s in (\"missing\", \"mislabeled\"))\n    if critique.forbidden_found or 2 * bad >= len(topic.required_parts):\n        return \"poor\"\n\n    if (\n        all(s == \"present\" for s in statuses)\n        and all(a.ok for a in critique.arrangement)\n        and not critique.text_issues\n    ):\n        return \"good\"\n\n    return \"needs_work\""}, "client": {"f": "app/openrouter.py", "c": "    body = {**body, \"usage\": {\"include\": True}}  # ask OpenRouter to report cost in usage\n    headers = {\"Authorization\": f\"Bearer {key}\"}\n    async with httpx.AsyncClient(headers=headers, transport=TRANSPORT) as client:\n        try:\n            return await _post_once(client, body, timeout)\n        except OpenRouterError as err:\n            if not (retry_5xx and (err.status == 429 or err.status >= 500)):\n                raise\n        await asyncio.sleep(RETRY_DELAY_S)\n        return await _post_once(client, body, timeout)"}, "checker": {"f": "app/checker.py · compare_part, condensed", "c": "    if invented:\n        return CheckRow(part=part, expected=None, critiqued=critiqued, match=\"✗ (invented)\")\n    if critiqued is None:\n        return CheckRow(part=part, expected=expected, critiqued=None, match=\"✗\")\n    if type(expected) is not type(critiqued):\n        return CheckRow(part=part, expected=expected, critiqued=critiqued, match=\"✗\")\n    if expected != critiqued:\n        return CheckRow(part=part, expected=expected, critiqued=critiqued, match=\"✗\")\n    return CheckRow(part=part, expected=expected, critiqued=critiqued, match=\"✓\")"}};
+function hl(src){
+  const esc = t => t.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const re = /(#[^\n]*|\/\/[^\n]*)|("""[\s\S]*?"""|"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|`[^`]*`)|\b(def|async|await|return|if|else|for|in|is|not|and|or|raise|try|except|as|const|None|True|False)\b/g;
+  let out = '', last = 0, m;
+  while ((m = re.exec(src))){
+    out += esc(src.slice(last, m.index));
+    out += m[1] ? `<span class="c">${esc(m[1])}</span>` : m[2] ? `<span class="s">${esc(m[2])}</span>` : `<span class="k">${m[3]}</span>`;
+    last = re.lastIndex;
+  }
+  return out + esc(src.slice(last));
+}
 function openDrawer(id){
   const d = D[id];
-  $('dbody').innerHTML = `<div class="tag">${d.tag}</div><h3>${d.t}</h3><p class="file">${d.f}</p>
-    <h4>what it does</h4><p>${d.what.replace(/\n/g,'<br>')}</p><h4>why this way</h4><p>${d.why}</p><h4>what breaks</h4><p>${d.breaks}</p>`;
+  $('dbody').innerHTML = `<div class="tag">${d.tag}</div><h3>${d.t}</h3>
+    <p class="lead2">${d.what.replace(/\n/g,'<br>')}</p>` +
+    (CODE[id] ? `<p class="file">${CODE[id].f}</p><pre class="code">${hl(CODE[id].c)}</pre>` : `<p class="file">${d.f}</p>`) +
+    `<div class="two"><div><h4>why this way</h4><p>${d.why}</p></div><div><h4>what breaks</h4><p>${d.breaks}</p></div></div>`;
   anodes.forEach(n => n.classList.toggle('picked', nid(n) === id)); $('drawer').classList.add('on');
 }
 function closeDrawer(){ $('drawer').classList.remove('on'); anodes.forEach(n => n.classList.remove('picked')); }
