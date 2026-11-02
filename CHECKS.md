@@ -18,7 +18,7 @@ Ten diagrams in `eval/images/`, one good and one deliberately flawed per topic, 
 - **First attempt, Nano Banana:** every "good" image had garbled or misplaced labels (see section 3), so none could serve as a correct reference.
 - **Final set:** the good images and the planted flaws were made with Nano Banana Pro. Some needed more than one try.
 - **Two images were reassigned:** one image the model was told to flaw came out clean, so it became the good image. The "good" circuit from the app's own prompt failed A2 (no + and −), so the final one adds "mark the + and − terminals" to the prompt. Prompts are in `eval/images/prompts*.json`.
-- **Who checked them:** Claude Code checked each image label by label and wrote `expected.json`. **Ralston and Javier should spot-check the five flawed entries before the presentation.**
+- **Who checked them:** Claude Code checked each image label by label and wrote `expected.json`. **Spot-check:** Javier checked the five flawed entries against their images on Nov 2; all five matched.
 - **Selection bias:** the flawed circuit was chosen *because* GPT-4o had already passed it, so this set leans toward GPT-4o's known weakness. Read section 2 with that in mind.
 
 ## 2. Critic comparison (behavior 16)
