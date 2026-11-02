@@ -1,6 +1,6 @@
 # Four-question annotation (DRAFT, not the final ANNOTATION.md)
 
-This is a starting point for Ralston and Javier. Sections 1 to 9 answer What is this, Why this choice, and What breaks in plain language, using only what the code, `spec.md` and `CHECKS.md` say. Each "What did I learn?" is left empty on purpose: it has to be your own experience, and it must include at least one place the agent was confidently wrong and you caught it. Rewrite anything that doesn't sound like you, then rename this file to `ANNOTATION.md`.
+This is a starting point for Ralston and Javier. Sections 1 to 10 answer What is this, Why this choice, and What breaks in plain language, using only what the code, `spec.md` and `CHECKS.md` say. Each "What did I learn?" is left empty on purpose: it has to be your own experience, and it must include at least one place the agent was confidently wrong and you caught it. Rewrite anything that doesn't sound like you, then rename this file to `ANNOTATION.md`.
 
 Examples already in the repo you can use for "What did I learn?" (use only what you really remember):
 - GPT-4o graded a mislabeled circuit "good" four times. The 10-image eval caught it (`CHECKS.md` section 5).
@@ -55,12 +55,23 @@ Examples already in the repo you can use for "What did I learn?" (use only what 
 
 ## 8. Eval harness (`eval/run_eval.py`, `eval/score.py`, `eval/expected.json`)
 **What is this?** A script that runs the generator and critic comparisons against the real APIs on 10 hand-checked images and writes the tables and cost totals into `CHECKS.md`.
-**Why this choice?** It reuses the app's own generator and critic code, so it measures what actually ships.
+**Why this choice?** It reuses the app's own generator and critic code, so it measures what actually ships. Scoring lives in `eval/score.py`, not in `app/checker.py`: it reads the app's `Critique` schema directly and ignores upper/lower case in part names, because the question here is "did the critic see the flaw?", not "did it spell the key exactly?".
 **What breaks?** Only 10 images and 3 repeats. `expected.json` was written by Claude Code and the team was supposed to spot-check the five flawed entries. The typo check first counted any text issue as a catch; review fixed it to require the planted label. A single network failure used to abort a run; now it becomes an invalid row.
 **What did I learn?** [YOUR WORDS]
 
 ## 9. Checker (`app/checker.py`), from the Week 6 integration
-**What is this?** Pure Python, no model and no network. It parses a critic reply (stripping one JSON fence), compares it to an answer key, and returns a result per part. A non-JSON reply is a structured failure, not a crash. A required part the critic didn't answer is a failing row. A part the critic made up is a failing row. An image passes only if every row passes.
+**What is this?** Pure Python, no model and no network. It parses a critic reply (stripping one JSON fence), compares it to an answer key, and returns a result per part. A non-JSON reply is a structured failure, not a crash. A required part the critic didn't answer is a failing row. A part the critic made up is a failing row. An image passes only if every row passes. `compare_critics()` lists the parts where two critics gave different answers and reports them as "critic uncertainty" next to the answer-key check, never instead of it. Its 27 tests (`tests/test_checker.py`, `tests/test_inter_critic.py`) came over from Week 6 in PR #14 and need no key.
 **Why this choice?** Comparison is strict equality: `True` is not `"true"`, and `"nucleus"` is not `"Nucleus"` or `"nucleeus"`. No fuzzy matching and no model as judge, so the same input always gives the same result and tests don't need a key.
-**What breaks?** Strictness means a harmless difference in wording counts as a failure. It is only as good as the answer key.
+**What breaks?** Strictness means a harmless difference in wording counts as a failure. It is only as good as the answer key. Nothing in the app or the eval calls it yet: it reads the Week 6 critique format, while the eval scores the app's `Critique` schema with `eval/score.py`. So the 15/15 and 9/15 results in section 10 did not come from this file.
+**What did I learn?** [YOUR WORDS]
+
+## 10. Model comparison findings (`CHECKS.md` sections 2 and 3)
+**What is this?** What the eval found when we ran two models for each AI job on the same inputs.
+- **Image model**, 15 images each from the app's unchanged prompt: `google/gemini-2.5-flash-image` had every label present and pointing at its part on only 2 of 15, and misspelled at least one label on 9 of 15 ("CELL MEMRANE", "mitohinotrion", "evaparation"). `google/gemini-3-pro-image` had every label pointing at its part on 15 of 15, with one misspelling ("chloplast").
+- **Critic**, 10 images × 3 repeats: `openai/gpt-4o` caught 9 of 15 planted flaws for $0.20. `xiaomi/mimo-v2.6-flash` caught 15 of 15 for $0.013. Neither raised a false flag on a good image.
+- **What GPT-4o missed both times was a label pointing at the wrong part** (the "wire" label on the battery, the swapped anther and stigma). It reads label text well but does not follow leader lines.
+
+**Why this choice?** The spec wrote both decision rules down before the runs, so the result decides, not our preference. Both rules triggered: Pro removes the garbled labels, and mimo matches GPT-4o on false flags and beats it on flaws caught. Neither switch is in the code yet, because a model change needs a new intent first. Pro also has a cost problem: about $35 for the semester against the $25 budget, so that one is a team decision.
+
+**What breaks?** The sample is small. The flawed circuit was picked *because* GPT-4o had already passed it, which tilts the test against GPT-4o; the flower swap was planted fresh and GPT-4o missed it too. Claude Code scored the image comparison by eye and wrote `expected.json`. mimo sometimes writes thousands of hidden reasoning tokens, so its speed varies.
 **What did I learn?** [YOUR WORDS]
