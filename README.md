@@ -43,3 +43,17 @@ Tags the course uses: `intent-spec`, `tp1-submitted`, `tp2-submitted`, `portfoli
 ## Running the agent
 
 Copy `.claude/settings.local.json.example` to `.claude/settings.local.json` and fill in your OpenRouter key and model slugs, or use the `orclaude` launcher from the [course repository](https://github.com/kousen/ai-integration-course/tree/main/scripts).
+
+## Cost
+
+Running total from OpenRouter, as of Nov 1, 2026: **$6.07** on the key (about $5.90 of it is the Oct 26 eval work; the key also covered earlier development runs and other coursework). Well under the ~$20 flag.
+
+| Source | Amount |
+|---|---|
+| Eval image set (Flash attempt plus 19 Nano Banana Pro images, some regenerated) | about $3.00 |
+| Generator comparison | $2.66 |
+| Critic comparison | $0.21 |
+| Spot checks and typo re-check | a few cents |
+| `runs.jsonl` (40 logged app calls, summed from the file) | $3.17 |
+
+Details are in `CHECKS.md` section 6. `runs.jsonl` is the per-call log; the OpenRouter Activity page is the source of truth.
