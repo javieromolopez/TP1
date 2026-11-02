@@ -333,48 +333,50 @@ code,.mono{font-family:var(--mono);font-size:.82em}
 -->
 
 <!-- 10 -->
-<section class="slide" data-steps="3" data-notes="[Javier]">
+<section class="slide" data-steps="4" data-notes="Thanks, Ralston. Everything you just saw works, but two things went wrong, and both come down to one problem: you cannot trust an AI's output just because it looks good. Our first image model was the cheap one, Gemini Flash. The pictures look great, but out of 15 runs, 9 had misspelled labels and only 2 had every label in the right place. <b>Click:</b> look here: CELL MEMRANE, pointing at the nucleus. CHORCOPOPT. A student would learn something false. <b>Click:</b> the better model, Gemini Pro, fixed almost all of it. <b>Click:</b> but it costs about 3.5 times as much, about $35 for the semester against our $25 budget. So we did not switch quietly. It is a decision for a new intent.">
   <div class="cover"></div><div class="pg">10</div>
-  <div class="body"><h2 class="in"><span class="ph">[headline]</span></h2></div>
+  <div class="body"><h2 class="in">The artist couldn't spell</h2></div>
   <div class="compare">
-    <figure class="slot st" data-step="0"><div class="frame"><img src="img/javier-1.png" alt="" onerror="this.closest('.slot').classList.add('empty')"><div class="empty-ph">[image]<br>slides/img/javier-1.png</div></div>
-      <figcaption><span class="hand">before</span><span class="ph">[caption]</span></figcaption></figure>
-    <figure class="slot st" data-step="1"><div class="frame"><img src="img/javier-2.png" alt="" onerror="this.closest('.slot').classList.add('empty')"><div class="empty-ph">[image]<br>slides/img/javier-2.png</div></div>
-      <figcaption><span class="hand">after</span><span class="ph">[caption]</span></figcaption></figure>
+    <figure class="slot st" data-step="0"><div class="frame"><img src="img/javier-1.png" alt="" onerror="this.closest('.slot').classList.add('empty')"><div class="empty-ph">[image]<br>slides/img/javier-1.png</div>
+        <div class="mark" data-step="1" data-kind="ring" style="left:61.8%;top:4.7%;width:17.4%;height:7.6%"></div>
+        <div class="mark" data-step="1" data-kind="ring" style="left:14.4%;top:67.2%;width:16.3%;height:7.6%"></div></div>
+      <figcaption><span class="hand">before</span>Gemini Flash: 9 of 15 runs misspelled a label</figcaption></figure>
+    <figure class="slot st" data-step="2"><div class="frame"><img src="img/javier-2.png" alt="" onerror="this.closest('.slot').classList.add('empty')"><div class="empty-ph">[image]<br>slides/img/javier-2.png</div></div>
+      <figcaption><span class="hand">after</span>Gemini Pro: 1 of 15</figcaption></figure>
   </div>
-  <p class="takeaway st" data-step="2"><span class="ph">[what we did about it]</span></p>
+  <p class="takeaway st" data-step="3">Pro costs 3.5&times; and breaks our $25 budget, so it goes to a new intent, not a quiet switch.</p>
 </section>
 
 <!-- 11 -->
-<section class="slide" data-steps="3" data-notes="[Javier]">
+<section class="slide" data-steps="3" data-notes="(Short on time? Say only the two numbers and move on.) The second problem is scarier. Our critic, GPT-4o, looked at a circuit where the wire label pointed into the battery, and said good. Four times in a row. So we built a test: 10 images, a good one and one with a planted mistake for each topic, three runs each. <b>Click:</b> a much cheaper model, MiMo, caught all 15, with no false alarms. <b>Click:</b> to be fair, we picked that circuit because GPT-4o had already missed it. But it also missed a mistake we planted fresh in the flower. Both misses were a label pointing at the wrong part. The lesson: an AI checking an AI still needs a test with known answers.">
   <div class="cover"></div><div class="pg">11</div>
-  <div class="body"><h2 class="in"><span class="ph">[headline]</span></h2></div>
+  <div class="body"><h2 class="in">The critic got fooled</h2></div>
   <div class="stats">
-    <div class="stat st" data-step="0"><div class="big ph">[#]</div><div class="lab ph">[what the number is]</div><div class="who ph">[model or option]</div></div>
-    <div class="stat st" data-step="1"><div class="big ph">[#]</div><div class="lab ph">[what the number is]</div><div class="who ph">[model or option]</div></div>
+    <div class="stat st" data-step="0"><div class="big">9/15</div><div class="lab">planted mistakes caught</div><div class="who">openai/gpt-4o &middot; $0.20</div></div>
+    <div class="stat st" data-step="1"><div class="big">15/15</div><div class="lab">planted mistakes caught</div><div class="who">xiaomi/mimo-v2.6-flash &middot; $0.013</div></div>
   </div>
-  <p class="takeaway st" data-step="2"><span class="ph">[so what]</span></p>
+  <p class="takeaway st" data-step="2">GPT-4o passed a broken circuit 4 times. The cheaper critic caught every mistake.</p>
 </section>
 
 <!-- 12 -->
-<section class="slide" data-steps="3" data-notes="[Javier]">
+<section class="slide" data-steps="3" data-notes="Three things, in order. One: switch the critic to the cheaper model that won. We have not changed the code yet on purpose: the intent changes first, then the code. <b>Click:</b> two: our checklist wants plus and minus on the battery, but our prompt never asked for them, so a correct-looking circuit could fail. That is a one-line prompt fix. <b>Click:</b> three: clean labels versus going over budget is a team decision. So far we have spent about six dollars on the key, and one run costs about five cents.">
   <div class="cover"></div><div class="pg">12</div>
   <div class="body">
     <h2 class="in">Next</h2>
     <div class="cols">
-      <div class="col st" data-step="0"><div class="n">1</div><h3 class="ph">[title]</h3><p class="ph">[one or two lines]</p></div>
-      <div class="col st" data-step="1"><div class="n">2</div><h3 class="ph">[title]</h3><p class="ph">[one or two lines]</p></div>
-      <div class="col st" data-step="2"><div class="n">3</div><h3 class="ph">[title]</h3><p class="ph">[one or two lines]</p></div>
+      <div class="col st" data-step="0"><div class="n">1</div><h3>Switch the critic</h3><p>To the cheaper model that won, through a new intent first.</p></div>
+      <div class="col st" data-step="1"><div class="n">2</div><h3>Fix the circuit prompt</h3><p>Ask for + and &minus; on the battery, so the prompt matches the checklist.</p></div>
+      <div class="col st" data-step="2"><div class="n">3</div><h3>Decide on Pro</h3><p>Clean labels or the $25 budget: a team decision.</p></div>
     </div>
   </div>
 </section>
 
 <!-- 13 -->
-<section class="slide s-close" data-notes="[Javier] Open the peer notes form, take questions.">
+<section class="slide s-close" data-notes="In one sentence: the AI draws, a second AI looks, and our code decides the grade. Thank you. Questions? (Open the peer notes form.)">
   <div class="cover"></div><div class="pg">13</div>
   <div class="body">
     <h2 class="in">Questions</h2>
-    <p class="sub in d1"><span class="ph">[one-line recap]</span></p>
+    <p class="sub in d1">The AI draws, a second AI looks, our code decides.</p>
     <div class="names in d2"><span>Ralston Raphael</span><span>Javier Romo</span></div>
     <p class="repo in d2">github.com/javieromolopez/TP1</p>
   </div>
