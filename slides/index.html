@@ -3,384 +3,266 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Diagram Check</title>
+<title>Diagram Check · TP1</title>
 <style>
+/* The deck borrows the app's own look: notebook cover, Geist, and a teacher's red pen (Kalam). */
+@font-face{font-family:"Geist";src:url(fonts/geist-sans-latin-400-normal.woff2) format("woff2");font-weight:400}
+@font-face{font-family:"Geist";src:url(fonts/geist-sans-latin-500-normal.woff2) format("woff2");font-weight:500}
+@font-face{font-family:"Geist";src:url(fonts/geist-sans-latin-600-normal.woff2) format("woff2");font-weight:600}
+@font-face{font-family:"Geist";src:url(fonts/geist-sans-latin-800-normal.woff2) format("woff2");font-weight:800}
+@font-face{font-family:"Geist Mono";src:url(fonts/geist-mono-latin-400-normal.woff2) format("woff2");font-weight:400}
+@font-face{font-family:"Kalam";src:url(fonts/kalam-latin-400-normal.woff2) format("woff2");font-weight:400}
+@font-face{font-family:"Kalam";src:url(fonts/kalam-latin-700-normal.woff2) format("woff2");font-weight:700}
 :root{
-  --paper:#f6f4ef; --card:#ffffff; --ink:#14171f; --muted:#5f6675; --faint:#9aa1ae; --line:#dcd8cf;
-  --red:#e2352a; --red-soft:rgba(226,53,42,.12); --blue:#2563eb; --blue-soft:#e6eefe;
-  --ai:#6b46d9; --ai-bg:#f0ebff; --code:#13804f; --code-bg:#e4f5ec; --data:#a5600b; --data-bg:#fcefd8;
-  --night:#0f1320; --ease:cubic-bezier(.22,.8,.22,1);
+  --page:#fff; --ink:#2f3137; --muted:#73767d; --faint:#a2a5ab; --line:#ebebea; --hover:#f5f5f3;
+  --cover:#eaf1fb; --rule:#cfdff3; --margin:#f2b8bf;
+  --good:#2e8b57; --good-bg:#e9f5ee; --pen:#d0384e; --pen-bg:#fcedef; --warn:#b07a12; --warn-bg:#fbf3dc; --blue:#2f6fde;
+  --sans:"Geist",system-ui,-apple-system,sans-serif; --mono:"Geist Mono",ui-monospace,Menlo,monospace; --hand:"Kalam","Comic Sans MS",cursive;
+  --ease:cubic-bezier(.22,.8,.22,1);
 }
 *{box-sizing:border-box}
-html,body{margin:0;height:100%;background:#0b0d14;overflow:hidden}
-body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
-#viewport{position:fixed;inset:0}
-#deck{width:1920px;height:1080px;position:absolute;left:50%;top:50%;transform-origin:center;background:var(--paper);overflow:hidden;border-radius:2px}
+html,body{margin:0;height:100%;background:#1b1c1f;overflow:hidden}
+body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
+#deck{width:1920px;height:1080px;position:absolute;left:50%;top:50%;transform-origin:center;background:var(--page);overflow:hidden}
 
-/* slides */
-.slide{position:absolute;inset:0;padding:96px 120px;opacity:0;visibility:hidden;transform:translateX(60px);transition:opacity .6s var(--ease),transform .7s var(--ease),visibility 0s .7s}
-.slide.active{opacity:1;visibility:visible;transform:none;transition:opacity .6s var(--ease),transform .7s var(--ease),visibility 0s}
-.slide.past{transform:translateX(-60px)}
-.kicker{font-size:22px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin:0 0 14px}
-h1.title{font-size:76px;line-height:1.04;letter-spacing:-.025em;margin:0;font-weight:800;max-width:1500px}
-h2.title{font-size:58px;line-height:1.08;letter-spacing:-.02em;margin:0;font-weight:800;max-width:1600px}
-.lead{font-size:30px;line-height:1.45;color:var(--muted);max-width:1300px;margin:24px 0 0}
-.in{opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease),transform .8s var(--ease)}
+/* every slide has the app's notebook cover across the top */
+.slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .5s var(--ease),visibility 0s .5s}
+.slide.active{opacity:1;visibility:visible;transition:opacity .5s var(--ease),visibility 0s}
+.cover{position:absolute;left:0;right:0;top:0;height:150px;
+  background:linear-gradient(90deg,transparent 150px,var(--margin) 150px,var(--margin) 153px,transparent 153px),
+             repeating-linear-gradient(180deg,var(--cover) 0 35px,var(--rule) 35px 37px)}
+.pg{position:absolute;left:62px;top:56px;font:700 44px/1 var(--hand);color:var(--pen);transform:rotate(-6deg)}
+.body{position:absolute;left:200px;right:140px;top:200px;bottom:90px}
+h1,h2{margin:0;font-weight:800;letter-spacing:-.025em;line-height:1.05}
+h2{font-size:64px}
+.sub{font-size:30px;line-height:1.45;color:var(--muted);margin:22px 0 0;max-width:1300px}
+.sub b{color:var(--ink);font-weight:600}
+code,.mono{font-family:var(--mono);font-size:.82em}
+.hand{font-family:var(--hand);color:var(--pen)}
+.in{opacity:0;transform:translateY(14px);transition:opacity .6s var(--ease),transform .7s var(--ease)}
 .active .in{opacity:1;transform:none}
-.active .d1{transition-delay:.12s}.active .d2{transition-delay:.24s}.active .d3{transition-delay:.36s}.active .d4{transition-delay:.48s}.active .d5{transition-delay:.6s}
+.active .d1{transition-delay:.1s}.active .d2{transition-delay:.2s}.active .d3{transition-delay:.3s}.active .d4{transition-delay:.4s}
+.st{opacity:0;transform:translateY(14px);transition:opacity .5s var(--ease),transform .6s var(--ease)}
+.st.shown{opacity:1;transform:none}
 
-/* title slide */
-.s-title{background:radial-gradient(1200px 700px at 78% 30%,#1d2440 0%,var(--night) 60%);color:#fff;display:flex;flex-direction:column;justify-content:center}
-.s-title h1{font-size:132px;letter-spacing:-.04em;line-height:.95;margin:0;font-weight:850}
-.s-title .tag{font-size:40px;line-height:1.35;color:#b9c1d6;margin:34px 0 0;max-width:1200px}
-.s-title .tag b{color:#fff;font-weight:700}
-.s-title .meta{position:absolute;left:120px;bottom:90px;font-size:24px;color:#8a93ab;display:flex;gap:40px}
-.s-title .meta span b{color:#e6e9f2;font-weight:600}
+/* title: the whole slide is the notebook cover */
+.s-title .cover{height:100%}
+.s-title .body{top:330px}
+.s-title h1{font-size:180px;letter-spacing:-.045em}
+.s-title .course{font:400 30px var(--mono);color:var(--muted);margin:0 0 24px}
+.s-title .names{position:absolute;left:200px;bottom:120px;font-size:30px;font-weight:500;display:flex;gap:56px}
+.s-title .names span:last-child{color:var(--muted);font-weight:400}
+.grade{position:absolute;right:240px;top:300px;font:700 120px/1 var(--hand);color:var(--pen);transform:rotate(-8deg)}
+.grade svg{position:absolute;left:-60px;top:-50px;width:calc(100% + 120px);height:calc(100% + 100px);overflow:visible}
 
-/* three steps */
-.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:84px}
-.step{background:var(--card);border-radius:28px;padding:44px 40px;box-shadow:0 1px 0 var(--line),0 24px 60px -30px rgba(20,23,31,.25);position:relative}
-.step .num{font-size:20px;font-weight:800;letter-spacing:.12em;color:var(--faint)}
-.step .ico{width:84px;height:84px;border-radius:22px;display:grid;place-items:center;font-size:44px;margin:16px 0 24px}
-.step h3{font-size:44px;margin:0 0 12px;letter-spacing:-.01em}
-.step p{font-size:26px;line-height:1.45;color:var(--muted);margin:0}
-.step .who{display:inline-block;margin-top:22px;font:600 20px ui-monospace,Menlo,monospace;padding:6px 12px;border-radius:8px}
-.arrow-between{position:absolute;right:-34px;top:50%;width:28px;height:28px;color:var(--faint);transform:translateY(-50%)}
-.oneidea{margin-top:56px;font-size:34px;font-weight:700;text-align:center}
-.oneidea em{font-style:normal;color:var(--red)}
+/* problem */
+.split{display:grid;grid-template-columns:1fr 760px;gap:90px;align-items:start;margin-top:56px}
+.crop{position:relative;height:640px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
+.crop .z{position:absolute;inset:0;transform-origin:55% 12%;transition:transform 1.6s var(--ease) .5s}
+.active .crop .z{transform:scale(1.5)}
+.crop img{width:100%;height:100%;object-fit:cover;display:block}
 
-/* problem slide */
-.problem{display:grid;grid-template-columns:1fr 1.05fr;gap:80px;align-items:center;height:100%}
-.zoomcrop{border-radius:28px;overflow:hidden;background:#fff;box-shadow:0 30px 80px -30px rgba(0,0,0,.35);position:relative;height:640px}
-.zoomcrop{aspect-ratio:904/904;height:auto!important}
-.zin{position:absolute;inset:0;transform-origin:55% 10%;transition:transform 1.8s var(--ease) .9s}
-.zin img{width:100%;height:100%;display:block;object-fit:cover}
-.active .zin{transform:scale(1.45)}
-.active .zoomcrop .mark.pring .shape{clip-path:circle(75% at 50% 50%);opacity:1;transition-delay:1.6s}
-.bigq{font-size:64px;font-weight:800;letter-spacing:-.02em;line-height:1.08;margin:0}
-.bigq .strike{color:var(--red)}
+/* how it works */
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:64px;margin-top:80px}
+.col .n{font:700 72px/1 var(--hand);color:var(--pen)}
+.col h3{font-size:38px;font-weight:700;letter-spacing:-.015em;margin:18px 0 14px;line-height:1.15}
+.col p{font-size:26px;line-height:1.5;color:var(--muted);margin:0}
+.col p code{color:var(--ink)}
 
-/* demo cue */
-.s-demo{background:var(--night);color:#fff;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
-.s-demo h2{font-size:120px;margin:0;letter-spacing:-.03em}
-.live{display:inline-flex;align-items:center;gap:14px;font-size:26px;font-weight:800;letter-spacing:.16em;color:#ff6b5f;margin-bottom:30px}
-.live i{width:16px;height:16px;border-radius:50%;background:#ff4d40;box-shadow:0 0 0 0 rgba(255,77,64,.6);animation:pulse 1.6s infinite}
-@keyframes pulse{70%{box-shadow:0 0 0 18px rgba(255,77,64,0)}100%{box-shadow:0 0 0 0 rgba(255,77,64,0)}}
-.demo-steps{display:flex;gap:28px;margin-top:56px}
-.demo-steps div{font-size:30px;color:#c9cfdf;padding:22px 30px;border:1.5px solid rgba(255,255,255,.18);border-radius:18px}
-.demo-steps b{color:#fff;margin-right:12px}
-.fallback{position:absolute;bottom:80px;left:120px;font-size:22px;color:#7e879e}
+/* demo */
+.s-demo h2{font-size:200px;letter-spacing:-.05em;margin-top:90px}
+.s-demo .sub{font-family:var(--mono);font-size:30px}
+.s-demo .aside{position:absolute;right:0;bottom:30px;font:400 36px var(--hand);color:var(--pen);transform:rotate(-3deg)}
 
-/* screenshot frames */
-.shotwrap{position:absolute;left:120px;right:120px;top:250px;bottom:140px;display:grid;place-items:center}
-.shot{position:relative;overflow:hidden;border-radius:22px;background:#fff;box-shadow:0 1px 0 var(--line),0 40px 90px -40px rgba(20,23,31,.45)}
-.zoomer{position:absolute;inset:0;transform-origin:0 0;transition:transform 1.1s var(--ease)}
+/* screenshots with red-pen marks */
+.shotarea{position:absolute;left:200px;right:140px;top:330px;bottom:70px;display:flex;align-items:flex-start}
+.shot{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:8px;background:#fff}
+.zoomer{position:absolute;inset:0;transform-origin:0 0;transition:transform 1s var(--ease)}
 .zoomer img{width:100%;height:100%;display:block}
 .mark{position:absolute;pointer-events:none}
-.mark .shape{position:absolute;inset:-5px;border:5px solid var(--red);background:var(--red-soft);border-radius:12px;clip-path:inset(0 100% 0 0 round 12px);transition:clip-path .85s var(--ease) .1s,opacity .4s;opacity:0}
-.mark.on .shape{clip-path:inset(0 0 0 0 round 12px);opacity:1}
-.mark.ring .shape{border-radius:50%;inset:-10px -14px;clip-path:circle(0% at 50% 50%)}
-.mark.ring.on .shape{clip-path:circle(75% at 50% 50%)}
-.spot{position:absolute;border-radius:16px;box-shadow:0 0 0 4000px rgba(12,14,22,.42);opacity:0;transition:all 1s var(--ease);pointer-events:none}
-.spot.on{opacity:1}
-.callout{position:absolute;left:120px;right:120px;bottom:56px;display:flex;justify-content:center;pointer-events:none}
-.callout span{font-size:32px;font-weight:700;background:var(--ink);color:#fff;padding:16px 28px;border-radius:16px;box-shadow:0 18px 40px -16px rgba(0,0,0,.5);opacity:0;transform:translateY(16px);transition:opacity .45s var(--ease),transform .55s var(--ease)}
-.callout span.on{opacity:1;transform:none}
-.callout span .dot{display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--red);margin-right:14px;vertical-align:2px}
-.shot-head{position:absolute;left:120px;top:96px;right:120px}
+.pen{position:absolute;overflow:visible;pointer-events:none}
+.pen path{fill:none;stroke:var(--pen);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;transition:stroke-dashoffset .75s var(--ease) .05s}
+.note{position:absolute;font:700 38px/1.15 var(--hand);color:var(--pen);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .4s .45s, left .9s var(--ease), top .9s var(--ease);
+  text-shadow:0 0 4px #fff,0 0 8px #fff,0 0 12px #fff}
+.note.on{opacity:1}
+.margin-note{position:absolute;right:140px;top:228px;max-width:900px;text-align:right;font:700 40px/1.2 var(--hand);color:var(--pen);transform:rotate(-2deg);margin:0;opacity:0;transition:opacity .4s .5s}
+.margin-note.on{opacity:1}
 
 /* architecture */
-.archwrap{position:absolute;left:110px;top:205px;width:1330px;height:730px}
-#arch{width:100%;height:100%}
-#arch .node{cursor:pointer}
-#arch .node rect{stroke-width:2.2;transition:opacity .5s,stroke-width .3s,filter .3s}
-#arch .node text{pointer-events:none;transition:opacity .5s}
-#arch .t1{font:700 14px -apple-system,Segoe UI,Roboto,sans-serif;fill:var(--ink)}
-#arch .t2{font:11.5px ui-monospace,Menlo,monospace;fill:var(--muted)}
-#arch .t3{font:11.5px -apple-system,Segoe UI,Roboto,sans-serif;fill:var(--muted)}
-#arch .k-ai rect{fill:var(--ai-bg);stroke:var(--ai)}
-#arch .k-code rect{fill:var(--code-bg);stroke:var(--code)}
-#arch .k-data rect{fill:var(--data-bg);stroke:var(--data)}
-#arch .k-ui rect{fill:var(--blue-soft);stroke:var(--blue)}
-#arch .k-off rect{fill:#f0f1f4;stroke:#9aa1ae;stroke-dasharray:6 4}
-#arch .node:hover rect{stroke-width:3.5}
-#arch .node.dim{opacity:.18}
-#arch .node.hl rect{stroke-width:3.5;filter:drop-shadow(0 6px 14px rgba(20,23,31,.18))}
-#arch .node.picked rect{stroke:var(--red);stroke-width:4}
-#arch .node{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(.92);transition:opacity .6s var(--ease),transform .7s var(--ease)}
-#arch.built .node{opacity:1;transform:none}
-#arch.built .node.dim{opacity:.18}
-#arch .edge{fill:none;stroke:#c3c7d1;stroke-width:2.5;stroke-dasharray:var(--len);stroke-dashoffset:var(--len);transition:stroke-dashoffset 1s var(--ease),stroke .4s,opacity .4s}
+.archwrap{position:absolute;left:180px;top:300px;width:1280px;height:703px}
+#arch{width:100%;height:100%;overflow:visible}
+#arch .node{cursor:pointer;opacity:0;transition:opacity .5s var(--ease)}
+#arch.built .node{opacity:1}
+#arch.built .node.dim{opacity:.22}
+#arch .node rect{stroke-width:1.5;transition:stroke-width .2s}
+#arch .node:hover rect{stroke-width:2.5}
+#arch .t1{font:600 14px var(--sans);fill:var(--ink)}
+#arch .t2{font:11.5px var(--mono);fill:var(--muted)}
+#arch .t3{font:11.5px var(--sans);fill:var(--muted)}
+#arch .k-ai rect{fill:#eaf1fb;stroke:var(--blue)}
+#arch .k-code rect{fill:var(--good-bg);stroke:var(--good)}
+#arch .k-data rect{fill:var(--warn-bg);stroke:var(--warn)}
+#arch .k-ui rect{fill:var(--hover);stroke:var(--ink)}
+#arch .k-off rect{fill:#fff;stroke:var(--faint);stroke-dasharray:5 4}
+#arch .node.picked rect{stroke:var(--pen);stroke-width:2.5}
+#arch .edge{fill:none;stroke:#c9cbd0;stroke-width:2;stroke-dasharray:var(--len);stroke-dashoffset:var(--len);transition:stroke-dashoffset .9s var(--ease),stroke .3s,opacity .3s}
 #arch.built .edge{stroke-dashoffset:0}
-#arch .edge.on{stroke:var(--blue);stroke-width:3.5}
-#arch .edge.hot{stroke:var(--red);stroke-width:3.5}
-#arch .edge.dim{opacity:.25}
-#arch .flow{fill:none;stroke:var(--blue);stroke-width:3.5;stroke-dasharray:7 9;opacity:0;animation:flow 0.9s linear infinite;pointer-events:none;transition:opacity .4s}
-#arch .flow.on{opacity:.9}
-#arch .flow.hotflow{stroke:var(--red)}
-@keyframes flow{to{stroke-dashoffset:-16}}
-#arch .lbl{font:11.5px -apple-system,Segoe UI,Roboto,sans-serif;fill:var(--faint);opacity:0;transition:opacity .6s .6s}
+#arch .edge.on{stroke:var(--ink);stroke-width:2.5}
+#arch .edge.hot{stroke:var(--pen);stroke-width:2.5}
+#arch .edge.dim{opacity:.3}
+#arch .flow{fill:none;stroke:var(--ink);stroke-width:2.5;stroke-dasharray:6 8;animation:flow .9s linear infinite;pointer-events:none}
+#arch .flow.hotflow{stroke:var(--pen)}
+@keyframes flow{to{stroke-dashoffset:-14}}
+#arch .lbl{font:11px var(--sans);fill:var(--faint);opacity:0;transition:opacity .5s .5s}
 #arch.built .lbl{opacity:1}
-#arch .box{fill:none;stroke:#cfcbc2;stroke-width:1.6;stroke-dasharray:3 6;opacity:0;transition:opacity .8s}
-#arch.built .box{opacity:1}
-#arch .cap{font:700 11.5px -apple-system,Segoe UI,Roboto,sans-serif;fill:var(--faint);letter-spacing:.08em}
-#packet{fill:var(--red);opacity:0;filter:drop-shadow(0 0 6px rgba(226,53,42,.6))}
-.archcap{position:absolute;left:120px;right:520px;bottom:36px;min-height:96px}
-.archcap .n{font-size:20px;font-weight:800;letter-spacing:.12em;color:var(--red);text-transform:uppercase}
-.archcap .t{font-size:34px;font-weight:700;margin-top:4px;transition:opacity .35s}
-.archcap .d{font-size:24px;color:var(--muted);margin-top:6px;line-height:1.4;max-width:1180px}
-.legend{position:absolute;right:120px;top:120px;display:flex;flex-direction:column;gap:10px;font-size:20px;color:var(--muted)}
-.legend i{display:inline-block;width:18px;height:18px;border-radius:5px;margin-right:10px;vertical-align:-3px;border:2px solid}
-.drawer{position:absolute;top:0;right:0;bottom:0;width:560px;background:var(--card);box-shadow:-30px 0 80px -40px rgba(0,0,0,.4);padding:72px 52px;transform:translateX(105%);transition:transform .6s var(--ease);z-index:5;overflow:auto}
+#arch .box{fill:none;stroke:#d9dade;stroke-width:1.2;stroke-dasharray:3 5}
+#arch .cap{font:10.5px var(--mono);fill:var(--faint)}
+#arch .loops path{fill:none;stroke:var(--pen);stroke-width:2.6;stroke-linecap:round;transition:stroke-dashoffset .7s var(--ease)}
+#arch .anote{font:700 15px var(--hand);fill:var(--pen)}
+#packet{fill:var(--pen);opacity:0}
+.archside{position:absolute;left:1500px;right:110px;top:330px}
+.archside .n{font:700 34px var(--hand);color:var(--pen)}
+.archside .t{font-size:34px;font-weight:700;letter-spacing:-.015em;line-height:1.15;margin-top:8px}
+.archside .d{font-size:23px;line-height:1.5;color:var(--muted);margin-top:14px}
+.archside .d code{color:var(--ink)}
+.archnav{position:absolute;left:1500px;bottom:110px;display:flex;gap:10px;z-index:4}
+.archnav button{font:500 20px var(--sans);border-radius:8px;padding:12px 20px;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink)}
+.archnav button.primary{background:var(--ink);border-color:var(--ink);color:#fff}
+.archcount{position:absolute;left:1500px;bottom:76px;font:400 18px var(--mono);color:var(--faint)}
+.legend{position:absolute;left:200px;top:262px;display:flex;gap:26px;font-size:18px;color:var(--muted)}
+.legend i{display:inline-block;width:16px;height:16px;border-radius:4px;margin-right:8px;vertical-align:-2px;border:1.5px solid}
+.drawer{position:absolute;top:0;right:0;bottom:0;width:560px;background:#fff;border-left:1px solid var(--line);padding:190px 52px 60px;transform:translateX(102%);transition:transform .5s var(--ease);z-index:6;overflow:auto}
 .drawer.on{transform:none}
-.drawer .x{position:absolute;right:30px;top:28px;border:0;background:none;font-size:36px;color:var(--faint);cursor:pointer}
-.drawer .chipk{display:inline-block;font-size:17px;font-weight:700;padding:6px 14px;border-radius:999px;border:2px solid;margin-bottom:16px}
-.drawer h3{font-size:44px;margin:0;letter-spacing:-.01em}
-.drawer .file{font:19px ui-monospace,Menlo,monospace;color:var(--muted);margin:8px 0 26px;word-break:break-all}
-.drawer h4{font-size:16px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin:26px 0 6px}
-.drawer p{font-size:23px;line-height:1.5;margin:0}
-.callbox{position:absolute;pointer-events:none;opacity:0;transition:opacity .5s .3s}
-.callbox.on{opacity:1}
+.drawer .x{position:absolute;right:28px;top:170px;border:0;background:none;font-size:34px;color:var(--faint);cursor:pointer}
+.drawer .tag{font:400 17px var(--mono);color:var(--muted)}
+.drawer h3{font-size:44px;font-weight:800;letter-spacing:-.02em;margin:8px 0 4px}
+.drawer .file{font:17px var(--mono);color:var(--muted);margin:0 0 22px;word-break:break-all}
+.drawer h4{font:700 26px var(--hand);color:var(--pen);margin:22px 0 4px}
+.drawer p{font-size:22px;line-height:1.5;margin:0}
 
-/* handoff */
-.s-hand{background:var(--night);color:#fff;display:flex;flex-direction:column;justify-content:center}
-.s-hand h2{font-size:96px;margin:0;letter-spacing:-.03em}
-.s-hand p{font-size:34px;color:#aeb6cb;margin-top:22px}
-
-
-/* ---------- Javier's section: reusable layouts ---------- */
-.ph{color:var(--faint);background:repeating-linear-gradient(90deg,transparent 0 6px,rgba(154,161,174,.0) 6px 12px);border-bottom:3px dashed #c9c4b8;padding-bottom:2px}
-.s-hand .ph,.s-close .ph{color:#7e879e;border-color:#3a4258}
-.st{opacity:0;transform:translateY(22px);transition:opacity .6s var(--ease),transform .7s var(--ease)}
-.st.shown{opacity:1;transform:none}
-.compare{position:absolute;left:120px;right:120px;top:300px;bottom:190px;display:grid;grid-template-columns:1fr 1fr;gap:48px}
-.slot{margin:0;display:flex;flex-direction:column;gap:18px;min-height:0}
-.slot .frame{position:relative;flex:1;min-height:0;border-radius:22px;overflow:hidden;background:#fff;box-shadow:0 1px 0 var(--line),0 30px 70px -36px rgba(20,23,31,.4)}
-.slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff}
-.slot .empty-ph{position:absolute;inset:18px;border:3px dashed #d6d1c6;border-radius:16px;display:none;place-items:center;text-align:center;color:var(--faint);font-size:24px;line-height:1.5;padding:30px}
+/* Javier: layouts with [placeholders] */
+.ph{color:var(--faint);border-bottom:2px dashed #d6d7da}
+.compare{position:absolute;left:200px;right:140px;top:360px;bottom:170px;display:grid;grid-template-columns:1fr 1fr;gap:48px}
+.slot{margin:0;display:flex;flex-direction:column;gap:14px;min-height:0}
+.slot .frame{position:relative;flex:1;min-height:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
+.slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.slot .empty-ph{position:absolute;inset:16px;border:1.5px dashed #d6d7da;border-radius:6px;display:none;place-items:center;text-align:center;color:var(--faint);font:20px/1.6 var(--mono)}
 .slot.empty img{display:none}.slot.empty .empty-ph{display:grid}
-.slot figcaption{font-size:26px;font-weight:600}
-.slot .badge{display:inline-block;font-size:18px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:6px 12px;border-radius:8px;margin-right:12px;vertical-align:3px}
-.badge.bad{background:var(--red-soft);color:var(--red)}.badge.good{background:var(--code-bg);color:var(--code)}
-.takeaway{position:absolute;left:120px;right:120px;bottom:60px;display:flex;justify-content:center}
-.takeaway span{font-size:32px;font-weight:700;background:var(--ink);color:#fff;padding:18px 30px;border-radius:16px;box-shadow:0 18px 40px -16px rgba(0,0,0,.5)}
-.takeaway span .dot{display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--red);margin-right:14px;vertical-align:2px}
-.stats{position:absolute;left:120px;right:120px;top:320px;display:grid;grid-template-columns:1fr auto 1fr;gap:56px;align-items:center}
-.stat{background:var(--card);border-radius:28px;padding:56px 52px;box-shadow:0 1px 0 var(--line),0 24px 60px -30px rgba(20,23,31,.25)}
-.stat .big{font-size:150px;font-weight:850;letter-spacing:-.04em;line-height:1}
-.stat .lab{font-size:28px;color:var(--muted);margin-top:14px}
-.stat .who{display:inline-block;margin-top:24px;font:600 22px ui-monospace,Menlo,monospace;padding:7px 14px;border-radius:8px;background:var(--paper)}
-.stat.lose .big{color:var(--red)}.stat.win .big{color:var(--code)}
-.vs{font-size:40px;font-weight:800;color:var(--faint)}
-.close-names{display:flex;gap:40px;font-size:28px;color:#aeb6cb;margin-top:40px}
-.close-names b{color:#fff}
-.s-close{background:radial-gradient(1200px 700px at 78% 30%,#1d2440 0%,var(--night) 60%);color:#fff;display:flex;flex-direction:column;justify-content:center}
-.s-close h2{font-size:140px;margin:0;letter-spacing:-.04em;line-height:1}
-.s-close .recap{font-size:38px;color:#c9cfdf;margin-top:28px;max-width:1400px}
-.s-close .repo{position:absolute;left:120px;bottom:90px;font:24px ui-monospace,Menlo,monospace;color:#8a93ab}
+.slot figcaption{font-size:24px}
+.slot figcaption .hand{font-size:30px;margin-right:12px}
+.takeaway{position:absolute;left:200px;right:140px;bottom:80px;font-size:34px;font-weight:600}
+.stats{position:absolute;left:200px;right:140px;top:380px;display:grid;grid-template-columns:1fr 1fr;gap:100px}
+.stat{border-top:2px solid var(--ink);padding-top:30px}
+.stat .big{font-size:170px;font-weight:800;letter-spacing:-.05em;line-height:1}
+.stat .lab{font-size:28px;color:var(--muted);margin-top:16px}
+.stat .who{font:400 21px var(--mono);color:var(--faint);margin-top:14px}
+
+.s-close h2{font-size:150px;letter-spacing:-.045em;margin-top:70px}
+.s-close .names{font-size:30px;font-weight:500;margin-top:60px;display:flex;gap:56px}
+.s-close .repo{font:400 26px var(--mono);color:var(--muted);margin-top:22px}
 
 /* chrome */
-#bar{position:absolute;left:0;bottom:0;height:6px;background:var(--red);transition:width .6s var(--ease);z-index:10}
-#nav{position:fixed;right:24px;bottom:22px;display:flex;gap:10px;z-index:20;opacity:.35;transition:opacity .3s}
+#bar{position:absolute;left:0;bottom:0;height:4px;background:var(--pen);transition:width .5s var(--ease);z-index:10}
+#nav{position:fixed;right:22px;bottom:20px;display:flex;gap:8px;z-index:20;opacity:.3;transition:opacity .3s}
 #nav:hover{opacity:1}
-#nav button{font:600 15px -apple-system,sans-serif;border:0;border-radius:10px;padding:10px 14px;background:rgba(255,255,255,.92);color:#14171f;cursor:pointer}
-#count{position:fixed;left:24px;bottom:26px;font:600 14px -apple-system,sans-serif;color:rgba(255,255,255,.45);z-index:20}
-#notes{position:fixed;left:0;right:0;bottom:0;max-height:34vh;overflow:auto;background:rgba(10,12,18,.94);color:#e8ebf3;font:20px/1.5 -apple-system,sans-serif;padding:18px 28px 70px;z-index:15;transform:translateY(100%);transition:transform .4s var(--ease)}
+#nav button{font:500 14px var(--sans);border:0;border-radius:6px;padding:9px 13px;background:#fff;color:var(--ink);cursor:pointer}
+#notes{position:fixed;left:0;right:0;bottom:0;max-height:34vh;overflow:auto;background:#1b1c1f;color:#eceae6;font:20px/1.5 var(--sans);padding:18px 28px 70px;z-index:15;transform:translateY(100%);transition:transform .35s var(--ease)}
 #notes.on{transform:none}
-#notes b{color:#ff8a80}
-#notes .tm{float:right;color:#9aa3b8;font-variant-numeric:tabular-nums}
-.archnext{position:absolute;right:120px;bottom:60px;display:flex;gap:12px;z-index:4}
-.archnext button{font:700 22px -apple-system,sans-serif;border-radius:14px;padding:16px 26px;cursor:pointer;border:2px solid var(--ink);background:var(--card);color:var(--ink);transition:transform .2s}
-.archnext button.primary{background:var(--ink);color:#fff}
-.archnext button:hover{transform:translateY(-2px)}
-.dots{position:absolute;right:120px;bottom:28px;display:flex;gap:7px}
-.dots i{width:9px;height:9px;border-radius:50%;background:#d6d2c9;transition:background .3s,transform .3s}
-.dots i.on{background:var(--red);transform:scale(1.3)}
-
-/* ================= Design system v2: editorial, after Slidev "seriph" ================= */
-@font-face{font-family:"Source Serif 4";src:url(fonts/source-serif-4-latin-400-normal.woff2) format("woff2");font-weight:400}
-@font-face{font-family:"Source Serif 4";src:url(fonts/source-serif-4-latin-600-normal.woff2) format("woff2");font-weight:600}
-@font-face{font-family:"Source Serif 4";src:url(fonts/source-serif-4-latin-400-italic.woff2) format("woff2");font-weight:400;font-style:italic}
-@font-face{font-family:"IBM Plex Sans";src:url(fonts/ibm-plex-sans-latin-400-normal.woff2) format("woff2");font-weight:400}
-@font-face{font-family:"IBM Plex Sans";src:url(fonts/ibm-plex-sans-latin-500-normal.woff2) format("woff2");font-weight:500}
-@font-face{font-family:"IBM Plex Sans";src:url(fonts/ibm-plex-sans-latin-600-normal.woff2) format("woff2");font-weight:600}
-@font-face{font-family:"IBM Plex Mono";src:url(fonts/ibm-plex-mono-latin-400-normal.woff2) format("woff2");font-weight:400}
-@font-face{font-family:"IBM Plex Mono";src:url(fonts/ibm-plex-mono-latin-500-normal.woff2) format("woff2");font-weight:500}
-:root{--paper:#faf8f4;--ink:#1a1a1a;--muted:#5c5a55;--faint:#9b978f;--line:#e2ded6;--red:#c8321f;--red-soft:rgba(200,50,31,.08);
-  --serif:"Source Serif 4",Georgia,serif;--sans:"IBM Plex Sans",-apple-system,Helvetica,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace}
-body,#deck{font-family:var(--sans)}
-.slide{padding:110px 128px}
-.kicker{font:500 20px var(--mono);letter-spacing:.02em;text-transform:none;color:var(--faint);margin:0 0 22px}
-h1.title,h2.title{font-family:var(--serif);font-weight:600;letter-spacing:-.01em;font-size:60px;line-height:1.1}
-.lead{font-size:28px;line-height:1.5;color:var(--muted)}
-.lead b{color:var(--ink);font-weight:600}
-/* title */
-.s-title{background:var(--paper);color:var(--ink);display:flex;flex-direction:column;justify-content:center}
-.s-title h1{font-family:var(--serif);font-weight:600;font-size:150px;letter-spacing:-.025em;line-height:1;margin:0}
-.s-title .tag{font-family:var(--serif);font-size:40px;line-height:1.4;color:var(--muted);margin:40px 0 0;max-width:1300px}
-.s-title .meta{left:128px;bottom:100px;font:400 22px var(--mono);color:var(--faint);gap:48px;border-top:1px solid var(--line);padding-top:24px;right:128px}
-.s-title::after{content:"";position:absolute;left:128px;top:110px;width:72px;height:4px;background:var(--red)}
-/* problem */
-.bigq{font-family:var(--serif);font-weight:600;font-size:68px;letter-spacing:-.015em}
-.bigq em{font-style:italic;font-weight:400;color:var(--red)}
-.zoomcrop{border-radius:6px;box-shadow:none;border:1px solid var(--line)}
-/* trio */
-.trio{gap:0;margin-top:90px;border-top:1px solid var(--ink)}
-.step{background:none;border-radius:0;box-shadow:none;padding:36px 44px 0 0;border-right:1px solid var(--line);margin-right:44px}
-.trio .step:last-child{border-right:0;margin-right:0}
-.step .num{font:400 76px var(--serif);color:var(--red);letter-spacing:0;line-height:1}
-.step h3{font-family:var(--serif);font-weight:600;font-size:46px;margin:22px 0 14px}
-.step p{font-size:26px;line-height:1.5}
-.step .who{background:none!important;color:var(--faint)!important;padding:0;margin-top:26px;font:400 20px var(--mono)}
-.oneidea{font-family:var(--serif);font-style:italic;font-weight:400;font-size:38px;text-align:left;margin-top:72px;color:var(--ink)}
-/* demo */
-.s-demo{background:var(--ink);color:#f3f1ec}
-.s-demo .kicker{color:#8f8b83}
-.s-demo h2{font-family:var(--serif);font-weight:600;font-size:150px;letter-spacing:-.025em}
-.demo-steps{gap:0;margin-top:64px;border-top:1px solid #3a3936}
-.demo-steps div{border:0;border-right:1px solid #3a3936;border-radius:0;padding:26px 56px 0 0;margin-right:56px;font-size:28px;color:#d9d6cf}
-.demo-steps div:last-child{border-right:0}
-.demo-steps b{font:400 28px var(--mono);color:#8f8b83}
-.fallback{font:400 20px var(--mono);color:#8f8b83;left:128px}
-/* screenshots */
-.shot-head{left:128px;top:110px}
-.shot{border-radius:6px;box-shadow:0 0 0 1px var(--line),0 20px 50px -30px rgba(0,0,0,.25)}
-.mark .shape{border-width:4px;border-radius:6px;background:transparent}
-.mark.ring .shape{border-radius:50%}
-.spot{border-radius:6px;box-shadow:0 0 0 4000px rgba(250,248,244,.72)}
-.callout,.takeaway{justify-content:flex-start;left:128px;bottom:60px}
-.callout span,.takeaway>span{background:none;color:var(--ink);box-shadow:none;border-radius:0;padding:0 0 0 22px;border-left:4px solid var(--red);font:500 30px var(--sans)}
-.takeaway>span .ph{color:var(--faint)}
-/* architecture */
-#arch .t1{font-family:var(--sans);font-weight:600}
-#arch .t2{font-family:var(--mono)}
-#arch .t3,#arch .lbl{font-family:var(--sans)}
-#arch .cap{font-family:var(--mono);font-weight:500;letter-spacing:.02em}
-#arch .node rect{rx:6px}
-#arch .node.hl rect{filter:none}
-.legend{font-size:18px;font-family:var(--sans);right:128px;top:118px}
-.legend i{border-radius:3px;border-width:1.5px}
-.archcap{left:128px}
-.archcap .n{font:500 18px var(--mono);letter-spacing:.02em;text-transform:none;color:var(--red)}
-.archcap .t{font-family:var(--serif);font-weight:600;font-size:38px}
-.archnext button{font:500 20px var(--sans);border-radius:4px;border:1px solid var(--ink);padding:14px 22px}
-.archnext button:hover{transform:none;background:var(--paper)}
-.archnext button.primary:hover{background:#000}
-.dots i{border-radius:0;width:14px;height:3px}.dots i.on{transform:none}
-.drawer{box-shadow:-1px 0 0 var(--line);padding:84px 56px}
-.drawer .chipk{border-radius:0;border:0;padding:0;font:500 17px var(--mono);letter-spacing:.02em}
-.drawer h3{font-family:var(--serif);font-weight:600;font-size:48px}
-.drawer h4{font:500 15px var(--mono);letter-spacing:.04em;color:var(--faint)}
-.drawer .file{font-family:var(--mono)}
-/* handoff + close */
-.s-hand,.s-close{background:var(--ink);color:#f3f1ec}
-.s-hand .kicker,.s-close .kicker{color:#8f8b83}
-.s-hand h2,.s-close h2{font-family:var(--serif);font-weight:600;letter-spacing:-.02em}
-.s-hand p{font-family:var(--serif);font-style:italic;color:#b9b5ad}
-.s-close .recap{font-family:var(--serif);color:#d9d6cf}
-.close-names{font:400 22px var(--mono);color:#8f8b83}
-.close-names b{font-weight:400;color:#d9d6cf}
-.s-close .repo{left:128px;font-family:var(--mono)}
-.s-hand .ph,.s-close .ph{color:#8f8b83;border-color:#4a4843}
-/* Javier layouts */
-.ph{border-bottom:2px dashed #cfc9bd}
-.compare{left:128px;right:128px}
-.slot .frame{border-radius:6px;box-shadow:0 0 0 1px var(--line)}
-.slot .empty-ph{border:1.5px dashed #cfc9bd;border-radius:4px;font:400 22px var(--mono)}
-.slot figcaption{font-size:24px;font-weight:500}
-.slot .badge{border-radius:0;background:none!important;padding:0;font:500 18px var(--mono);letter-spacing:.02em;text-transform:none}
-.stats{left:128px;right:128px}
-.stat{background:none;box-shadow:none;border-radius:0;border-top:1px solid var(--ink);padding:36px 0 0}
-.stat .big{font-family:var(--serif);font-weight:600;font-size:150px}
-.stat .who{background:none;padding:0;font:400 20px var(--mono);color:var(--faint)}
-.vs{font:400 italic 40px var(--serif);color:var(--faint)}
-.takeaway span span{background:none;padding:0;border-left:0;box-shadow:none;border-radius:0;color:var(--faint);font:inherit;border-bottom:2px dashed #cfc9bd}
-/* chrome */
-#bar{height:3px}
-#nav button{border-radius:4px;font-family:var(--sans)}
-#notes{font-family:var(--sans)}
+#notes b{color:#f2a0ad}
+#notes .tm{float:right;color:#9b9a96;font-family:var(--mono)}
 </style>
 </head>
 <body>
-<div id="viewport"><div id="deck">
+<div id="deck">
 
-<!-- 1. Title -->
-<section class="slide s-title" data-notes="[Draft] Hi, we're Ralston and Javier. One sentence on who we are, then straight to the problem.">
-  <p class="kicker in">CPSC 415 &nbsp;·&nbsp; Team Project 1</p>
-  <h1 class="in d1">Diagram Check</h1>
-  <p class="tag in d2">An AI draws a science diagram. A second AI looks at it.<br>Our code decides whether it is right.</p>
-  <div class="meta in d3"><span>Ralston Raphael</span><span>Javier Romo</span><span>November 2, 2026</span></div>
+<!-- 1 -->
+<section class="slide s-title" data-notes="[Draft] Who we are, one line. Then the problem.">
+  <div class="cover"></div>
+  <div class="body">
+    <p class="course in">CPSC 415 · Team Project 1</p>
+    <h1 class="in d1">Diagram Check</h1>
+    <p class="sub in d2">A web app that draws labeled science diagrams and checks its own work.</p>
+  </div>
+  <div class="grade in d3"><span>TP1</span><svg class="penfree" data-w="260" data-h="160"></svg></div>
+  <div class="names in d3"><span>Ralston Raphael · Javier Romo</span><span>Nov 2, 2026</span></div>
 </section>
 
-<!-- 2. Problem -->
-<section class="slide" data-notes="[Draft] AI diagrams look right at a glance. Zoom: this label is supposed to say cytoplasm. A student studying from this would learn a word that doesn't exist.">
-  <div class="problem">
-    <div>
-      <p class="kicker in">01 &nbsp;The problem</p>
-      <p class="bigq in d1">AI diagrams look right.<br>The labels <em>often aren't.</em></p>
-      <p class="lead in d2">This is a real image our app generated tonight. It's supposed to say <b>cytoplasm</b>.</p>
+<!-- 2 -->
+<section class="slide" data-notes="[Draft] Image models get the shapes right and the spelling wrong. This came out of our app tonight.">
+  <div class="cover"></div><div class="pg">2</div>
+  <div class="body">
+    <div class="split">
+      <div>
+        <h2 class="in">Image models misspell labels</h2>
+        <p class="sub in d1">We asked for a plant cell. Gemini labeled the cytoplasm <b>“cytorpaspt.”</b></p>
+        <p class="sub in d2">A student studying from this would learn a word that doesn't exist.</p>
+      </div>
+      <div class="crop in d1"><div class="z"><img src="img/diagram.png" alt="Generated plant cell with a misspelled label">
+        <div class="mark" data-auto="1" data-kind="ring" style="left:45%;top:13.2%;width:21%;height:6.4%"></div></div></div>
     </div>
-    <div class="zoomcrop in d2"><div class="zin"><img src="img/diagram.png" alt="A generated plant cell with a misspelled label"><div class="mark ring pring" style="left:45.7%;top:15.5%;width:19.5%;height:7.1%"><div class="shape"></div></div></div></div>
   </div>
 </section>
 
-<!-- 3. What we built -->
-<section class="slide" data-notes="[Draft] Three steps. Two different AIs, then plain Python. The key idea is the last line.">
-  <p class="kicker in">02 &nbsp;What we built</p>
-  <h2 class="title in d1">Pick a topic. Get a diagram and an honest grade.</h2>
-  <div class="trio">
-    <div class="step in d2"><div class="num">1</div><h3>Draw</h3><p>An image model draws a labeled textbook diagram of the topic.</p><span class="who">gemini-2.5-flash-image</span></div>
-    <div class="step in d3"><div class="num">2</div><h3>Check</h3><p>A second AI looks at the picture and marks every part on a checklist.</p><span class="who">gpt-4o</span></div>
-    <div class="step in d4"><div class="num">3</div><h3>Grade</h3><p>Plain Python turns those marks into good, needs work, or poor.</p><span class="who">verdict.py</span></div>
+<!-- 3 -->
+<section class="slide" data-notes="[Draft] Three parts. Two different models, then plain Python.">
+  <div class="cover"></div><div class="pg">3</div>
+  <div class="body">
+    <h2 class="in">How it works</h2>
+    <div class="cols">
+      <div class="col in d1"><div class="n">1</div><h3>Gemini draws the diagram</h3><p><code>gemini-2.5-flash-image</code> gets the topic's exact labels and returns a PNG.</p></div>
+      <div class="col in d2"><div class="n">2</div><h3>GPT-4o marks every part</h3><p>It gets the image and a checklist, not our prompt, and answers in JSON.</p></div>
+      <div class="col in d3"><div class="n">3</div><h3><code>verdict.py</code> gives the grade</h3><p>Plain Python turns the marks into good, needs work, or poor.</p></div>
+    </div>
   </div>
-  <p class="oneidea in d5">The AI says what it sees. Our code decides the grade.</p>
 </section>
 
-<!-- 4. Live demo cue -->
-<section class="slide s-demo" data-notes="Switch to the browser at localhost:8000. Plant cell → Generate. While it loads (~10-15 s), say what is happening: drawing, stamping, checking. If anything fails, come back here and press → for the screenshots.">
-  <p class="kicker in">03 &nbsp;Live demo</p>
-  <h2 class="in d1">Let's run it.</h2>
-  <div class="demo-steps in d2"><div><b>1</b>Pick a topic</div><div><b>2</b>Generate</div><div><b>3</b>Read the result</div></div>
-  <p class="fallback in d3">localhost:8000 · backup screenshots on the next slides</p>
+<!-- 4 -->
+<section class="slide s-demo" data-notes="Switch to localhost:8000. Plant cell, Generate. While it loads (10-15 s) say: drawing, stamping, checking. If it fails, come back and press → for the screenshots.">
+  <div class="cover"></div><div class="pg">4</div>
+  <div class="body">
+    <h2 class="in">Demo</h2>
+    <p class="sub in d1">localhost:8000 · plant cell</p>
+    <p class="aside in d2">screenshots on the next slides, just in case</p>
+  </div>
 </section>
 
-<!-- 5. Home -->
-<section class="slide" data-shot="home" data-notes="[Draft] Walk the screen top to bottom.">
-  <div class="shot-head"><p class="kicker in">03 &nbsp;The app</p><h2 class="title in d1">One screen, one button</h2></div>
-  <div class="shotwrap"><div class="shot in d2"><div class="zoomer"><img src="img/home.png" alt="App home screen"></div></div></div>
-  <div class="callout"></div>
+<!-- 5 -->
+<section class="slide" data-shot="home" data-notes="[Draft] Top to bottom: the two models, the topics, the button.">
+  <div class="cover"></div><div class="pg">5</div>
+  <div class="body"><h2 class="in">Home page</h2></div>
+  <p class="margin-note"></p><div class="shotarea in d1"><div class="shot"><div class="zoomer"><img src="img/home.png" alt="App home page"></div></div></div>
 </section>
 
-<!-- 6. Result -->
-<section class="slide" data-shot="result" data-notes="[Draft] The grade at the top, then the picture. Point at the misspellings. Then the honest part: one mistake the checker missed.">
-  <div class="shot-head"><p class="kicker in">03 &nbsp;The result</p><h2 class="title in d1">A grade you can trace back to evidence</h2></div>
-  <div class="shotwrap"><div class="shot in d2"><div class="zoomer"><img src="img/result.png" alt="A generated plant cell with its verdict and checklist"></div></div></div>
-  <div class="callout"></div>
+<!-- 6 -->
+<section class="slide" data-shot="result" data-notes="[Draft] Grade first, then the picture. The misspellings it caught, then the one it missed.">
+  <div class="cover"></div><div class="pg">6</div>
+  <div class="body"><h2 class="in">Result for plant cell</h2></div>
+  <p class="margin-note"></p><div class="shotarea in d1"><div class="shot"><div class="zoomer"><img src="img/result.png" alt="Result with verdict, diagram and checklist"></div></div></div>
 </section>
 
-<!-- 7. Checklist -->
-<section class="slide" data-shot="checklist" data-notes="[Draft] Every part gets a mark and a note. The label text section is the AI reading the actual letters in the image.">
-  <div class="shot-head"><p class="kicker in">03 &nbsp;The checklist</p><h2 class="title in d1">Every part, marked</h2></div>
-  <div class="shotwrap"><div class="shot in d2"><div class="zoomer"><img src="img/checklist.png" alt="Checklist with three mislabeled parts"></div></div></div>
-  <div class="callout"></div>
+<!-- 7 -->
+<section class="slide" data-shot="checklist" data-notes="[Draft] Each part gets a mark and a note. Label text is the model reading the letters in the image.">
+  <div class="cover"></div><div class="pg">7</div>
+  <div class="body"><h2 class="in">Checklist</h2></div>
+  <p class="margin-note"></p><div class="shotarea in d1"><div class="shot"><div class="zoomer"><img src="img/checklist.png" alt="Checklist with three mislabeled parts"></div></div></div>
 </section>
 
-<!-- 8. Architecture -->
-<section class="slide" id="s-arch" data-arch="1" data-notes="Click Next to walk one request through the system. Click any box at any time for details (Esc closes).">
-  <p class="kicker in">04 &nbsp;Under the hood</p>
-  <h2 class="title in d1" id="archtitle">How one click flows through the app</h2>
-  <div class="legend in d2">
-    <span><i style="background:var(--ai-bg);border-color:var(--ai)"></i>AI model</span>
-    <span><i style="background:var(--code-bg);border-color:var(--code)"></i>plain Python</span>
-    <span><i style="background:var(--data-bg);border-color:var(--data)"></i>data</span>
-    <span><i style="background:var(--blue-soft);border-color:var(--blue)"></i>browser</span>
-    <span><i style="background:#f0f1f4;border-color:#9aa1ae;border-style:dashed"></i>not wired in yet</span>
+<!-- 8 -->
+<section class="slide" data-arch="1" data-notes="Next walks one request through. Click any box for details; Esc closes.">
+  <div class="cover"></div><div class="pg">8</div>
+  <div class="body"><h2 class="in">Architecture</h2></div>
+  <div class="legend in d1">
+    <span><i style="background:#eaf1fb;border-color:var(--blue)"></i>model call</span>
+    <span><i style="background:var(--good-bg);border-color:var(--good)"></i>our Python</span>
+    <span><i style="background:var(--warn-bg);border-color:var(--warn)"></i>data</span>
+    <span><i style="background:var(--hover);border-color:var(--ink)"></i>browser</span>
+    <span><i style="background:#fff;border-color:var(--faint);border-style:dashed"></i>not wired in</span>
   </div>
   <div class="archwrap">
     <svg id="arch" viewBox="0 0 1020 560" role="img" aria-label="Architecture diagram">
       <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
-      <rect class="box" x="185" y="48" width="560" height="470" rx="16"/>
-      <text class="cap lbl" x="200" y="68">FASTAPI SERVER · app/main.py</text>
+      <rect class="box" x="185" y="48" width="560" height="470" rx="12"/>
+      <text class="cap" x="200" y="68">app/main.py (FastAPI)</text>
       <path class="edge" id="e_req"  d="M150 242 H203" marker-end="url(#ah)"/>
       <path class="edge" id="e_pg"   d="M335 242 H383" marker-end="url(#ah)"/>
       <path class="edge" id="e_gimg" d="M450 210 V175 H798" marker-end="url(#ah)"/>
@@ -393,130 +275,166 @@ h1.title,h2.title{font-family:var(--serif);font-weight:600;letter-spacing:-.01em
       <g id="flows"></g>
       <text class="lbl" x="153" y="232">topic</text>
       <text class="lbl" x="338" y="232">prompt</text>
-      <text class="lbl" x="620" y="166">prompt →</text>
-      <text class="lbl" x="470" y="166">← PNG image</text>
+      <text class="lbl" x="640" y="166">prompt</text>
+      <text class="lbl" x="470" y="166">PNG</text>
       <text class="lbl" x="519" y="232">PNG</text>
       <text class="lbl" x="640" y="312">stamped PNG</text>
       <text class="lbl" x="704" y="362">image + checklist</text>
-      <text class="lbl" x="706" y="392">JSON ←</text>
-      <text class="lbl" x="519" y="362">raw JSON</text>
+      <text class="lbl" x="706" y="392">JSON</text>
+      <text class="lbl" x="519" y="362">JSON</text>
       <text class="lbl" x="340" y="362">marks</text>
       <text class="lbl" x="156" y="392">result</text>
 
-      <g class="node k-ui" id="n_browser"><rect x="20" y="210" width="130" height="190" rx="12"/><text class="t1" x="85" y="290" text-anchor="middle">Web page</text><text class="t3" x="85" y="310" text-anchor="middle">pick a topic,</text><text class="t3" x="85" y="326" text-anchor="middle">see the result</text><text class="t2" x="85" y="352" text-anchor="middle">static/</text></g>
-      <g class="node k-data" id="n_catalog"><rect x="205" y="85" width="520" height="55" rx="10"/><text class="t1" x="225" y="108">Topic catalog</text><text class="t3" x="225" y="127">5 topics: labels to draw, parts to check, rules. One file everyone reads.</text><text class="t2" x="705" y="108" text-anchor="end">topics.json</text></g>
-      <g class="node k-code" id="n_pb"><rect x="205" y="210" width="130" height="64" rx="10"/><text class="t1" x="270" y="237" text-anchor="middle">Prompt builder</text><text class="t2" x="270" y="258" text-anchor="middle">prompt_builder.py</text></g>
-      <g class="node k-code" id="n_gen"><rect x="385" y="210" width="130" height="64" rx="10"/><text class="t1" x="450" y="237" text-anchor="middle">Generator</text><text class="t2" x="450" y="258" text-anchor="middle">generator.py</text></g>
-      <g class="node k-code" id="n_stamp"><rect x="565" y="210" width="130" height="64" rx="10"/><text class="t1" x="630" y="237" text-anchor="middle">AI stamp</text><text class="t2" x="630" y="258" text-anchor="middle">stamp.py</text></g>
-      <g class="node k-ai" id="n_critic"><rect x="565" y="340" width="130" height="64" rx="10"/><text class="t1" x="630" y="367" text-anchor="middle">Critic</text><text class="t2" x="630" y="388" text-anchor="middle">critic.py</text></g>
-      <g class="node k-code" id="n_val"><rect x="385" y="340" width="130" height="64" rx="10"/><text class="t1" x="450" y="367" text-anchor="middle">Validator</text><text class="t2" x="450" y="388" text-anchor="middle">validator.py</text></g>
-      <g class="node k-code" id="n_verdict"><rect x="205" y="340" width="130" height="64" rx="10"/><text class="t1" x="270" y="367" text-anchor="middle">Verdict</text><text class="t2" x="270" y="388" text-anchor="middle">verdict.py</text></g>
-      <g class="node k-code" id="n_client"><rect x="205" y="445" width="520" height="52" rx="10"/><text class="t1" x="225" y="468">OpenRouter client + run log</text><text class="t3" x="225" y="486">Both AI calls go through here. Logs model, tokens, cost, time.</text><text class="t2" x="705" y="468" text-anchor="end">openrouter.py</text></g>
-      <g class="node k-ai" id="n_imgmodel"><rect x="800" y="140" width="200" height="70" rx="12"/><text class="t1" x="900" y="168" text-anchor="middle">Image model</text><text class="t2" x="900" y="188" text-anchor="middle">gemini-2.5-flash-image</text><text class="t3" x="900" y="203" text-anchor="middle">via OpenRouter</text></g>
-      <g class="node k-ai" id="n_critmodel"><rect x="800" y="340" width="200" height="64" rx="12"/><text class="t1" x="900" y="367" text-anchor="middle">Checker model</text><text class="t2" x="900" y="388" text-anchor="middle">openai/gpt-4o</text></g>
-      <g class="node k-off" id="n_checker"><rect x="20" y="445" width="150" height="64" rx="10"/><text class="t1" x="95" y="472" text-anchor="middle">checker.py</text><text class="t3" x="95" y="490" text-anchor="middle">Week 6, not wired in</text></g>
-
-      <g class="callbox" id="cb_see"><rect x="770" y="420" width="240" height="58" rx="10" fill="#fff" stroke="var(--red)" stroke-width="2"/><text x="784" y="443" class="t1" style="font-size:13px">Gets: <tspan fill="var(--code)">image + checklist</tspan></text><text x="784" y="465" class="t1" style="font-size:13px">Never gets: <tspan fill="var(--red)">our prompt</tspan></text></g>
-      <g class="callbox" id="cb_ai"><rect x="770" y="420" width="240" height="34" rx="10" fill="#fff" stroke="var(--ai)" stroke-width="2"/><text x="784" y="442" class="t1" style="font-size:13px">AI: "here is what I see"</text></g>
-      <g class="callbox" id="cb_code"><rect x="185" y="408" width="290" height="32" rx="10" fill="#fff" stroke="var(--code)" stroke-width="2"/><text x="199" y="429" class="t1" style="font-size:13px">Code: fixed rules pick the grade</text></g>
-      <circle id="packet" r="8"/>
+      <g class="node k-ui" id="n_browser"><rect x="20" y="210" width="130" height="190" rx="8"/><text class="t1" x="85" y="296" text-anchor="middle">Web page</text><text class="t2" x="85" y="318" text-anchor="middle">static/</text></g>
+      <g class="node k-data" id="n_catalog"><rect x="205" y="85" width="520" height="55" rx="8"/><text class="t1" x="225" y="108">Topic catalog</text><text class="t3" x="225" y="127">labels to draw, parts to check, rules</text><text class="t2" x="705" y="108" text-anchor="end">topics.json</text></g>
+      <g class="node k-code" id="n_pb"><rect x="205" y="210" width="130" height="64" rx="8"/><text class="t1" x="270" y="237" text-anchor="middle">Prompt builder</text><text class="t2" x="270" y="258" text-anchor="middle">prompt_builder.py</text></g>
+      <g class="node k-code" id="n_gen"><rect x="385" y="210" width="130" height="64" rx="8"/><text class="t1" x="450" y="237" text-anchor="middle">Generator</text><text class="t2" x="450" y="258" text-anchor="middle">generator.py</text></g>
+      <g class="node k-code" id="n_stamp"><rect x="565" y="210" width="130" height="64" rx="8"/><text class="t1" x="630" y="237" text-anchor="middle">Stamp</text><text class="t2" x="630" y="258" text-anchor="middle">stamp.py</text></g>
+      <g class="node k-code" id="n_critic"><rect x="565" y="340" width="130" height="64" rx="8"/><text class="t1" x="630" y="367" text-anchor="middle">Critic</text><text class="t2" x="630" y="388" text-anchor="middle">critic.py</text></g>
+      <g class="node k-code" id="n_val"><rect x="385" y="340" width="130" height="64" rx="8"/><text class="t1" x="450" y="367" text-anchor="middle">Validator</text><text class="t2" x="450" y="388" text-anchor="middle">validator.py</text></g>
+      <g class="node k-code" id="n_verdict"><rect x="205" y="340" width="130" height="64" rx="8"/><text class="t1" x="270" y="367" text-anchor="middle">Verdict</text><text class="t2" x="270" y="388" text-anchor="middle">verdict.py</text></g>
+      <g class="node k-code" id="n_client"><rect x="205" y="445" width="520" height="52" rx="8"/><text class="t1" x="225" y="468">OpenRouter client</text><text class="t3" x="225" y="486">every model call goes through here and is logged to runs.jsonl</text><text class="t2" x="705" y="468" text-anchor="end">openrouter.py</text></g>
+      <g class="node k-ai" id="n_imgmodel"><rect x="800" y="140" width="200" height="70" rx="8"/><text class="t1" x="900" y="170" text-anchor="middle">Gemini</text><text class="t2" x="900" y="191" text-anchor="middle">gemini-2.5-flash-image</text></g>
+      <g class="node k-ai" id="n_critmodel"><rect x="800" y="340" width="200" height="64" rx="8"/><text class="t1" x="900" y="367" text-anchor="middle">GPT-4o</text><text class="t2" x="900" y="388" text-anchor="middle">openai/gpt-4o</text></g>
+      <g class="node k-off" id="n_checker"><rect x="20" y="445" width="150" height="64" rx="8"/><text class="t1" x="95" y="472" text-anchor="middle">checker.py</text><text class="t3" x="95" y="490" text-anchor="middle">Week 6, not wired in</text></g>
+      <g class="loops" id="loops"></g>
+      <circle id="packet" r="7"/>
     </svg>
   </div>
-  <div class="archcap"><div class="n" id="ac-n"></div><div class="t" id="ac-t"></div><div class="d" id="ac-d"></div></div>
-  <div class="archnext"><button id="ab-back">← Back</button><button id="ab-next" class="primary">Next →</button></div>
-  <div class="dots" id="adots"></div>
+  <div class="archside"><div class="n" id="ac-n"></div><div class="t" id="ac-t"></div><div class="d" id="ac-d"></div></div>
+  <div class="archnav"><button id="ab-back">← Back</button><button id="ab-next" class="primary">Next →</button></div>
+  <div class="archcount" id="ac-c"></div>
   <aside class="drawer" id="drawer"><button class="x" id="dx" aria-label="Close">×</button><div id="dbody"></div></aside>
 </section>
 
-<!-- 9. Handoff -->
-<section class="slide s-hand" data-notes="[Draft, Ralston] Hand off: 'That's how it works when it works. Javier will show what went wrong along the way.'">
-  <p class="kicker in">05 &nbsp;Javier</p>
-  <h2 class="in d1">What went wrong<br>along the way</h2>
-  <p class="in d2">Garbled labels, a checker that got fooled, and what we changed.</p>
+<!-- 9 -->
+<section class="slide" data-notes="[Draft, Ralston] Hand off to Javier.">
+  <div class="cover"></div><div class="pg">9</div>
+  <div class="body">
+    <h2 class="in" style="font-size:110px;margin-top:120px">What went wrong</h2>
+    <p class="sub in d1">Javier</p>
+  </div>
 </section>
 
-<!-- ============ JAVIER'S SECTION (layouts only; his content goes in the [placeholders) ============
-     How to fill:
-     - Replace any text in [brackets] and remove the "ph" class from it.
-     - Images: save them as slides/img/javier-1.png, javier-2.png ... and they appear automatically.
-     - Click-by-click reveals: data-steps="N" on the]<section> = number of clicks; data-step="k" on an element = shows on click k (0 = on arrival).
-     - Red circle or box on an image: put inside a .frame, e.g.
-       <div class="mark ring" data-step="2" style="left:40%;top:30%;width:20%;height:10%"><div class="shape"></div></div>
-       (use "mark box" for a rectangle; positions are % of the image frame)
+<!-- ============ JAVIER'S SLIDES: layout only, content goes in the [brackets] ============
+     - Replace bracketed text and remove class="ph" from it.
+     - Images: save as slides/img/javier-1.png, javier-2.png and they load automatically.
+     - Clicks: data-steps="N" on <section> = number of clicks; data-step="k" on an element shows it on click k (0 = on arrival).
+     - Red-pen circle on an image, inside a .frame:
+         <div class="mark" data-step="2" data-kind="ring" style="left:40%;top:30%;width:20%;height:10%"></div>
+       data-kind="box" draws a box instead. Positions are % of the frame.
 -->
 
-<!-- 10. Javier: what went wrong #1 (side-by-side images) -->
-<section class="slide" data-steps="3" data-notes="[Javier] What went wrong #1. Click 1 shows the second image, click 2 shows the takeaway.">
-  <p class="kicker in">05 &nbsp;What went wrong, 1</p>
-  <h2 class="title in d1"><span class="ph">[One-sentence headline: what went wrong]</span></h2>
+<!-- 10 -->
+<section class="slide" data-steps="3" data-notes="[Javier]">
+  <div class="cover"></div><div class="pg">10</div>
+  <div class="body"><h2 class="in"><span class="ph">[headline]</span></h2></div>
   <div class="compare">
-    <figure class="slot st" data-step="0"><div class="frame"><img src="img/javier-1.png" alt="" onerror="this.closest('.slot').classList.add('empty')"><div class="empty-ph">[Image A]<br>save as slides/img/javier-1.png</div></div>
-      <figcaption><span class="badge bad">Before</span><span class="ph">[caption]</span></figcaption></figure>
-    <figure class="slot st" data-step="1"><div class="frame"><img src="img/javier-2.png" alt="" onerror="this.closest('.slot').classList.add('empty')"><div class="empty-ph">[Image B]<br>save as slides/img/javier-2.png</div></div>
-      <figcaption><span class="badge good">After</span><span class="ph">[caption]</span></figcaption></figure>
+    <figure class="slot st" data-step="0"><div class="frame"><img src="img/javier-1.png" alt="" onerror="this.closest('.slot').classList.add('empty')"><div class="empty-ph">[image]<br>slides/img/javier-1.png</div></div>
+      <figcaption><span class="hand">before</span><span class="ph">[caption]</span></figcaption></figure>
+    <figure class="slot st" data-step="1"><div class="frame"><img src="img/javier-2.png" alt="" onerror="this.closest('.slot').classList.add('empty')"><div class="empty-ph">[image]<br>slides/img/javier-2.png</div></div>
+      <figcaption><span class="hand">after</span><span class="ph">[caption]</span></figcaption></figure>
   </div>
-  <div class="takeaway st" data-step="2"><span><span class="ph">[What we did about it]</span></span></div>
+  <p class="takeaway st" data-step="2"><span class="ph">[what we did about it]</span></p>
 </section>
 
-<!-- 11. Javier: what went wrong #2 (head-to-head numbers) -->
-<section class="slide" data-steps="3" data-notes="[Javier] What went wrong #2. Click 1 reveals the second number, click 2 the takeaway.">
-  <p class="kicker in">05 &nbsp;What went wrong, 2</p>
-  <h2 class="title in d1"><span class="ph">[One-sentence headline]</span></h2>
+<!-- 11 -->
+<section class="slide" data-steps="3" data-notes="[Javier]">
+  <div class="cover"></div><div class="pg">11</div>
+  <div class="body"><h2 class="in"><span class="ph">[headline]</span></h2></div>
   <div class="stats">
-    <div class="stat lose st" data-step="0"><div class="big ph">[#]</div><div class="lab ph">[what this number means]</div><span class="who ph">[model / option A]</span></div>
-    <div class="vs st" data-step="1">vs</div>
-    <div class="stat win st" data-step="1"><div class="big ph">[#]</div><div class="lab ph">[what this number means]</div><span class="who ph">[model / option B]</span></div>
+    <div class="stat st" data-step="0"><div class="big ph">[#]</div><div class="lab ph">[what the number is]</div><div class="who ph">[model or option]</div></div>
+    <div class="stat st" data-step="1"><div class="big ph">[#]</div><div class="lab ph">[what the number is]</div><div class="who ph">[model or option]</div></div>
   </div>
-  <div class="takeaway st" data-step="2"><span><span class="ph">[So what]</span></span></div>
+  <p class="takeaway st" data-step="2"><span class="ph">[so what]</span></p>
 </section>
 
-<!-- 12. Javier: what we'd do next (three cards) -->
-<section class="slide" data-steps="3" data-notes="[Javier] Next steps, one card per click.">
-  <p class="kicker in">06 &nbsp;What we'd do next</p>
-  <h2 class="title in d1"><span class="ph">[Headline]</span></h2>
-  <div class="trio">
-    <div class="step st" data-step="0"><div class="num">1</div><h3 class="ph" style="margin-top:18px">[Title]</h3><p class="ph">[One or two lines]</p></div>
-    <div class="step st" data-step="1"><div class="num">2</div><h3 class="ph" style="margin-top:18px">[Title]</h3><p class="ph">[One or two lines]</p></div>
-    <div class="step st" data-step="2"><div class="num">3</div><h3 class="ph" style="margin-top:18px">[Title]</h3><p class="ph">[One or two lines]</p></div>
+<!-- 12 -->
+<section class="slide" data-steps="3" data-notes="[Javier]">
+  <div class="cover"></div><div class="pg">12</div>
+  <div class="body">
+    <h2 class="in">Next</h2>
+    <div class="cols">
+      <div class="col st" data-step="0"><div class="n">1</div><h3 class="ph">[title]</h3><p class="ph">[one or two lines]</p></div>
+      <div class="col st" data-step="1"><div class="n">2</div><h3 class="ph">[title]</h3><p class="ph">[one or two lines]</p></div>
+      <div class="col st" data-step="2"><div class="n">3</div><h3 class="ph">[title]</h3><p class="ph">[one or two lines]</p></div>
+    </div>
   </div>
 </section>
 
-<!-- 13. Close + questions -->
-<section class="slide s-close" data-notes="[Javier] One-sentence recap, then open the peer notes form and take questions.">
-  <p class="kicker in">Thank you</p>
-  <h2 class="in d1">Questions?</h2>
-  <p class="recap in d2"><span class="ph">[One-sentence recap of the whole project]</span></p>
-  <div class="close-names in d3"><span><b>Ralston Raphael</b></span><span><b>Javier Romo</b></span></div>
-  <p class="repo in d4">github.com/javieromolopez/TP1</p>
+<!-- 13 -->
+<section class="slide s-close" data-notes="[Javier] Open the peer notes form, take questions.">
+  <div class="cover"></div><div class="pg">13</div>
+  <div class="body">
+    <h2 class="in">Questions</h2>
+    <p class="sub in d1"><span class="ph">[one-line recap]</span></p>
+    <div class="names in d2"><span>Ralston Raphael</span><span>Javier Romo</span></div>
+    <p class="repo in d2">github.com/javieromolopez/TP1</p>
+  </div>
 </section>
 
 <div id="bar"></div>
-</div></div>
-<div id="nav"><button id="prevb">←</button><button id="nextb">→</button><button id="fsb">⛶</button><button id="notesb">Notes</button></div>
-<div id="count"></div>
+</div>
+<div id="nav"><button id="prevb">←</button><button id="nextb">→</button><button id="fsb">Full screen</button><button id="notesb">Notes</button></div>
 <div id="notes"><span class="tm" id="timer">0:00</span><div id="notestext"></div></div>
 
 <script>
 const BOXES = {"home": {"w": 1280, "h": 450, "marks": {"props": [0.1094, 0.2171, 0.7812, 0.2089], "topics": [0.1094, 0.6896, 0.5285, 0.0889], "generate": [0.1094, 0.8185, 0.1281, 0.0889], "title": [0.1094, 0.0978, 0.7812, 0.0971]}}, "loading": {"w": 1280, "h": 760, "marks": {"loading": [0.1094, 0.3421, 0.7812, 0.6289], "generate": [0.1094, 0.2132, 0.1281, 0.0526]}}, "result": {"w": 1280, "h": 667, "marks": {"verdict": [0.1094, 0.036, 0.7812, 0.1109], "subtext": [0.275, 0.0975, 0.2508, 0.03], "diagram": [0.1195, 0.1949, 0.3531, 0.6777], "caption": [0.1227, 0.8876, 0.3469, 0.0285]}}, "checklist": {"w": 542, "h": 696, "marks": {"row2": [0.0756, 0.2615, 0.8487, 0.0618], "row4": [0.0756, 0.3865, 0.8487, 0.0618], "row6": [0.0756, 0.5101, 0.8487, 0.0618], "texts": [0.0756, 0.8434, 0.8487, 0.1279]}}, "narrative": {"w": 542, "h": 158, "marks": {"quote": [0.0756, 0.1266, 0.8487, 0.7468]}}};
 
-/* ---------- screenshot slides: marks and fragments ---------- */
-// [x, y, w, h] as fractions of the screenshot; kind: ring | box
+/* ---------- red pen ---------- */
+// A loop the way a hand draws it: slightly wobbly, not closed, ends past the start.
+function rnd(seed){ let x = Math.sin(seed) * 10000; return x - Math.floor(x); }
+function loopPath(w, h, seed){
+  const cx = w/2, cy = h/2, rx = w/2, ry = h/2, a0 = -2.2 + rnd(seed)*0.6, turns = 1.12, n = 70, pts = [];
+  for (let i = 0; i <= n; i++){
+    const t = i/n, a = a0 + t * turns * Math.PI * 2, grow = 1 + 0.06*t;
+    const wob = 1 + 0.035*Math.sin(3*a + seed) + 0.02*Math.sin(5*a + seed*2);
+    pts.push([cx + Math.cos(a)*rx*grow*wob, cy + Math.sin(a)*ry*grow*wob]);
+  }
+  return 'M' + pts.map(p => p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' L');
+}
+function boxPath(w, h, seed){
+  const j = k => (rnd(seed+k)-.5)*6;
+  return `M${-4+j(1)} ${2+j(2)} L${w+6+j(3)} ${-2+j(4)} L${w+3+j(5)} ${h+3+j(6)} L${-3+j(7)} ${h+1+j(8)} L${-1+j(9)} ${-6+j(10)}`;
+}
+let seedN = 1;
+function penSVG(w, h, kind){
+  const pad = kind === 'ring' ? Math.max(14, h*.35) : 4, W = w + pad*2, H = h + pad*2;
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('class','pen'); svg.setAttribute('width',W); svg.setAttribute('height',H);
+  svg.setAttribute('viewBox',`${-pad} ${-pad} ${W} ${H}`);
+  svg.style.left = (-pad)+'px'; svg.style.top = (-pad)+'px';
+  const p = document.createElementNS('http://www.w3.org/2000/svg','path');
+  const rw = kind === 'ring' ? w + pad*0.9 : w, rh = kind === 'ring' ? h + pad*0.9 : h;
+  p.setAttribute('d', kind === 'ring' ? loopPath(rw, rh, seedN++) : boxPath(w, h, seedN++));
+  if (kind === 'ring') p.setAttribute('transform', `translate(${-(rw-w)/2} ${-(rh-h)/2})`);
+  svg.appendChild(p);
+  return svg;
+}
+function drawMark(el){
+  if (el.dataset.drawn) return;
+  const w = el.offsetWidth, h = el.offsetHeight; if (!w || !h) return;
+  const svg = penSVG(w, h, el.dataset.kind || 'ring'); el.appendChild(svg);
+  const p = svg.querySelector('path'), L = p.getTotalLength();
+  p.style.strokeDasharray = L; p.style.strokeDashoffset = L; el.dataset.drawn = 1;
+}
+function penOn(el, on){ drawMark(el); const p = el.querySelector('path'); if (p) p.style.strokeDashoffset = on ? 0 : p.getTotalLength(); }
+
+/* ---------- screenshot slides ---------- */
 const MARKS = {
   home: {
-    title:   {b: BOXES.home.marks.title.slice(0,2).concat([0.34, BOXES.home.marks.title[3]]), k:'box'},
-    props:   {b: [0.103, 0.205, 0.31, 0.232], k:'box'},
+    props:   {b:[0.103, 0.205, 0.31, 0.232], k:'box'},
     topics:  {b: BOXES.home.marks.topics, k:'box'},
-    generate:{b: BOXES.home.marks.generate, k:'box'},
+    generate:{b: BOXES.home.marks.generate, k:'ring'},
   },
   result: {
-    verdict: {b: [0.112, 0.04, 0.20, 0.104], k:'ring'},
+    verdict: {b:[0.118, 0.045, 0.19, 0.095], k:'ring'},
     subtext: {b: BOXES.result.marks.subtext, k:'box'},
-    l1: {b: [0.281, 0.300, 0.069, 0.048], k:'ring'},
-    l2: {b: [0.411, 0.503, 0.068, 0.052], k:'ring'},
-    l3: {b: [0.381, 0.705, 0.084, 0.053], k:'ring'},
-    missed: {b: [0.142, 0.703, 0.054, 0.047], k:'ring'},
-    caption: {b: [0.118, 0.885, 0.11, 0.035], k:'box'},
-    rows: {b: [0.513, 0.44, 0.365, 0.38], k:'box'},
+    l1: {b:[0.287, 0.306, 0.058, 0.036], k:'ring'},
+    l2: {b:[0.417, 0.512, 0.056, 0.036], k:'ring'},
+    l3: {b:[0.387, 0.711, 0.073, 0.038], k:'ring'},
+    missed: {b:[0.148, 0.709, 0.042, 0.035], k:'ring'},
+    caption: {b:[0.12, 0.888, 0.105, 0.03], k:'box'},
   },
   checklist: {
     row2: {b: BOXES.checklist.marks.row2, k:'box'},
@@ -527,196 +445,182 @@ const MARKS = {
 };
 const FRAGS = {
   home: [
-    {marks:[], say:null},
-    {marks:['topics'], focus:'topics', say:'Pick one of five science topics'},
-    {marks:['topics','generate'], focus:'generate', say:'One click: draw, then check (about 10–15 s)'},
-    {marks:['props'], focus:'props', say:'Two different AI models: one draws, one checks'},
+    {marks:[]},
+    {marks:['props'], focus:'props', say:'two different models'},
+    {marks:['props','topics'], focus:'topics', say:'5 topics'},
+    {marks:['props','topics','generate'], focus:'generate', say:'draws, then checks (10–15 s)'},
   ],
   result: [
-    {marks:[], say:null},
-    {marks:['verdict'], focus:'verdict', say:'The grade: needs work, 4 of 7 parts correct'},
-    {marks:['verdict','subtext'], focus:'subtext', say:'Computed by our code, not by the AI'},
-    {marks:['l1','l2','l3'], focus:['l1','l3'], zoom:2.0, say:'Three garbled labels the checker caught'},
-    {marks:['l1','l2','l3','missed'], focus:'missed', zoom:2.0, say:'…and one it missed: this “nucleus” points at cytoplasm'},
-    {marks:['caption'], focus:'caption', say:'Every image is labeled AI-generated'},
+    {marks:[]},
+    {marks:['verdict'], focus:'verdict', say:'4 of 7 correct'},
+    {marks:['verdict','subtext'], focus:'subtext', say:'computed in verdict.py'},
+    {marks:['l1','l2','l3'], focus:['l1','l3'], zoom:2, out:1, say:'caught: three misspelled labels'},
+    {marks:['l1','l2','l3','missed'], focus:'missed', zoom:2, out:1, say:'missed: this “nucleus” points at cytoplasm'},
+    {marks:['caption'], focus:'caption', say:'stamped as AI-generated'},
   ],
   checklist: [
-    {marks:[], say:null},
-    {marks:['row2','row4','row6'], focus:['row2','row6'], say:'Three parts marked mislabeled, with the reason'},
-    {marks:['texts'], focus:'texts', say:'The exact misspellings it read off the image'},
+    {marks:[]},
+    {marks:['row2','row4','row6'], focus:['row2','row6'], out:1, say:'3 parts mislabeled, with what it read'},
+    {marks:['row2','row4','row6','texts'], focus:'texts', out:1, say:'and the spelling it read off the image'},
   ],
 };
-
 function fitShot(slide){
-  const key = slide.dataset.shot, shot = slide.querySelector('.shot'), wrap = slide.querySelector('.shotwrap');
-  const ar = BOXES[key].w / BOXES[key].h;
-  const W = 1680, H = 690;
-  let w = W, h = W / ar; if (h > H){ h = H; w = H * ar; }
-  shot.style.width = w + 'px'; shot.style.height = h + 'px';
-  return [w, h];
+  const key = slide.dataset.shot, shot = slide.querySelector('.shot');
+  const ar = BOXES[key].w / BOXES[key].h, W = 1580, H = 670;
+  let w = W, h = W/ar; if (h > H){ h = H; w = H*ar; }
+  shot.style.width = w+'px'; shot.style.height = h+'px'; return [w, h];
 }
 function buildShot(slide){
   const key = slide.dataset.shot, z = slide.querySelector('.zoomer');
+  fitShot(slide);
   for (const [id, m] of Object.entries(MARKS[key])){
-    const d = document.createElement('div'); d.className = 'mark'; d.dataset.id = id;
-    const [x,y,w,h] = m.b;
-    Object.assign(d.style, {left: x*100+'%', top: y*100+'%', width: w*100+'%', height: h*100+'%'});
-    d.classList.add(m.k); d.innerHTML = '<div class="shape"></div>';
+    const d = document.createElement('div'); d.className = 'mark'; d.dataset.id = id; d.dataset.kind = m.k;
+    const [x,y,w,h] = m.b; Object.assign(d.style, {left:x*100+'%', top:y*100+'%', width:w*100+'%', height:h*100+'%'});
     z.appendChild(d);
   }
-  const spot = document.createElement('div'); spot.className = 'spot'; slide.querySelector('.shot').appendChild(spot);
-  slide.querySelector('.callout').innerHTML = '<span><b class="txt"></b></span>';
+  const n = document.createElement('div'); n.className = 'note'; slide.querySelector('.shot').appendChild(n);
 }
 function union(key, ids){
   ids = [].concat(ids); let x1=1,y1=1,x2=0,y2=0;
   for (const id of ids){ const [x,y,w,h] = MARKS[key][id].b; x1=Math.min(x1,x); y1=Math.min(y1,y); x2=Math.max(x2,x+w); y2=Math.max(y2,y+h); }
   return [x1,y1,x2-x1,y2-y1];
 }
-function showShotFrag(slide, i){
+function showShot(slide, i){
   const key = slide.dataset.shot, f = FRAGS[key][i], [W,H] = fitShot(slide);
-  slide.querySelectorAll('.mark').forEach(m => m.classList.toggle('on', f.marks.includes(m.dataset.id)));
-  // zoom
   let s = f.zoom || 1, tx = 0, ty = 0;
   if (f.focus && s > 1){
-    const [x,y,w,h] = union(key, f.focus); const cx = (x+w/2)*W, cy = (y+h/2)*H;
+    const [x,y,w,h] = union(key, f.focus), cx = (x+w/2)*W, cy = (y+h/2)*H;
     tx = Math.min(0, Math.max(W - W*s, W/2 - cx*s)); ty = Math.min(0, Math.max(H - H*s, H/2 - cy*s));
   }
   slide.querySelector('.zoomer').style.transform = `translate(${tx}px,${ty}px) scale(${s})`;
-  // spotlight in frame coordinates (after zoom)
-  const spot = slide.querySelector('.spot');
-  if (f.focus){
-    const [x,y,w,h] = union(key, f.focus), pad = 14;
-    Object.assign(spot.style, {left:(x*W*s+tx-pad)+'px', top:(y*H*s+ty-pad)+'px', width:(w*W*s+2*pad)+'px', height:(h*H*s+2*pad)+'px'});
-    spot.classList.add('on');
-  } else spot.classList.remove('on');
-  const c = slide.querySelector('.callout span');
-  if (f.say){ c.querySelector('.txt').textContent = f.say; c.classList.add('on'); } else c.classList.remove('on');
+  slide.querySelectorAll('.mark').forEach(m => penOn(m, f.marks.includes(m.dataset.id)));
+  const note = slide.querySelector('.note'), mn = slide.querySelector('.margin-note');
+  mn.classList.toggle('on', !!f.out); if (f.out) mn.textContent = f.say;
+  if (f.focus && f.say && !f.out){
+    note.textContent = f.say;
+    const [x,y,w,h] = union(key, f.focus), X1 = x*W*s+tx, Y1 = y*H*s+ty, X2 = X1 + w*W*s, Y2 = Y1 + h*H*s;
+    const nw = note.offsetWidth || f.say.length*17, gap = 34;
+    let left = X2 + gap, top = (Y1+Y2)/2 - 24;
+    if (left + nw > W - 10){ left = X1 - gap - nw; }
+    if (left < 10){ left = Math.max(10, Math.min(W - nw - 10, X1)); top = Y2 + 18; if (top > H - 60) top = Y1 - 64; }
+    note.style.left = left+'px'; note.style.top = Math.max(8, top)+'px'; note.classList.add('on');
+  } else note.classList.remove('on');
 }
 
-/* ---------- architecture slide ---------- */
+/* ---------- architecture ---------- */
 const D = {
-  browser:{t:'Web page',k:'ui',tag:'Browser',f:'app/static/ (index.html, app.js, style.css)',
-    what:'One page: pick a topic, click Generate, see the picture, the checklist, label problems and the grade.',
-    why:'Plain HTML, CSS and JavaScript. No build step, so every line is readable. React + Vite would be a whole toolchain for one screen.',
-    breaks:'It depends on the exact JSON the server returns. Errors show as a message.'},
-  catalog:{t:'Topic catalog',k:'data',tag:'Data, no code',f:'app/topics.json · app/schemas.py',
-    what:'Five topics. Each one lists the labels to draw, the parts the checker must find, parts that must not appear, and arrangement rules.',
-    why:'A JSON file, so checklists change without touching code. It is validated when the server starts, so a typo stops the server instead of quietly breaking grades.',
-    breaks:'A wrong checklist makes every grade for that topic wrong, with no error.'},
-  pb:{t:'Prompt builder',k:'code',tag:'Plain Python',f:'app/prompt_builder.py',
-    what:'Writes the instructions for the image model: flat 2D textbook style, these exact labels, no people or faces.',
-    why:'One place for the prompt, so the tests and the eval measure exactly what the app sends.',
-    breaks:'If the prompt forgets something, the picture will too.'},
-  gen:{t:'Generator',k:'code',tag:'Python calling an AI',f:'app/generator.py',
-    what:'Sends the prompt once and gets a PNG back. It never retries on its own, because every try costs money.',
-    why:'gemini-2.5-flash-image, about $0.04 an image. The Pro model spells better but costs about 3.5× as much.',
-    breaks:'Garbled labels, timeouts (504), or no image in the reply (502).'},
-  imgmodel:{t:'Image model',k:'ai',tag:'External AI',f:'google/gemini-2.5-flash-image via OpenRouter',
-    what:'Draws the diagram from our prompt. About 6 seconds.',why:'Cheap, fast, decent at text in images.',breaks:'Spelling. It draws what looks right, not what is right.'},
-  stamp:{t:'AI stamp',k:'code',tag:'Plain Python',f:'app/stamp.py',
-    what:'Writes hidden fields into the PNG: ai_generated=true, the model, the topic, the time. The page also shows a visible caption.',
-    why:'Pillow does it in a few lines. The stronger standard (C2PA) needs signing certificates.',
-    breaks:'A screenshot removes the hidden fields. It is a label, not proof.'},
-  critic:{t:'Critic',k:'ai',tag:'Python calling an AI',f:'app/critic.py',
-    what:'Sends the picture and the topic checklist to a vision model and asks for strict JSON: each part present, missing or mislabeled, plus label problems.',
-    why:'It never sends the prompt, so the model has to judge the picture, not what we asked for. Temperature 0 and JSON mode for steady answers.',
-    breaks:'A model can call a wrong diagram fine. Javier has the story.'},
-  critmodel:{t:'Checker model',k:'ai',tag:'External AI',f:'openai/gpt-4o via OpenRouter',
-    what:'Looks at the image and fills in the checklist. About 6 seconds, under a cent.',why:'Reliable structured output.',breaks:'Sometimes confidently wrong.'},
-  val:{t:'Validator',k:'code',tag:'Plain Python',f:'app/validator.py',
-    what:'Cleans the reply: strips code fences, parses JSON, checks every required part appears exactly once and nothing is made up. Asks once more if the reply is broken.',
-    why:'No AI here, so it is tested without an API key.',breaks:'After one failed retry the page shows "Critique unavailable".'},
-  verdict:{t:'Verdict',k:'code',tag:'Plain Python · the part that grades',f:'app/verdict.py',
-    what:'poor: a forbidden part appears, or half or more parts are missing or mislabeled.\ngood: every part present, every rule holds, no typos.\nneeds work: anything else.',
-    why:'The AI reports, our code concludes, so the AI never grades itself.',breaks:'Only as good as the marks the AI reports.'},
-  client:{t:'OpenRouter client + run log',k:'code',tag:'Plain Python',f:'app/openrouter.py → runs.jsonl',
-    what:'Sends every AI call with timeouts and writes one log line per call: model, tokens, cost, time.',
-    why:'Plain httpx, so the exact request is visible. The log is how we add up cost.',breaks:'Needs the API key in .env. No login, so it is for localhost only.'},
-  checker:{t:'checker.py',k:'off',tag:'Week 6 · not wired in yet',f:'app/checker.py',
-    what:'Compares a critic reply to an answer key with exact matches. Non-JSON is a structured failure, not a crash.',
-    why:'Exact matching gives the same answer every time and needs no key.',breaks:'Nothing in the live app imports it yet.'},
+  browser:{t:'Web page',tag:'browser',f:'app/static/ (index.html, app.js, style.css)',
+    what:'Topic buttons, a Generate button, then the picture, the checklist and the grade.',
+    why:'Plain HTML, CSS and JavaScript with no build step. React would add a toolchain for one screen.',
+    breaks:'It expects one exact JSON shape from the server.'},
+  catalog:{t:'Topic catalog',tag:'data',f:'app/topics.json, app/schemas.py',
+    what:'Five topics. For each: the labels to draw, the parts to check, parts that must not appear, and arrangement rules.',
+    why:'Checklists are data, not code. The file is validated at startup, so a typo stops the server.',
+    breaks:'A wrong checklist gives wrong grades with no error.'},
+  pb:{t:'Prompt builder',tag:'our Python',f:'app/prompt_builder.py',
+    what:'Writes the image prompt: flat textbook style, these exact labels, no people.',
+    why:'One place for the prompt, so tests and the eval use what the app sends.',
+    breaks:'Anything the prompt leaves out, the image leaves out.'},
+  gen:{t:'Generator',tag:'our Python, calls Gemini',f:'app/generator.py',
+    what:'One call to the image model. Returns the PNG. No automatic retry.',
+    why:'Every retry costs money. About $0.04 an image; the Pro model is about 3.5× that.',
+    breaks:'Misspelled labels, a timeout (504), or no image in the reply (502).'},
+  imgmodel:{t:'Gemini',tag:'model call',f:'google/gemini-2.5-flash-image via OpenRouter',
+    what:'Draws the diagram. About 6 seconds.',why:'Cheap and fast.',breaks:'Spelling.'},
+  stamp:{t:'Stamp',tag:'our Python',f:'app/stamp.py',
+    what:'Writes ai_generated=true, the model, the topic and the time into the PNG metadata. The page shows a caption too.',
+    why:'A few lines with Pillow. C2PA would need signing certificates.',
+    breaks:'A screenshot drops the metadata.'},
+  critic:{t:'Critic',tag:'our Python, calls GPT-4o',f:'app/critic.py',
+    what:'Sends the image and the checklist and asks for JSON: each part present, missing or mislabeled, plus label typos.',
+    why:'The prompt is never sent, so the model has to judge the picture. Temperature 0, JSON mode.',
+    breaks:'The model can pass a wrong diagram. Javier covers this.'},
+  critmodel:{t:'GPT-4o',tag:'model call',f:'openai/gpt-4o via OpenRouter',
+    what:'Fills in the checklist from the image. About 6 seconds, under a cent.',why:'Reliable JSON output.',breaks:'Sometimes confidently wrong.'},
+  val:{t:'Validator',tag:'our Python',f:'app/validator.py',
+    what:'Strips code fences, parses the JSON, checks every part appears once and nothing is made up. Retries once.',
+    why:'No model here, so it is tested without an API key.',breaks:'After one failed retry the page says "Critique unavailable".'},
+  verdict:{t:'Verdict',tag:'our Python',f:'app/verdict.py',
+    what:'poor: a forbidden part, or half the parts missing or mislabeled.\ngood: everything present, every rule ok, no typos.\nneeds work: the rest.',
+    why:'The model reports. Our code grades.',breaks:'Only as good as the marks it gets.'},
+  client:{t:'OpenRouter client',tag:'our Python',f:'app/openrouter.py → runs.jsonl',
+    what:'Sends every model call with a timeout and logs model, tokens, cost and time.',
+    why:'Plain httpx, so the request is visible. The log is how we total cost.',breaks:'Needs the key in .env. No login, localhost only.'},
+  checker:{t:'checker.py',tag:'Week 6, not wired in',f:'app/checker.py',
+    what:'Compares a critic reply to an answer key with exact matches.',
+    why:'Exact matching gives the same result every time and needs no key.',breaks:'Nothing in the app imports it yet.'},
 };
 const AFR = [
-  {t:'The whole system', d:'One page, one server, two AI models. Click any box for details.', n:[], e:[]},
-  {t:'You click Generate', d:'The page sends the topic to the server.', n:['browser'], e:['e_req']},
-  {t:'Build the prompt', d:'Look up the topic, write the instructions: style, exact labels, no people.', n:['catalog','pb'], e:['e_req']},
-  {t:'Draw the diagram', d:'One call to the image model through OpenRouter. ~6 s, ~4¢.', n:['gen','imgmodel','client'], e:['e_pg','e_gimg']},
-  {t:'Stamp it as AI', d:'Hidden "ai_generated" fields go into the PNG.', n:['stamp'], e:['e_gs']},
-  {t:'Check the picture', d:'Image + checklist go to gpt-4o. The prompt does not.', n:['critic','critmodel','catalog','client'], e:['e_sc','e_cm']},
-  {t:'Clean up the reply', d:'Parse the JSON, every part exactly once, nothing invented. One retry.', n:['val'], e:['e_cv']},
-  {t:'Code picks the grade', d:'A plain function counts marks and checks rules. No AI.', n:['verdict'], e:['e_vv']},
-  {t:'Show the result', d:'Image, checklist and grade back to the page. ~10–15 s total.', n:['browser'], e:['e_resp']},
-  {t:'The checker never sees our prompt', d:'Red is the prompt path. It ends at the image model, so the critic judges the picture, not what we asked for.', view:'see'},
-  {t:'The AI describes. Our code decides.', d:'The model reports what it sees. A small tested function turns that into the grade.', view:'grade'},
+  {t:'Every part', d:'Click a box for details.', n:[], e:[]},
+  {t:'The page sends the topic', d:'<code>POST /api/generate</code> with the topic id.', n:['browser'], e:['e_req']},
+  {t:'Build the prompt', d:'<code>prompt_builder.py</code> adds the style rules and the exact labels from <code>topics.json</code>.', n:['catalog','pb'], e:['e_req']},
+  {t:'Draw', d:'<code>generator.py</code> makes one call to Gemini through OpenRouter. About 6 s and 4 cents.', n:['gen','imgmodel'], e:['e_pg','e_gimg']},
+  {t:'Stamp', d:'<code>stamp.py</code> writes <code>ai_generated=true</code> into the PNG.', n:['stamp'], e:['e_gs']},
+  {t:'Check', d:'<code>critic.py</code> sends the image and the checklist to GPT-4o. The prompt is not sent.', n:['critic','critmodel'], e:['e_sc','e_cm']},
+  {t:'Validate', d:'<code>validator.py</code> parses the JSON and checks each part appears once. One retry.', n:['val'], e:['e_cv']},
+  {t:'Grade', d:'<code>verdict.py</code> counts the marks. No model call.', n:['verdict'], e:['e_vv']},
+  {t:'Return', d:'The page shows the image, the checklist and the grade. 10–15 s in total.', n:['browser'], e:['e_resp']},
+  {t:'The critic never gets the prompt', d:'The prompt path (red) stops at Gemini. GPT-4o only sees the picture.', view:'see'},
+  {t:'Grading happens in verdict.py', d:'GPT-4o says what it sees. <code>verdict.py</code> decides the grade.', view:'grade'},
 ];
 const $ = id => document.getElementById(id);
-const arch = $('arch');
-const anodes = [...arch.querySelectorAll('.node')], aedges = [...arch.querySelectorAll('.edge')];
-const flows = $('flows');
-let af = 0, raf = 0;
-
-aedges.forEach(p => { const L = p.getTotalLength(); p.style.setProperty('--len', L); p.style.strokeDasharray = L; });
-anodes.forEach((n,i) => n.style.transitionDelay = (i*60)+'ms');
+const arch = $('arch'), anodes = [...arch.querySelectorAll('.node')], aedges = [...arch.querySelectorAll('.edge')];
 const nid = n => n.id.slice(2);
+let af = 0, raf = 0;
+aedges.forEach(p => { const L = p.getTotalLength(); p.style.setProperty('--len', L); p.style.strokeDasharray = L; });
+anodes.forEach((n,i) => n.style.transitionDelay = (i*50)+'ms');
 
-function archReset(){
-  anodes.forEach(n => n.classList.remove('dim','hl'));
-  aedges.forEach(e => e.classList.remove('on','hot','dim'));
-  flows.innerHTML = ''; ['cb_see','cb_ai','cb_code'].forEach(c => $(c).classList.remove('on'));
-  $('packet').style.opacity = 0; cancelAnimationFrame(raf);
+function archLoops(ids, note){
+  const g = $('loops'); g.innerHTML = '';
+  ids.forEach((id, k) => {
+    const r = $('n_'+id).querySelector('rect'), x = +r.getAttribute('x'), y = +r.getAttribute('y'), w = +r.getAttribute('width'), h = +r.getAttribute('height');
+    const pad = 12, p = document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d', loopPath(w + pad*2, h + pad*2, 7 + k*3 + af));
+    p.setAttribute('transform', `translate(${x-pad} ${y-pad})`);
+    g.appendChild(p);
+    const L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L;
+    requestAnimationFrame(() => requestAnimationFrame(() => { p.style.transitionDelay = (k*0.15)+'s'; p.style.strokeDashoffset = 0; }));
+  });
+  if (note){ const t = document.createElementNS('http://www.w3.org/2000/svg','text'); t.setAttribute('class','anote'); t.setAttribute('x',note[0]); t.setAttribute('y',note[1]); t.textContent = note[2]; g.appendChild(t); }
 }
-function flow(id, hot){
-  const src = $(id), f = src.cloneNode(); f.removeAttribute('id'); f.removeAttribute('marker-end');
-  f.setAttribute('class','flow' + (hot ? ' hotflow' : '')); f.style.cssText = '';
-  flows.appendChild(f); requestAnimationFrame(() => f.classList.add('on'));
+function flowOn(id, hot){
+  const f = $(id).cloneNode(); f.removeAttribute('id'); f.removeAttribute('marker-end'); f.setAttribute('class','flow'+(hot?' hotflow':'')); f.style.cssText = ''; $('flows').appendChild(f);
 }
 function packet(ids){
   const paths = ids.map(i => $(i)), lens = paths.map(p => p.getTotalLength()), total = lens.reduce((a,b)=>a+b,0);
-  const dot = $('packet'), dur = 700 + total * 2.2, t0 = performance.now();
-  const ease = t => t<.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
+  const dot = $('packet'), dur = 600 + total*2, t0 = performance.now(), ease = t => t<.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
   dot.style.opacity = 1;
   const tick = now => {
-    let d = ease(Math.min(1,(now-t0)/dur)) * total, i = 0;
+    let d = ease(Math.min(1,(now-t0)/dur))*total, i = 0;
     while (i < lens.length-1 && d > lens[i]){ d -= lens[i]; i++; }
-    const pt = paths[i].getPointAtLength(Math.min(d, lens[i]));
-    dot.setAttribute('cx', pt.x); dot.setAttribute('cy', pt.y);
-    if (now - t0 < dur) raf = requestAnimationFrame(tick); else setTimeout(() => dot.style.opacity = 0, 350);
+    const pt = paths[i].getPointAtLength(Math.min(d, lens[i])); dot.setAttribute('cx',pt.x); dot.setAttribute('cy',pt.y);
+    if (now - t0 < dur) raf = requestAnimationFrame(tick); else setTimeout(() => dot.style.opacity = 0, 300);
   };
   cancelAnimationFrame(raf); raf = requestAnimationFrame(tick);
 }
 function showArch(i){
-  af = i; const f = AFR[i]; archReset();
-  if (f.view === 'see'){
-    anodes.forEach(n => { if (!['critic','critmodel','stamp','pb','gen','imgmodel'].includes(nid(n))) n.classList.add('dim'); });
-    ['e_pg','e_gimg'].forEach(e => { $(e).classList.add('hot'); flow(e, true); });
-    ['e_sc','e_cm'].forEach(e => { $(e).classList.add('on'); flow(e); });
-    aedges.forEach(e => { if (!e.classList.contains('on') && !e.classList.contains('hot')) e.classList.add('dim'); });
-    $('n_critic').classList.add('hl'); $('cb_see').classList.add('on');
-  } else if (f.view === 'grade'){
-    anodes.forEach(n => { if (!['critic','critmodel','val','verdict'].includes(nid(n))) n.classList.add('dim'); });
-    ['e_cm','e_cv','e_vv'].forEach(e => { $(e).classList.add('on'); flow(e); });
-    aedges.forEach(e => { if (!e.classList.contains('on')) e.classList.add('dim'); });
-    $('n_critic').classList.add('hl'); $('n_verdict').classList.add('hl');
-    $('cb_ai').classList.add('on'); $('cb_code').classList.add('on');
-  } else if (f.n.length){
-    anodes.forEach(n => n.classList.toggle('dim', !f.n.includes(nid(n))));
-    f.n.forEach(id => $('n_'+id).classList.add('hl'));
-    aedges.forEach(e => e.classList.toggle('dim', !f.e.includes(e.id)));
-    f.e.forEach(e => { $(e).classList.add('on'); flow(e); });
-    packet(f.e);
+  af = i; const f = AFR[i];
+  anodes.forEach(n => n.classList.remove('dim')); aedges.forEach(e => e.classList.remove('on','hot','dim'));
+  $('flows').innerHTML = ''; $('loops').innerHTML = ''; $('packet').style.opacity = 0; cancelAnimationFrame(raf);
+  let lit = [], edges = [], hot = [], note = null;
+  if (f.view === 'see'){ lit = ['pb','gen','imgmodel','stamp','critic','critmodel']; hot = ['e_pg','e_gimg']; edges = ['e_gs','e_sc','e_cm']; archLoops(['critic'], [570, 432, 'image + checklist only']); }
+  else if (f.view === 'grade'){ lit = ['critic','critmodel','val','verdict']; edges = ['e_cm','e_cv','e_vv']; archLoops(['verdict'], [205, 432, 'the grade comes from here']); }
+  else if (f.n.length){ lit = f.n; edges = f.e; archLoops(f.n.filter(x => x !== 'catalog' || f.n.length === 1)); packet(f.e); }
+  if (lit.length){
+    anodes.forEach(n => n.classList.toggle('dim', !lit.includes(nid(n))));
+    aedges.forEach(e => e.classList.toggle('dim', !edges.includes(e.id) && !hot.includes(e.id)));
+    edges.forEach(e => { $(e).classList.add('on'); flowOn(e); });
+    hot.forEach(e => { $(e).classList.add('hot'); flowOn(e, true); });
   }
-  $('ac-n').textContent = i === 0 ? 'Overview' : (f.view ? 'Key idea' : `Step ${i} of 8`);
-  const t = $('ac-t'); t.style.opacity = 0; setTimeout(() => { t.textContent = f.t; $('ac-d').textContent = f.d; t.style.opacity = 1; }, 160);
-  [...$('adots').children].forEach((d,k) => d.classList.toggle('on', k === i));
+  $('ac-n').textContent = i === 0 ? 'overview' : f.view ? 'the point' : `step ${i}`;
+  $('ac-t').textContent = f.t; $('ac-d').innerHTML = f.d;
+  $('ac-c').textContent = `${i+1} / ${AFR.length}`;
 }
-AFR.forEach(() => $('adots').appendChild(document.createElement('i')));
-
 function openDrawer(id){
-  const d = D[id], col = {ai:'var(--ai)',code:'var(--code)',data:'var(--data)',ui:'var(--blue)',off:'#8a93a6'}[d.k];
-  $('dbody').innerHTML = `<span class="chipk" style="color:${col};border-color:${col}">${d.tag}</span><h3>${d.t}</h3><p class="file">${d.f}</p>
-    <h4>What it does</h4><p>${d.what.replace(/\n/g,'<br>')}</p><h4>Why this way</h4><p>${d.why}</p><h4>What breaks</h4><p>${d.breaks}</p>`;
-  anodes.forEach(n => n.classList.toggle('picked', nid(n) === id));
-  $('drawer').classList.add('on');
+  const d = D[id];
+  $('dbody').innerHTML = `<div class="tag">${d.tag}</div><h3>${d.t}</h3><p class="file">${d.f}</p>
+    <h4>what it does</h4><p>${d.what.replace(/\n/g,'<br>')}</p><h4>why this way</h4><p>${d.why}</p><h4>what breaks</h4><p>${d.breaks}</p>`;
+  anodes.forEach(n => n.classList.toggle('picked', nid(n) === id)); $('drawer').classList.add('on');
 }
 function closeDrawer(){ $('drawer').classList.remove('on'); anodes.forEach(n => n.classList.remove('picked')); }
 anodes.forEach(n => n.addEventListener('click', e => { e.stopPropagation(); openDrawer(nid(n)); }));
@@ -724,21 +628,22 @@ $('dx').onclick = e => { e.stopPropagation(); closeDrawer(); };
 $('ab-next').onclick = e => { e.stopPropagation(); next(); };
 $('ab-back').onclick = e => { e.stopPropagation(); prev(); };
 
-/* ---------- deck engine ---------- */
+/* ---------- deck ---------- */
 const slides = [...document.querySelectorAll('.slide')];
 let cur = 0, frag = 0;
 slides.filter(s => s.dataset.shot).forEach(buildShot);
 function fragsOf(s){ return s.dataset.shot ? FRAGS[s.dataset.shot].length : s.dataset.arch ? AFR.length : s.dataset.steps ? +s.dataset.steps : 1; }
 function render(){
-  slides.forEach((s,i) => { s.classList.toggle('active', i === cur); s.classList.toggle('past', i < cur); });
+  slides.forEach((s,i) => s.classList.toggle('active', i === cur));
   const s = slides[cur];
-  if (s.dataset.shot) showShotFrag(s, frag);
-  if (s.dataset.steps) s.querySelectorAll('[data-step]').forEach(el => el.classList.toggle(el.classList.contains('mark') ? 'on' : 'shown', frag >= +el.dataset.step));
-  if (s.dataset.arch){ if (!arch.classList.contains('built')) setTimeout(() => arch.classList.add('built'), 250); showArch(frag); }
-  else { closeDrawer(); }
-  $('bar').style.width = ((cur + (frag+1)/fragsOf(s)) / slides.length * 100) + '%';
-  $('count').textContent = `${cur+1} / ${slides.length}`;
-  $('notestext').innerHTML = `<b>Slide ${cur+1}${fragsOf(s)>1 ? ` · ${frag+1}/${fragsOf(s)}` : ''}</b> — ${s.dataset.notes || ''}`;
+  if (s.dataset.shot) showShot(s, frag);
+  if (s.dataset.steps) s.querySelectorAll('[data-step]').forEach(el => {
+    const on = frag >= +el.dataset.step; if (el.classList.contains('mark')) penOn(el, on); else el.classList.toggle('shown', on);
+  });
+  s.querySelectorAll('.mark[data-auto]').forEach(el => setTimeout(() => penOn(el, s.classList.contains('active')), 1700));
+  if (s.dataset.arch){ if (!arch.classList.contains('built')) setTimeout(() => arch.classList.add('built'), 200); showArch(frag); } else closeDrawer();
+  $('bar').style.width = ((cur + (frag+1)/fragsOf(s)) / slides.length * 100)+'%';
+  $('notestext').innerHTML = `<b>${cur+1}${fragsOf(s)>1 ? `.${frag+1}/${fragsOf(s)}` : ''}</b> ${s.dataset.notes || ''}`;
   try { history.replaceState(null,'','#'+(cur+1)+'.'+frag); } catch(e){}
 }
 function next(){ const n = fragsOf(slides[cur]); if (frag < n-1) frag++; else if (cur < slides.length-1){ cur++; frag = 0; } render(); }
@@ -751,17 +656,20 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'f' || e.key === 'F') fs();
   else if (e.key === 'Home'){ cur = 0; frag = 0; render(); }
 });
-document.getElementById('deck').addEventListener('click', e => {
-  if (e.target.closest('.drawer, #arch, .archnext, button')) return;
-  next();
-});
+$('deck').addEventListener('click', e => { if (e.target.closest('.drawer, #arch, .archnav, button')) return; next(); });
 function fs(){ document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen().catch(()=>{}); }
 $('nextb').onclick = next; $('prevb').onclick = prev; $('fsb').onclick = fs; $('notesb').onclick = () => $('notes').classList.toggle('on');
 function scale(){ const k = Math.min(innerWidth/1920, innerHeight/1080); $('deck').style.transform = `translate(-50%,-50%) scale(${k})`; }
 addEventListener('resize', scale); scale();
+// the title slide's hand-drawn circle
+document.querySelectorAll('svg.penfree').forEach(svg => {
+  const w = +svg.dataset.w, h = +svg.dataset.h; svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  const p = document.createElementNS('http://www.w3.org/2000/svg','path'); p.setAttribute('d', loopPath(w, h, 3));
+  p.setAttribute('style','fill:none;stroke:var(--pen);stroke-width:5;stroke-linecap:round'); svg.appendChild(p);
+});
 const t0 = Date.now(); setInterval(() => { const s = Math.floor((Date.now()-t0)/1000); $('timer').textContent = `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; }, 1000);
 const m = location.hash.match(/^#(\d+)(?:\.(\d+))?/); if (m){ cur = Math.min(slides.length-1, +m[1]-1); frag = +(m[2]||0); }
-render();
+document.fonts.ready.then(render);
 </script>
 </body>
 </html>
