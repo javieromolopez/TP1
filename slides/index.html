@@ -387,7 +387,7 @@ code,.mono{font-family:var(--mono);font-size:.82em}
 </section>
 
 <!-- design choices -->
-<section class="slide" data-steps="3" data-notes="&lt;b&gt;~1 min.&lt;/b&gt; Click 1: our code gives the grade, same answer every time, tested with no key, but it&#x27;s only as good as the marks and the &#x27;half&#x27; cutoff is our judgment. The critic never sees the prompt, so it judges the picture, but it only grades the listed parts.&lt;br&gt;Click 2: topics live in a JSON file, so we can change a checklist without code, but a wrong checklist gives wrong grades with no error. Plain HTTP calls, every call logged, so we can see the request and total the cost, but we write the timeouts and retries ourselves.&lt;br&gt;Click 3: FastAPI and a plain JS page, easy to read, no login, localhost only.">
+<section class="slide" data-steps="2" data-notes="&lt;b&gt;~45 s.&lt;/b&gt; Click 1: our code gives the grade, same answer every time, tested with no key, but it&#x27;s only as good as the marks and the &#x27;half&#x27; cutoff is our judgment. The critic never sees the prompt, so it judges the picture, but it only grades the listed parts.&lt;br&gt;Click 2: topics live in a JSON file, so we can change a checklist without code, but a wrong checklist gives wrong grades with no error.">
   <div class="cover"></div><div class="pg">0</div>
   <div class="body"><h2 class="in">Design choices: upside and tradeoff</h2></div>
   <div class="tbl">
@@ -395,9 +395,7 @@ code,.mono{font-family:var(--mono);font-size:.82em}
     <div class="tr st" data-step="0"><div class="nm">Our code gives the grade</div><div class="up">Same answer every time. Tested with no API key.</div><div class="down">Only as good as the marks it gets. The “half” cutoff is our own call.</div></div>
     <div class="tr st" data-step="0"><div class="nm">The critic never sees the prompt</div><div class="up">It judges the picture, not what we asked for.</div><div class="down">It grades only the parts on the checklist.</div></div>
     <div class="tr st" data-step="1"><div class="nm">Topics live in a JSON file</div><div class="up">Change a checklist without touching code. It is validated at startup.</div><div class="down">A wrong checklist gives wrong grades with no error. Only 5 topics.</div></div>
-    <div class="tr st" data-step="1"><div class="nm">Plain HTTP calls, every call logged</div><div class="up">The request is visible. <code>runs.jsonl</code> totals cost.</div><div class="down">We write timeouts and retries ourselves. Images never retry.</div></div>
-    <div class="tr st" data-step="2"><div class="nm">FastAPI and a plain JS page</div><div class="up">A few readable files. No build step.</div><div class="down">No login. It only runs on localhost.</div></div>
-  </div>
+          </div>
 </section>
 
 <!-- 9 -->
