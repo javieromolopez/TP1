@@ -1,0 +1,243 @@
+[
+  {
+    "name": "solar-system",
+    "model": "minimax/minimax-m3",
+    "critique": {
+      "checks": [
+        {
+          "requirement": "The Sun is shown",
+          "met": true,
+          "evidence": "A large yellow Sun is prominently shown at the center."
+        },
+        {
+          "requirement": "Exactly eight planets are shown",
+          "met": false,
+          "evidence": "Only four planets are visible around the Sun."
+        },
+        {
+          "requirement": "Every planet has a text label",
+          "met": true,
+          "evidence": "Each of the four visible planets has an adjacent text label."
+        },
+        {
+          "requirement": "Saturn is drawn with rings",
+          "met": true,
+          "evidence": "The green Saturn-like planet labeled \"Saturlh\" is drawn with rings."
+        }
+      ]
+    },
+    "raw": "{\"checks\":[{\"requirement\":\"The Sun is shown\",\"met\":true,\"evidence\":\"A large yellow Sun is prominently shown at the center.\"},{\"requirement\":\"Exactly eight planets are shown\",\"met\":false,\"evidence\":\"Only four planets are visible around the Sun.\"},{\"requirement\":\"Every planet has a text label\",\"met\":true,\"evidence\":\"Each of the four visible planets has an adjacent text label.\"},{\"requirement\":\"Saturn is drawn with rings\",\"met\":true,\"evidence\":\"The green Saturn-like planet labeled \\\"Saturlh\\\" is drawn with rings.\"}]}",
+    "usage": {
+      "in": 1720,
+      "out": 117,
+      "finish": "stop"
+    },
+    "check": {
+      "ok": false,
+      "problems": [
+        "1 requirement(s) reported unmet"
+      ],
+      "unmet": [
+        "Exactly eight planets are shown"
+      ],
+      "missing": [],
+      "extra": []
+    },
+    "text_read": "The Solar System",
+    "text_matches": true,
+    "usage_text": {
+      "in": 1570,
+      "out": 48,
+      "finish": "stop"
+    }
+  },
+  {
+    "name": "earth-layers",
+    "model": "minimax/minimax-m3",
+    "critique": null,
+    "raw": null,
+    "usage": {
+      "in": 1760,
+      "out": 1500,
+      "finish": "length"
+    },
+    "check": {
+      "ok": false,
+      "problems": [
+        "critique was not the JSON checklist that was asked for"
+      ],
+      "unmet": [],
+      "missing": [
+        "The Earth is shown cut open as a cross-section",
+        "Exactly four layers are shown",
+        "The layers are labeled crust, mantle, outer core, and inner core",
+        "There are no people in the image"
+      ],
+      "extra": []
+    },
+    "text_read": "Layers of the Earth",
+    "text_matches": true,
+    "usage_text": {
+      "in": 1592,
+      "out": 33,
+      "finish": "stop"
+    }
+  },
+  {
+    "name": "volcano",
+    "model": "minimax/minimax-m3",
+    "critique": {
+      "checks": [
+        {
+          "requirement": "The volcano is shown cut in half as a cross-section",
+          "met": true,
+          "evidence": "The volcano interior is visible showing the inner structure with a cutaway view."
+        },
+        {
+          "requirement": "A magma chamber is shown below the volcano",
+          "met": false,
+          "evidence": "No distinct magma chamber is visible below the volcano; only the conduit and lava flow are shown."
+        },
+        {
+          "requirement": "A vent connects the magma chamber to the top",
+          "met": false,
+          "evidence": "While a vent/conduit is visible through the volcano, there is no magma chamber for it to connect to."
+        },
+        {
+          "requirement": "Lava is shown coming out of the volcano",
+          "met": true,
+          "evidence": "Orange lava streams are visible flowing down the sides of the volcano from the crater."
+        }
+      ]
+    },
+    "raw": "{\"checks\": [{\"requirement\": \"The volcano is shown cut in half as a cross-section\", \"met\": true, \"evidence\": \"The volcano interior is visible showing the inner structure with a cutaway view.\"}, {\"requirement\": \"A magma chamber is shown below the volcano\", \"met\": false, \"evidence\": \"No distinct magma chamber is visible below the volcano; only the conduit and lava flow are shown.\"}, {\"requirement\": \"A vent connects the magma chamber to the top\", \"met\": false, \"evidence\": \"While a vent/conduit is visible through the volcano, there is no magma chamber for it to connect to.\"}, {\"requirement\": \"Lava is shown coming out of the volcano\", \"met\": true, \"evidence\": \"Orange lava streams are visible flowing down the sides of the volcano from the crater.\"}]}",
+    "usage": {
+      "in": 949,
+      "out": 394,
+      "finish": "stop"
+    },
+    "check": {
+      "ok": false,
+      "problems": [
+        "2 requirement(s) reported unmet"
+      ],
+      "unmet": [
+        "A magma chamber is shown below the volcano",
+        "A vent connects the magma chamber to the top"
+      ],
+      "missing": [],
+      "extra": []
+    },
+    "text_read": "Volacno Cros-Sectom",
+    "text_matches": false,
+    "usage_text": {
+      "in": 1592,
+      "out": 194,
+      "finish": "stop"
+    }
+  },
+  {
+    "name": "moon-phases",
+    "model": "minimax/minimax-m3",
+    "critique": {
+      "checks": [
+        {
+          "requirement": "Exactly eight Moon shapes are shown",
+          "met": false,
+          "evidence": "Only four Moon shapes are shown."
+        },
+        {
+          "requirement": "A full moon is shown",
+          "met": true,
+          "evidence": "A fully illuminated circular Moon appears at the far right."
+        },
+        {
+          "requirement": "A new moon is shown",
+          "met": true,
+          "evidence": "A completely dark circular Moon appears third in the row."
+        },
+        {
+          "requirement": "Every Moon shape has a text label",
+          "met": true,
+          "evidence": "Each of the four Moon shapes has a label directly beneath it."
+        }
+      ]
+    },
+    "raw": "{\"checks\":[{\"requirement\":\"Exactly eight Moon shapes are shown\",\"met\":false,\"evidence\":\"Only four Moon shapes are shown.\"},{\"requirement\":\"A full moon is shown\",\"met\":true,\"evidence\":\"A fully illuminated circular Moon appears at the far right.\"},{\"requirement\":\"A new moon is shown\",\"met\":true,\"evidence\":\"A completely dark circular Moon appears third in the row.\"},{\"requirement\":\"Every Moon shape has a text label\",\"met\":true,\"evidence\":\"Each of the four Moon shapes has a label directly beneath it.\"}]}",
+    "usage": {
+      "in": 1767,
+      "out": 274,
+      "finish": "stop"
+    },
+    "check": {
+      "ok": false,
+      "problems": [
+        "1 requirement(s) reported unmet"
+      ],
+      "unmet": [
+        "Exactly eight Moon shapes are shown"
+      ],
+      "missing": [],
+      "extra": []
+    },
+    "text_read": "Phases of the Moon",
+    "text_matches": true,
+    "usage_text": {
+      "in": 1592,
+      "out": 44,
+      "finish": "stop"
+    }
+  },
+  {
+    "name": "rock-cycle",
+    "model": "minimax/minimax-m3",
+    "critique": {
+      "checks": [
+        {
+          "requirement": "Igneous, sedimentary, and metamorphic rock are each labeled",
+          "met": false,
+          "evidence": "Only \u201cIgneous\u201d is clearly labeled; the other two labels contain garbled text."
+        },
+        {
+          "requirement": "Arrows connect the rock types",
+          "met": true,
+          "evidence": "Curved arrows visibly connect the three illustrated rocks."
+        },
+        {
+          "requirement": "The arrows form a closed cycle",
+          "met": true,
+          "evidence": "The arrows continue around all three rocks in a closed circular path."
+        },
+        {
+          "requirement": "There are no people in the image",
+          "met": true,
+          "evidence": "No people are visible."
+        }
+      ]
+    },
+    "raw": "{\"checks\":[{\"requirement\":\"Igneous, sedimentary, and metamorphic rock are each labeled\",\"met\":false,\"evidence\":\"Only \u201cIgneous\u201d is clearly labeled; the other two labels contain garbled text.\"},{\"requirement\":\"Arrows connect the rock types\",\"met\":true,\"evidence\":\"Curved arrows visibly connect the three illustrated rocks.\"},{\"requirement\":\"The arrows form a closed cycle\",\"met\":true,\"evidence\":\"The arrows continue around all three rocks in a closed circular path.\"},{\"requirement\":\"There are no people in the image\",\"met\":true,\"evidence\":\"No people are visible.\"}]}",
+    "usage": {
+      "in": 1753,
+      "out": 556,
+      "finish": "stop"
+    },
+    "check": {
+      "ok": false,
+      "problems": [
+        "1 requirement(s) reported unmet"
+      ],
+      "unmet": [
+        "Igneous, sedimentary, and metamorphic rock are each labeled"
+      ],
+      "missing": [],
+      "extra": []
+    },
+    "text_read": "The Rock Cycle",
+    "text_matches": true,
+    "usage_text": {
+      "in": 1592,
+      "out": 38,
+      "finish": "stop"
+    }
+  }
+]
