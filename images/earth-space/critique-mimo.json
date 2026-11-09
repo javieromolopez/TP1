@@ -1,0 +1,268 @@
+[
+  {
+    "name": "solar-system",
+    "model": "xiaomi/mimo-v2.6-flash",
+    "critique": {
+      "checks": [
+        {
+          "requirement": "The Sun is shown",
+          "met": true,
+          "evidence": "A large yellow circle is centered in the diagram representing the Sun."
+        },
+        {
+          "requirement": "Exactly eight planets are shown",
+          "met": false,
+          "evidence": "There are only four large spherical planetary bodies surrounding the central Sun."
+        },
+        {
+          "requirement": "Every planet has a text label",
+          "met": true,
+          "evidence": "Each of the visible spheres has text beneath or beside it (e.g., Braiap, Glalnist)."
+        },
+        {
+          "requirement": "Saturn is drawn with rings",
+          "met": true,
+          "evidence": "The green planet labeled 'Satwlth' is depicted with a ring around it."
+        }
+      ]
+    },
+    "raw": "{\"checks\": [{\"requirement\": \"The Sun is shown\", \"met\": true, \"evidence\": \"A large yellow circle is centered in the diagram representing the Sun.\"}, {\"requirement\": \"Exactly eight planets are shown\", \"met\": false, \"evidence\": \"There are only four large spherical planetary bodies surrounding the central Sun.\"}, {\"requirement\": \"Every planet has a text label\", \"met\": true, \"evidence\": \"Each of the visible spheres has text beneath or beside it (e.g., Braiap, Glalnist).\"}, {\"requirement\": \"Saturn is drawn with rings\", \"met\": true, \"evidence\": \"The green planet labeled 'Satwlth' is depicted with a ring around it.\"}]}",
+    "usage": {
+      "in": 1211,
+      "out": 159,
+      "finish": "stop"
+    },
+    "check": {
+      "ok": false,
+      "problems": [
+        "1 requirement(s) reported unmet"
+      ],
+      "unmet": [
+        "Exactly eight planets are shown"
+      ],
+      "missing": [],
+      "extra": []
+    },
+    "text_read": "The Solar System",
+    "text_matches": true,
+    "usage_text": {
+      "in": 1058,
+      "out": 4,
+      "finish": "stop"
+    }
+  },
+  {
+    "name": "earth-layers",
+    "model": "xiaomi/mimo-v2.6-flash",
+    "critique": {
+      "checks": [
+        {
+          "requirement": "The Earth is shown cut open as a cross-section",
+          "met": true,
+          "evidence": "The image depicts a globe with a wedge cut out to reveal internal structures."
+        },
+        {
+          "requirement": "Exactly four layers are shown",
+          "met": true,
+          "evidence": "The diagram displays four distinct colored concentric bands representing the layers."
+        },
+        {
+          "requirement": "The layers are labeled crust, mantle, outer core, and inner core",
+          "met": false,
+          "evidence": "The labels are misspelled, reading 'crusst', 'Mantue', 'Outhr Core', and 'Inter Core'."
+        },
+        {
+          "requirement": "There are no people in the image",
+          "met": true,
+          "evidence": "The image contains only text and a diagram of the Earth, with no human figures."
+        }
+      ]
+    },
+    "raw": "```json\n{\"checks\": [{\"requirement\": \"The Earth is shown cut open as a cross-section\", \"met\": true, \"evidence\": \"The image depicts a globe with a wedge cut out to reveal internal structures.\"}, {\"requirement\": \"Exactly four layers are shown\", \"met\": true, \"evidence\": \"The diagram displays four distinct colored concentric bands representing the layers.\"}, {\"requirement\": \"The layers are labeled crust, mantle, outer core, and inner core\", \"met\": false, \"evidence\": \"The labels are misspelled, reading 'crusst', 'Mantue', 'Outhr Core', and 'Inter Core'.\"}, {\"requirement\": \"There are no people in the image\", \"met\": true, \"evidence\": \"The image contains only text and a diagram of the Earth, with no human figures.\"}]}\n```",
+    "usage": {
+      "in": 1229,
+      "out": 188,
+      "finish": "stop"
+    },
+    "check": {
+      "ok": false,
+      "problems": [
+        "1 requirement(s) reported unmet"
+      ],
+      "unmet": [
+        "The layers are labeled crust, mantle, outer core, and inner core"
+      ],
+      "missing": [],
+      "extra": []
+    },
+    "text_read": "Layers of the Earth",
+    "text_matches": true,
+    "usage_text": {
+      "in": 1058,
+      "out": 5,
+      "finish": "stop"
+    }
+  },
+  {
+    "name": "volcano",
+    "model": "xiaomi/mimo-v2.6-flash",
+    "critique": {
+      "checks": [
+        {
+          "requirement": "The volcano is shown cut in half as a cross-section",
+          "met": false,
+          "evidence": "The title says 'Cros-Sectom' but the image shows a whole volcano with no interior cutaway view."
+        },
+        {
+          "requirement": "A magma chamber is shown below the volcano",
+          "met": false,
+          "evidence": "There is no magma chamber visible below the volcano; the base is solid brown."
+        },
+        {
+          "requirement": "A vent connects the magma chamber to the top",
+          "met": false,
+          "evidence": "There is no vent or magma chamber shown; only an orange channel runs down the front."
+        },
+        {
+          "requirement": "Lava is shown coming out of the volcano",
+          "met": false,
+          "evidence": "An orange stream runs down the front of the volcano, but it does not clearly appear to be erupting from the top."
+        }
+      ]
+    },
+    "raw": "{\"checks\": [{\"requirement\": \"The volcano is shown cut in half as a cross-section\", \"met\": false, \"evidence\": \"The title says 'Cros-Sectom' but the image shows a whole volcano with no interior cutaway view.\"}, {\"requirement\": \"A magma chamber is shown below the volcano\", \"met\": false, \"evidence\": \"There is no magma chamber visible below the volcano; the base is solid brown.\"}, {\"requirement\": \"A vent connects the magma chamber to the top\", \"met\": false, \"evidence\": \"There is no vent or magma chamber shown; only an orange channel runs down the front.\"}, {\"requirement\": \"Lava is shown coming out of the volcano\", \"met\": false, \"evidence\": \"An orange stream runs down the front of the volcano, but it does not clearly appear to be erupting from the top.\"}]}",
+    "usage": {
+      "in": 1234,
+      "out": 193,
+      "finish": "stop"
+    },
+    "check": {
+      "ok": false,
+      "problems": [
+        "4 requirement(s) reported unmet"
+      ],
+      "unmet": [
+        "The volcano is shown cut in half as a cross-section",
+        "A magma chamber is shown below the volcano",
+        "A vent connects the magma chamber to the top",
+        "Lava is shown coming out of the volcano"
+      ],
+      "missing": [],
+      "extra": []
+    },
+    "text_read": "Volacno Cros-Sectom",
+    "text_matches": false,
+    "usage_text": {
+      "in": 1058,
+      "out": 8,
+      "finish": "stop"
+    }
+  },
+  {
+    "name": "moon-phases",
+    "model": "xiaomi/mimo-v2.6-flash",
+    "critique": {
+      "checks": [
+        {
+          "requirement": "Exactly eight Moon shapes are shown",
+          "met": false,
+          "evidence": "There are only four moon shapes visible in the image."
+        },
+        {
+          "requirement": "A full moon is shown",
+          "met": false,
+          "evidence": "The fourth moon is green and full, but the third moon is black, and there is no clearly lit full moon typical of a textbook diagram."
+        },
+        {
+          "requirement": "A new moon is shown",
+          "met": false,
+          "evidence": "There are only four moon shapes and none is labeled 'new moon'."
+        },
+        {
+          "requirement": "Every Moon shape has a text label",
+          "met": false,
+          "evidence": "Each of the four shapes has a label, but since there are only four shapes instead of eight, the set is incomplete."
+        }
+      ]
+    },
+    "raw": "```json\n{\"checks\": [{\"requirement\": \"Exactly eight Moon shapes are shown\", \"met\": false, \"evidence\": \"There are only four moon shapes visible in the image.\"}, {\"requirement\": \"A full moon is shown\", \"met\": false, \"evidence\": \"The fourth moon is green and full, but the third moon is black, and there is no clearly lit full moon typical of a textbook diagram.\"}, {\"requirement\": \"A new moon is shown\", \"met\": false, \"evidence\": \"There are only four moon shapes and none is labeled 'new moon'.\"}, {\"requirement\": \"Every Moon shape has a text label\", \"met\": false, \"evidence\": \"Each of the four shapes has a label, but since there are only four shapes instead of eight, the set is incomplete.\"}]}\n```",
+    "usage": {
+      "in": 1240,
+      "out": 180,
+      "finish": "stop"
+    },
+    "check": {
+      "ok": false,
+      "problems": [
+        "4 requirement(s) reported unmet"
+      ],
+      "unmet": [
+        "Exactly eight Moon shapes are shown",
+        "A full moon is shown",
+        "A new moon is shown",
+        "Every Moon shape has a text label"
+      ],
+      "missing": [],
+      "extra": []
+    },
+    "text_read": "Phases of the Moon",
+    "text_matches": true,
+    "usage_text": {
+      "in": 1058,
+      "out": 6,
+      "finish": "stop"
+    }
+  },
+  {
+    "name": "rock-cycle",
+    "model": "xiaomi/mimo-v2.6-flash",
+    "critique": {
+      "checks": [
+        {
+          "requirement": "Igneous, sedimentary, and metamorphic rock are each labeled",
+          "met": false,
+          "evidence": "The labels are garbled text ('Ignous', 'Mgmartcary', 'Selidenalbry', 'Metamrhcan') rather than correct rock names."
+        },
+        {
+          "requirement": "Arrows connect the rock types",
+          "met": true,
+          "evidence": "Arrows are drawn between the three rock illustrations."
+        },
+        {
+          "requirement": "The arrows form a closed cycle",
+          "met": true,
+          "evidence": "Arrows point around in a circular path connecting all three rocks back to the start."
+        },
+        {
+          "requirement": "There are no people in the image",
+          "met": true,
+          "evidence": "Only rocks, arrows, and text are present; no human figures appear."
+        }
+      ]
+    },
+    "raw": "{\"checks\": [{\"requirement\": \"Igneous, sedimentary, and metamorphic rock are each labeled\", \"met\": false, \"evidence\": \"The labels are garbled text ('Ignous', 'Mgmartcary', 'Selidenalbry', 'Metamrhcan') rather than correct rock names.\"}, {\"requirement\": \"Arrows connect the rock types\", \"met\": true, \"evidence\": \"Arrows are drawn between the three rock illustrations.\"}, {\"requirement\": \"The arrows form a closed cycle\", \"met\": true, \"evidence\": \"Arrows point around in a circular path connecting all three rocks back to the start.\"}, {\"requirement\": \"There are no people in the image\", \"met\": true, \"evidence\": \"Only rocks, arrows, and text are present; no human figures appear.\"}]}",
+    "usage": {
+      "in": 1224,
+      "out": 184,
+      "finish": "stop"
+    },
+    "check": {
+      "ok": false,
+      "problems": [
+        "1 requirement(s) reported unmet"
+      ],
+      "unmet": [
+        "Igneous, sedimentary, and metamorphic rock are each labeled"
+      ],
+      "missing": [],
+      "extra": []
+    },
+    "text_read": "The Rock Cycle",
+    "text_matches": true,
+    "usage_text": {
+      "in": 1058,
+      "out": 4,
+      "finish": "stop"
+    }
+  }
+]

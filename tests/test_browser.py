@@ -198,3 +198,28 @@ def test_server_error_is_shown_and_the_button_comes_back(page):
     expect(page.locator("#error")).to_contain_text("refused")
     expect(page.locator("#generate")).to_be_enabled()
     expect(page.locator("#result")).to_be_hidden()
+
+
+def test_label_check_rows_render_under_label_text(page):
+    """Week 6 (spec behaviors 18, 19): code-checked label results show next to the critic's text issues."""
+    held = hold_generate(page)
+    with page.expect_request("**/api/generate"):
+        page.click("#generate")
+    held[0].fulfill(json=critique_response(label_check={
+        "ok": False, "missing": ["mitochondria"], "unexpected": ["Mitochondrin"],
+        "read": ["Mitochondrin"], "error": None}))
+
+    issues = page.locator("#text-issues li")
+    expect(issues).to_have_count(3)
+    expect(issues.nth(1)).to_have_text("“mitochondria” is not printed in the image (checked in code)")
+    expect(issues.nth(2)).to_have_text("“Mitochondrin” is not one of this diagram’s labels (checked in code)")
+    expect(page.locator("#text-count")).to_have_text("3 to fix")
+
+
+def test_label_check_unavailable_is_said_plainly(page):
+    held = hold_generate(page)
+    with page.expect_request("**/api/generate"):
+        page.click("#generate")
+    held[0].fulfill(json=critique_response(label_check={
+        "ok": None, "missing": [], "unexpected": [], "read": [], "error": "label read unavailable"}))
+    expect(page.locator("#text-issues li").nth(1)).to_have_text("Labels were not checked in code: label read unavailable")

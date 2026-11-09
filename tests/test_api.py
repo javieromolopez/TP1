@@ -42,6 +42,10 @@ def critique_reply(topic=CIRCUIT, **overrides):
     return reply({"content": json.dumps(data)})
 
 
+def labels_reply(labels=None, topic=CIRCUIT):
+    return reply({"content": json.dumps({"labels": topic.labels if labels is None else labels})})
+
+
 def generate(client, topic_id="simple-circuit"):
     return client.post("/api/generate", json={"topic_id": topic_id})
 
@@ -95,7 +99,7 @@ def test_health_with_key(client):
 
 # Full pipeline, B9
 def test_generate_returns_stamped_image_critique_and_code_verdict(client, fake_chat):
-    fake_chat.replies = [image_reply(), critique_reply()]
+    fake_chat.replies = [image_reply(), critique_reply(), labels_reply()]
     response = generate(client)
 
     assert response.status_code == 200
@@ -111,13 +115,14 @@ def test_generate_returns_stamped_image_critique_and_code_verdict(client, fake_c
     assert body["image_hidden_reason"] is None
     assert body["usage"]["image"]["model"] == "google/gemini-2.5-flash-image"
     assert body["arrangement_rules"] == [{"id": r.id, "text": r.text} for r in CIRCUIT.arrangement_rules]
-    assert len(fake_chat.calls) == 2
+    assert body["label_check"] == {"ok": True, "missing": [], "unexpected": [], "read": CIRCUIT.labels, "error": None}
+    assert len(fake_chat.calls) == 3
 
 
 def test_verdict_comes_from_code_not_the_model(client, fake_chat):
     """A critic that claims "verdict": "good" while reporting two missing parts still gets "poor"."""
     parts = [{"name": p, "status": "missing" if i < 2 else "present"} for i, p in enumerate(CIRCUIT.required_parts)]
-    fake_chat.replies = [image_reply(), critique_reply(parts=parts, verdict="good")]
+    fake_chat.replies = [image_reply(), critique_reply(parts=parts, verdict="good"), labels_reply()]
     assert generate(client).json()["verdict"] == "poor"
 
 
@@ -140,7 +145,7 @@ def test_image_provider_error_is_502(client, fake_chat):
 
 # B11
 def test_person_in_image_withholds_the_image(client, fake_chat):
-    fake_chat.replies = [image_reply(), critique_reply(people_present=True)]
+    fake_chat.replies = [image_reply(), critique_reply(people_present=True), labels_reply()]
     body = generate(client).json()
     assert body["image"] is None
     assert body["image_hidden_reason"] == PERSON_HIDDEN == "This diagram was hidden because it showed a person."
@@ -192,3 +197,74 @@ def test_unknown_topic_names_it(client, fake_chat):
     assert client.post("/api/generate", json={"topic_id": "volcano"}).json()["detail"].startswith(
         "Unknown topic 'volcano'."
     )
+
+
+# Week 6 label text check (spec behaviors 18, 20, 21, 22)
+def test_label_read_sends_the_image_and_asks_only_for_the_labels(client, fake_chat):
+    fake_chat.replies = [image_reply(), critique_reply(), labels_reply()]
+    generate(client)
+    body, kwargs = fake_chat.calls[2]
+    content = body["messages"][0]["content"]
+    assert content[1]["type"] == "image_url"
+    assert "exactly as printed" in content[0]["text"]
+    assert "Draw only these labels" not in content[0]["text"]          # never the generation prompt
+    assert all(label not in content[0]["text"] for label in CIRCUIT.labels)   # nor the expected answers
+    assert kwargs["timeout"] == 30
+
+
+def test_a_misread_label_turns_good_into_needs_work(client, fake_chat):
+    labels = [CIRCUIT.labels[0] + "x", *CIRCUIT.labels[1:]]
+    fake_chat.replies = [image_reply(), critique_reply(), labels_reply(labels)]
+    body = generate(client).json()
+    assert body["verdict"] == "needs_work"
+    assert body["label_check"]["ok"] is False
+    assert body["label_check"]["missing"] == [CIRCUIT.labels[0]]
+    assert body["label_check"]["unexpected"] == [CIRCUIT.labels[0] + "x"]
+
+
+def test_the_label_check_never_improves_a_poor_verdict(client, fake_chat):
+    parts = [{"name": p, "status": "missing" if i < 2 else "present"} for i, p in enumerate(CIRCUIT.required_parts)]
+    fake_chat.replies = [image_reply(), critique_reply(parts=parts), labels_reply()]
+    body = generate(client).json()
+    assert body["label_check"]["ok"] is True
+    assert body["verdict"] == "poor"
+
+
+@pytest.mark.parametrize("content", ["I can see some labels.", '{"labels": "nucleus"}'])
+def test_a_non_json_label_read_leaves_the_verdict_alone(client, fake_chat, content):
+    fake_chat.replies = [image_reply(), critique_reply(), reply({"content": content})]
+    body = generate(client).json()
+    assert body["verdict"] == "good"
+    assert body["label_check"]["ok"] is None
+    assert body["label_check"]["error"]
+
+
+@pytest.mark.parametrize("failure", [openrouter.OpenRouterTimeout("slow"), openrouter.OpenRouterError(503, "down")])
+def test_a_failed_label_read_still_returns_the_image_and_critique(client, fake_chat, failure):
+    fake_chat.replies = [image_reply(), critique_reply(), failure]
+    response = generate(client)
+    assert response.status_code == 200
+    body = response.json()
+    assert body["image"] and body["critique"]
+    assert body["verdict"] == "good"
+    assert body["label_check"]["ok"] is None
+    assert body["label_check"]["error"] == "label read unavailable"
+
+
+def test_no_label_read_when_the_critique_failed(client, fake_chat):
+    fake_chat.replies = [image_reply(), reply({"content": "no json"}), reply({"content": "still none"})]
+    body = generate(client).json()
+    assert body["label_check"] is None
+    assert len(fake_chat.calls) == 3
+
+
+
+def test_a_malformed_label_reply_is_a_failed_check_not_a_500(client, fake_chat):
+    """Review on #18: a reply with no choices raised KeyError in read_labels and failed the request."""
+    fake_chat.replies = [image_reply(), critique_reply(), {"usage": {"prompt_tokens": 1, "completion_tokens": 0, "cost": 0.0}}]
+    response = generate(client)
+    assert response.status_code == 200
+    body = response.json()
+    assert body["verdict"] == "good"
+    assert body["label_check"]["ok"] is None
+    assert body["label_check"]["error"]

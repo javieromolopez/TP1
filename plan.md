@@ -119,3 +119,19 @@ Two pieces of work can move in parallel with the main pipeline, neither blocks c
 No worktree isolation is needed — this is one feature on one branch per CLAUDE.md. Within the order above, the two team members should claim non-overlapping steps (e.g., one owns 1–6, the other owns 7–9) and meet at 10–13.
 
 **Approved by:** Javier Romo & Ralston Raphael, October 19, 2026
+
+## Week 6: label text check (Ralston, branch `week06-ralston`)
+
+The Week 6 lab's piece for TP1. Javier's PRs #10 and #14 already merged the FLUX image set and `app/checker.py` with its tests, so this builds on them and adds no second checker.
+
+1. Spec: "Label text check (Week 6)" component, behaviors 18–22, failure rows and cost row (this commit).
+2. Tests first (red): `tests/test_label_check.py` for `check_labels` (behaviors 19, 20), and `tests/test_api.py` for the wiring (18, 21, 22). The three existing full-pipeline API tests get a label-read reply, because the pipeline now makes one more call after a valid critique.
+3. `app/label_check.py`, then wire it into `app/main.py` and show its result under "Label text" in the page (green).
+4. `images/earth-space/`: Ralston's five FLUX images with `manifest.json` and both critics' files, from the Week 6 lab in `cpsc415-week05`.
+5. `.claude/hooks/guard.py` + `.claude/settings.json` installed; `gate.sh` as the pre-push hook. Then the PR, the reviewer (`review.py`), the findings as a PR comment, fixes or replies, and Javier's approval before the merge.
+
+**Risks.** A model that "corrects" spelling while transcribing (seen in Week 6) would hide a misspelled label. The code cannot see that, and `CHECKS.md` records it as a limit. An extra call per run adds about $0.003 and 2–4 s.
+
+**Proof.** No-key: the new tests plus the full suite (`python -m pytest -q`) and `uvx ruff check .`. Billed: none required. The label check reuses the critic's model, and one manual run is optional.
+
+**Approved by:** Ralston Raphael, November 9, 2026 (Javier approves through the PR review)

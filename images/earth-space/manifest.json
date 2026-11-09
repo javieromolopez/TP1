@@ -1,0 +1,92 @@
+[
+  {
+    "name": "solar-system",
+    "prompt": "Flat-color 2D textbook illustration for a middle-school science class, white background, solid color fills, clean labels in clear text with arrows pointing to each part. The Sun and the eight planets in order from the Sun, each planet labeled with its name. Saturn has rings. The title \"The Solar System\" is large and clearly legible at the top.",
+    "seed": 501,
+    "requirements": [
+      "The Sun is shown",
+      "Exactly eight planets are shown",
+      "Every planet has a text label",
+      "Saturn is drawn with rings"
+    ],
+    "expected_text": "The Solar System",
+    "model": "black-forest-labs/flux.2-klein-4b",
+    "aspect_ratio": "1:1",
+    "file": "solar-system.jpg",
+    "media_type": "image/jpeg",
+    "cost": 0.014,
+    "seconds": 3.0
+  },
+  {
+    "name": "earth-layers",
+    "prompt": "Flat-color 2D textbook illustration for a middle-school science class, white background, solid color fills, clean labels in clear text with arrows pointing to each part. The Earth cut open as a cross-section showing four layers, labeled crust, mantle, outer core, and inner core. The title \"Layers of the Earth\" is large and clearly legible at the top.",
+    "seed": 502,
+    "requirements": [
+      "The Earth is shown cut open as a cross-section",
+      "Exactly four layers are shown",
+      "The layers are labeled crust, mantle, outer core, and inner core",
+      "There are no people in the image"
+    ],
+    "expected_text": "Layers of the Earth",
+    "model": "black-forest-labs/flux.2-klein-4b",
+    "aspect_ratio": "1:1",
+    "file": "earth-layers.jpg",
+    "media_type": "image/jpeg",
+    "cost": 0.014,
+    "seconds": 3.7
+  },
+  {
+    "name": "volcano",
+    "prompt": "Flat-color 2D textbook illustration for a middle-school science class, white background, solid color fills, clean labels in clear text with arrows pointing to each part. A volcano cut in half showing the magma chamber, the vent, the crater, and lava flowing down the side, each part labeled. The title \"Volcano Cross-Section\" is large and clearly legible at the top.",
+    "seed": 503,
+    "requirements": [
+      "The volcano is shown cut in half as a cross-section",
+      "A magma chamber is shown below the volcano",
+      "A vent connects the magma chamber to the top",
+      "Lava is shown coming out of the volcano"
+    ],
+    "expected_text": "Volcano Cross-Section",
+    "model": "black-forest-labs/flux.2-klein-4b",
+    "aspect_ratio": "1:1",
+    "file": "volcano.jpg",
+    "media_type": "image/jpeg",
+    "cost": 0.014,
+    "seconds": 3.7
+  },
+  {
+    "name": "moon-phases",
+    "prompt": "Flat-color 2D textbook illustration for a middle-school science class, white background, solid color fills, clean labels in clear text with arrows pointing to each part. The eight phases of the Moon in a row: new moon, waxing crescent, first quarter, waxing gibbous, full moon, waning gibbous, third quarter, waning crescent, each labeled. The title \"Phases of the Moon\" is large and clearly legible at the top.",
+    "seed": 504,
+    "requirements": [
+      "Exactly eight Moon shapes are shown",
+      "A full moon is shown",
+      "A new moon is shown",
+      "Every Moon shape has a text label"
+    ],
+    "expected_text": "Phases of the Moon",
+    "model": "black-forest-labs/flux.2-klein-4b",
+    "aspect_ratio": "1:1",
+    "file": "moon-phases.jpg",
+    "media_type": "image/jpeg",
+    "cost": 0.014,
+    "seconds": 3.8
+  },
+  {
+    "name": "rock-cycle",
+    "prompt": "Flat-color 2D textbook illustration for a middle-school science class, white background, solid color fills, clean labels in clear text with arrows pointing to each part. Igneous, sedimentary, and metamorphic rock, each labeled, connected by arrows that form a cycle. The title \"The Rock Cycle\" is large and clearly legible at the top.",
+    "seed": 505,
+    "requirements": [
+      "Igneous, sedimentary, and metamorphic rock are each labeled",
+      "Arrows connect the rock types",
+      "The arrows form a closed cycle",
+      "There are no people in the image"
+    ],
+    "expected_text": "The Rock Cycle",
+    "model": "black-forest-labs/flux.2-klein-4b",
+    "aspect_ratio": "1:1",
+    "file": "rock-cycle.jpg",
+    "media_type": "image/jpeg",
+    "cost": 0.014,
+    "seconds": 3.1
+  }
+]
