@@ -88,6 +88,16 @@ function setFilter(filter) {
   $("no-problems").hidden = shown > 0;
 }
 
+// The model transcribed the labels and the server compared them with the topic's labels in code.
+function labelCheckRows(check) {
+  if (!check) return [];
+  if (check.error) return [{ ok: false, text: `Label check in code unavailable: ${check.error}` }];
+  return [
+    ...check.missing.map((label) => ({ ok: false, text: `“${label}” is not printed in the image (checked in code)` })),
+    ...check.unexpected.map((label) => ({ ok: false, text: `“${label}” is not one of this diagram’s labels (checked in code)` })),
+  ];
+}
+
 function renderCritique(body) {
   const critique = body.critique;
   $("critique").hidden = !critique;
@@ -115,9 +125,12 @@ function renderCritique(body) {
     // A passing rule's note usually restates the rule, so the note is shown only on a failure.
     text: `${a.rule}${rules[a.rule] ? ` · ${rules[a.rule]}` : ""}${!a.ok && a.note ? ` (${a.note})` : ""}`,
   })), "No arrangement rules were checked.");
-  fillList($("text-issues"), $("text-count"), critique.text_issues.map((t) => (
-    { ok: false, text: `“${t.label_text}” is ${PROBLEMS[t.problem] || t.problem}` }
-  )), "Every label reads correctly.");
+  fillList($("text-issues"), $("text-count"), [
+    ...critique.text_issues.map((t) => (
+      { ok: false, text: `“${t.label_text}” is ${PROBLEMS[t.problem] || t.problem}` }
+    )),
+    ...labelCheckRows(body.label_check),
+  ], "Every label reads correctly.");
   fillList($("forbidden"), $("forbidden-count"), critique.forbidden_found.map((name) => (
     { ok: false, text: `${name} is drawn but should not be there` }
   )), "Nothing extra was drawn.");
