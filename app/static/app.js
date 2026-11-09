@@ -91,7 +91,7 @@ function setFilter(filter) {
 // The model transcribed the labels and the server compared them with the topic's labels in code.
 function labelCheckRows(check) {
   if (!check) return [];
-  if (check.error) return [{ ok: false, text: `Label check in code unavailable: ${check.error}` }];
+  if (check.error) return [{ ok: false, text: `Labels were not checked in code: ${check.error}` }];
   return [
     ...check.missing.map((label) => ({ ok: false, text: `“${label}” is not printed in the image (checked in code)` })),
     ...check.unexpected.map((label) => ({ ok: false, text: `“${label}” is not one of this diagram’s labels (checked in code)` })),
