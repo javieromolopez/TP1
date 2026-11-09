@@ -55,7 +55,9 @@ async def read_labels(png: bytes, *, model: str = critic.MODEL) -> str:
         ],
     }
     result = await openrouter.chat(body, timeout=critic.CRITIC_TIMEOUT_S, retry_5xx=True)
-    return result.data["choices"][0]["message"].get("content") or ""
+    # A reply without choices is a failed read, not a KeyError (review on #18): "" fails check_labels.
+    choices = result.data.get("choices") or [{}]
+    return (choices[0].get("message") or {}).get("content") or ""
 
 
 def check_labels(topic: Topic, raw: str) -> LabelCheck:
