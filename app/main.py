@@ -1,4 +1,4 @@
-"""FastAPI server: generate -> stamp -> critique -> validate -> verdict, one request per click (spec § API server).
+"""FastAPI server: generate -> stamp -> critique -> validate -> label check -> verdict, one request per click (spec § API server).
 
   python -m uvicorn app.main:app      # then open http://localhost:8000
 """
@@ -14,6 +14,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from app import generator, openrouter, validator
+from app.label_check import label_check
 from app.schemas import TOPICS_PATH, Critique, Topic, load_topics
 from app.stamp import stamp
 from app.verdict import verdict
@@ -81,6 +82,11 @@ def create_app(topics_path: Path = TOPICS_PATH) -> FastAPI:
         created = datetime.now(UTC).isoformat(timespec="seconds")
         png = stamp(image.png, {"generator": image.model, "topic": topic.id, "created": created})
         critique, critique_error = await critique_image(topic, png)
+        # Labels are transcribed by the model and compared in code; only after a valid critique (behavior 18).
+        labels = await label_check(topic, png) if critique else None
+        final_verdict = verdict(topic, critique) if critique else None
+        if final_verdict == "good" and labels is not None and labels.ok is False:
+            final_verdict = "needs_work"  # a misread label can lower the verdict, never raise it (behavior 21)
 
         # A diagram that shows a person is withheld; the critique still goes to the UI.
         hide = critique is not None and critique.people_present
@@ -89,7 +95,8 @@ def create_app(topics_path: Path = TOPICS_PATH) -> FastAPI:
             "image_hidden_reason": PERSON_HIDDEN if hide else None,
             "critique": critique.model_dump() if critique else None,
             "critique_error": critique_error,
-            "verdict": verdict(topic, critique) if critique else None,
+            "verdict": final_verdict,
+            "label_check": labels.to_dict() if labels else None,
             "arrangement_rules": [{"id": r.id, "text": r.text} for r in topic.arrangement_rules],
             "usage": {
                 "image": {

@@ -160,7 +160,7 @@ Requirements the tests will check. Tests marked *(no key)* use a mocked HTTP lay
 16. On the critic eval set, the chosen critic raises no false ✗ on the five good diagrams and catches the planted flaw in at least four of the five flawed ones. *(eval)*
 17. A real end-to-end run completes in ≤ 45 s and costs ≤ $0.25, read from `runs.jsonl`. *(eval)*
 18. After a critique validates, `/api/generate` makes exactly one label-read call and returns `label_check` with `ok`, `missing` (expected labels not read, in catalog order), `unexpected` (labels read that the topic does not have) and `read`. When the critique failed, no label read is made and `label_check` is `null`. *(no key)*
-19. Label text is compared in code, ignoring only case, surrounding punctuation and repeated spaces. A misspelled label ("Mitochondrin") is both missing ("mitochondria") and unexpected. *(no key)*
+19. Label text is compared in code, ignoring only case, surrounding punctuation and repeated spaces. A misspelled label ("mitochondrin") is both missing ("mitochondrion") and unexpected. *(no key)*
 20. A label read that is not JSON, or JSON without a list of strings under `labels`, is a failed label check (`ok: null` with an `error`), not a crash. The verdict is then left as the critique made it. *(no key)*
 21. If the label check finds a missing or unexpected label, a `good` verdict becomes `needs_work`. A worse verdict is never improved by the label check. *(no key)*
 22. A label-read timeout or provider error never fails the request: the image and the critique are returned, with `label_check.error` saying the label read was unavailable. *(no key)*
