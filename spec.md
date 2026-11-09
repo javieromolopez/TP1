@@ -70,6 +70,12 @@ Each component lists the two required decisions (language, model) and the altern
 - **Interfaces:** `validate(topic, raw_text) -> Critique | ValidationError`; `verdict(topic, critique) -> "good" | "needs_work" | "poor"`.
 - **Dependencies:** pydantic.
 
+### Label text check (Week 6)
+- **What it does:** After a critique validates, one more narrow call asks the critic model to list every text label in the image exactly as printed, as JSON `{"labels": [...]}`. Then plain code compares that list with the topic's `labels` from `topics.json`, using `app/checker.py`'s `build_report` (each expected label is an answer-key entry). An expected label that was not read is **missing**: it was misspelled, garbled, or not drawn. A label read that the topic does not have is **unexpected**. The critic is never asked whether a label is right. It only transcribes, and the code decides. This closes the gap where `text_issues` is the critic grading its own reading: in Ralston's Week 6 set the critics accepted gibberish labels as labels, and one silently corrected a misspelled title.
+- **Language:** Python, same process. **Model:** the critic's model (`openai/gpt-4o`), `temperature: 0`, `response_format: json_object`. **Why:** the same client and image already in hand. The narrow question is cheap (one image plus about 60 tokens in, a short list out).
+- **Interfaces:** `read_labels(png) -> str` (raw reply) and `check_labels(topic, raw) -> LabelCheck` (`ok`, `missing`, `unexpected`, `read`, `error`). Comparison ignores case, surrounding punctuation and repeated spaces, and nothing else: "nucleeus" does not match "nucleus".
+- **Dependencies:** none new (httpx through `app/openrouter.py`).
+
 ### API server
 - **What it does:** Serves the static frontend and two JSON endpoints. It runs generate → stamp → critique → validate per request and logs usage.
 - **Language:** Python with **FastAPI** + uvicorn. **Why:** request and response bodies and the critique schema are all Pydantic models, so one validation layer covers both our API and the model's output. Async handlers also keep a 30-second model call from blocking the server. Alternative considered: Flask. It is simpler to start, but it needs a separate validation library, and its dev server handles one request at a time by default. Java/Spring Boot was ruled out as far heavier than two endpoints need.
@@ -153,6 +159,11 @@ Requirements the tests will check. Tests marked *(no key)* use a mocked HTTP lay
 15. Browser check (Playwright, mocked backend): choose a topic, click Generate, and the button disables while the request runs. The image, the "AI-generated" caption, one checklist row per required part, the narrative, and the verdict all render. *(no key)*
 16. On the critic eval set, the chosen critic raises no false ✗ on the five good diagrams and catches the planted flaw in at least four of the five flawed ones. *(eval)*
 17. A real end-to-end run completes in ≤ 45 s and costs ≤ $0.25, read from `runs.jsonl`. *(eval)*
+18. After a critique validates, `/api/generate` makes exactly one label-read call and returns `label_check` with `ok`, `missing` (expected labels not read, in catalog order), `unexpected` (labels read that the topic does not have) and `read`. When the critique failed, no label read is made and `label_check` is `null`. *(no key)*
+19. Label text is compared in code, ignoring only case, surrounding punctuation and repeated spaces. A misspelled label ("Mitochondrin") is both missing ("mitochondria") and unexpected. *(no key)*
+20. A label read that is not JSON, or JSON without a list of strings under `labels`, is a failed label check (`ok: null` with an `error`), not a crash. The verdict is then left as the critique made it. *(no key)*
+21. If the label check finds a missing or unexpected label, a `good` verdict becomes `needs_work`. A worse verdict is never improved by the label check. *(no key)*
+22. A label-read timeout or provider error never fails the request: the image and the critique are returned, with `label_check.error` saying the label read was unavailable. *(no key)*
 
 ## Failure handling
 | Case | What happens |
@@ -166,6 +177,8 @@ Requirements the tests will check. Tests marked *(no key)* use a mocked HTTP lay
 | Critic sees a person in the image | Image withheld (behavior 11). |
 | Timeout | Image call `504`. Critique call: image still shown with a critique error. |
 | OpenRouter `429` / `5xx` | No automatic retry on the image call (cost). One retry after 2 s on the critique call. |
+| Label read not JSON, timed out, or provider error | `label_check: {ok: null, error: ...}`; the image, critique and verdict are still returned (behaviors 20, 22). |
+| Labels misspelled or garbled | Found in code by the label check; a `good` verdict becomes `needs_work` (behavior 21). |
 | Double-click on Generate | Button disabled until the response arrives, so one click means one paid call. |
 
 ## Cost estimate
@@ -175,7 +188,8 @@ Prices from OpenRouter's model list, checked October 18, 2026.
 |---|---|---|
 | Image, `google/gemini-2.5-flash-image` | ~150 in, 1 image out (~1,290 image tokens) | ~$0.039 |
 | Critique, `openai/gpt-4o` ($2.50 / $10 per M) | ~765 image + ~700 text in, ~600 out | ~$0.010 |
-| **One run** | | **~$0.05** (≤ $0.06 with a critique retry) |
+| Label read, `openai/gpt-4o` | ~765 image + ~80 text in, ~60 out | ~$0.003 |
+| **One run** | | **~$0.053** (≤ $0.063 with a critique retry) |
 
 The intent's per-run ceiling is $0.25, so a run is about 5× under it.
 
