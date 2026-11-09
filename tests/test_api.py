@@ -256,3 +256,14 @@ def test_no_label_read_when_the_critique_failed(client, fake_chat):
     assert body["label_check"] is None
     assert len(fake_chat.calls) == 3
 
+
+
+def test_a_malformed_label_reply_is_a_failed_check_not_a_500(client, fake_chat):
+    """Review on #18: a reply with no choices raised KeyError in read_labels and failed the request."""
+    fake_chat.replies = [image_reply(), critique_reply(), {"usage": {"prompt_tokens": 1, "completion_tokens": 0, "cost": 0.0}}]
+    response = generate(client)
+    assert response.status_code == 200
+    body = response.json()
+    assert body["verdict"] == "good"
+    assert body["label_check"]["ok"] is None
+    assert body["label_check"]["error"]
