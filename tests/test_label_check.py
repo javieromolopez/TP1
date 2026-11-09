@@ -25,10 +25,10 @@ def test_case_surrounding_punctuation_and_spaces_are_ignored():
 
 
 def test_a_misspelled_label_is_missing_and_unexpected():
-    labels = [("mitochondrin" if label == "mitochondria" else label) for label in CELL.labels]
+    labels = [("mitochondrin" if label == "mitochondrion" else label) for label in CELL.labels]
     result = check_labels(CELL, read(*labels))
     assert result.ok is False
-    assert result.missing == ["mitochondria"]
+    assert result.missing == ["mitochondrion"]
     assert result.unexpected == ["mitochondrin"]
 
 
