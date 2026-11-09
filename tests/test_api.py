@@ -230,8 +230,9 @@ def test_the_label_check_never_improves_a_poor_verdict(client, fake_chat):
     assert body["verdict"] == "poor"
 
 
-def test_a_non_json_label_read_leaves_the_verdict_alone(client, fake_chat):
-    fake_chat.replies = [image_reply(), critique_reply(), reply({"content": "I can see some labels."})]
+@pytest.mark.parametrize("content", ["I can see some labels.", '{"labels": "nucleus"}'])
+def test_a_non_json_label_read_leaves_the_verdict_alone(client, fake_chat, content):
+    fake_chat.replies = [image_reply(), critique_reply(), reply({"content": content})]
     body = generate(client).json()
     assert body["verdict"] == "good"
     assert body["label_check"]["ok"] is None

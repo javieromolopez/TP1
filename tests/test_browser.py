@@ -222,4 +222,4 @@ def test_label_check_unavailable_is_said_plainly(page):
         page.click("#generate")
     held[0].fulfill(json=critique_response(label_check={
         "ok": None, "missing": [], "unexpected": [], "read": [], "error": "label read unavailable"}))
-    expect(page.locator("#text-issues li").nth(1)).to_have_text("Label check in code unavailable: label read unavailable")
+    expect(page.locator("#text-issues li").nth(1)).to_have_text("Labels were not checked in code: label read unavailable")

@@ -60,3 +60,23 @@ def test_a_reply_that_is_not_json_is_a_failed_check_not_a_crash():
         assert result.ok is None
         assert result.error
         assert result.missing == [] and result.unexpected == []
+
+
+def test_the_label_read_is_logged_to_runs_jsonl_like_every_model_call(monkeypatch):
+    """Review on #18 asked for this proof: read_labels goes through openrouter.chat, which logs (behavior 14)."""
+    import asyncio
+
+    import httpx
+
+    from app import openrouter
+    from app.label_check import read_labels
+
+    payload = {"choices": [{"message": {"content": read("nucleus")}}],
+               "usage": {"prompt_tokens": 850, "completion_tokens": 12, "cost": 0.0029}}
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setattr(openrouter, "TRANSPORT", httpx.MockTransport(lambda request: httpx.Response(200, json=payload)))
+    assert asyncio.run(read_labels(b"png")) == read("nucleus")
+    lines = [json.loads(line) for line in openrouter.RUNS_PATH.read_text().splitlines()]
+    assert len(lines) == 1
+    assert lines[0]["model"] == "openai/gpt-4o"
+    assert lines[0]["cost"] == 0.0029
